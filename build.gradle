@@ -1,6 +1,7 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.1.1'
     id 'com.gradle.plugin-publish' version '0.9.7'
+    id 'java-gradle-plugin'
     id 'idea'
 }
 
@@ -15,6 +16,17 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
+def pluginId = 'org.jmailen.kotlinter'
+
+gradlePlugin {
+    plugins {
+        kotlinterPlugin {
+            id = pluginId
+            implementationClass = 'org.jmailen.gradle.kotlinter.KotlinterPlugin'
+        }
+    }
+}
+
 pluginBundle {
     website = 'https://github.com/jeremymailen/kotlinter'
     vcsUrl = 'https://github.com/jeremymailen/kotlinter'
@@ -22,7 +34,7 @@ pluginBundle {
 
     plugins {
         kotlinterPlugin {
-            id = 'org.jmailen.kotlinter'
+            id = pluginId
             version = '0.1'
             displayName = 'Kotlin Lint plugin'
             description = 'Linting and formatting for Kotlin source code using ktlint'

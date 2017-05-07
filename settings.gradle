@@ -1,0 +1,3 @@
+//include 'test-project'
+
+rootProject.name = 'kotlinter-gradle'

@@ -8,6 +8,7 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jmailen.gradle.kotlinter.support.resolveRuleSets
 import org.jmailen.gradle.kotlinter.tasks.LintTask
 
 class KotlinterPlugin : Plugin<Project> {
@@ -19,15 +20,22 @@ class KotlinterPlugin : Plugin<Project> {
     }
 
     fun createTasks(project: Project) {
+        val ruleSets = resolveRuleSets()
+
         val lintKotlinMain = project.tasks.create("lintKotlinMain", LintTask::class.java) {
             it.setKotlinSource("main")
+            it.ruleSets = ruleSets
         }
         val lintKotlinTest = project.tasks.create("lintKotlinTest", LintTask::class.java) {
             it.setKotlinSource("test")
+            it.ruleSets = ruleSets
         }
         val lintKotlin = project.tasks.create("lintKotlin") {
+            it.group = "verification"
+            it.description = "Runs lint on the Kotlin source files."
             it.dependsOn(lintKotlinMain, lintKotlinTest)
         }
+
         project.tasks.getByName("check") {
             it.dependsOn(lintKotlin)
         }

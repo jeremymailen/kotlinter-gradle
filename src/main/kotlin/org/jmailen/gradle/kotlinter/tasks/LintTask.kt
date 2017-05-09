@@ -5,9 +5,11 @@ import com.github.shyiko.ktlint.core.RuleSet
 import org.gradle.api.GradleException
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 
+@ParallelizableTask
 open class LintTask : SourceTask() {
 
     @Input

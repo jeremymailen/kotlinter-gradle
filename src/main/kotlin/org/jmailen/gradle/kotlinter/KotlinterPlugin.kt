@@ -2,6 +2,7 @@ package org.jmailen.gradle.kotlinter
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.HasConvention
 import org.gradle.api.plugins.JavaPluginConvention
@@ -22,18 +23,19 @@ class KotlinterPlugin : Plugin<Project> {
     fun createTasks(project: Project) {
         val ruleSets = resolveRuleSets()
 
-        val lintKotlinMain = project.tasks.create("lintKotlinMain", LintTask::class.java) {
-            it.setKotlinSource("main")
-            it.ruleSets = ruleSets
+        val lintTasks = project.kotlinSourceSets().map { sourceSet ->
+            val sourceSetId = sourceSet.name.split(" ").first().capitalize()
+
+            project.tasks.create("lintKotlin$sourceSetId", LintTask::class.java) { task ->
+                task.source(sourceSet)
+                task.ruleSets = ruleSets
+            }
         }
-        val lintKotlinTest = project.tasks.create("lintKotlinTest", LintTask::class.java) {
-            it.setKotlinSource("test")
-            it.ruleSets = ruleSets
-        }
+
         val lintKotlin = project.tasks.create("lintKotlin") {
             it.group = "verification"
             it.description = "Runs lint on the Kotlin source files."
-            it.dependsOn(lintKotlinMain, lintKotlinTest)
+            it.dependsOn(lintTasks)
         }
 
         project.tasks.getByName("check") {
@@ -42,13 +44,7 @@ class KotlinterPlugin : Plugin<Project> {
     }
 }
 
-internal fun SourceTask.setKotlinSource(sourceSetName: String) {
-    project.sourceSets().all { sourceSet ->
-        if (sourceSet.name == sourceSetName) {
-            sourceSet.kotlin?.srcDirs?.forEach { source(it) }
-        }
-    }
-}
+fun Project.kotlinSourceSets() = sourceSets().map { it.kotlin }.filterNotNull()
 
 fun Project.sourceSets() = convention.getPlugin(JavaPluginConvention::class.java).sourceSets
 

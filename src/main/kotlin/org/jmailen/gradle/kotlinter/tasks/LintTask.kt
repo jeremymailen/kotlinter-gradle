@@ -4,38 +4,51 @@ import com.github.shyiko.ktlint.core.KtLint
 import com.github.shyiko.ktlint.core.RuleSet
 import org.gradle.api.GradleException
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
+import java.io.File
 
 @ParallelizableTask
 open class LintTask : SourceTask() {
 
-    @Input
+    @Internal
     lateinit var ruleSets: List<RuleSet>
+
+    @OutputFile
+    lateinit var report: File
 
     @TaskAction
     fun run() {
+        var errors = ""
+
         this.getSource().forEach { file ->
             val relativePath = file.toRelativeString(project.projectDir)
 
             logger.log(LogLevel.DEBUG, "linting: $relativePath")
 
-            val lintFunc = when (file.name.endsWith(".kt")) {
-                true -> KtLint::lint
-                false -> KtLint::lintScript
+            val lintFunc = when (file.extension) {
+                "kt" -> KtLint::lint
+                "kts" -> KtLint::lintScript
+                else -> {
+                    logger.log(LogLevel.DEBUG, "ignoring non Kotlin file: $relativePath")
+                    null
+                }
             }
+            lintFunc?.invoke(file.readText(), ruleSets) { (line, col, detail) ->
+                val errorStr = "$relativePath:$line:$col: $detail"
+                logger.log(LogLevel.ERROR, "Lint error > $errorStr")
+                errors += "$errorStr\n"
+            }
+        }
 
-            var hasLintErrors = false
-            lintFunc(file.readText(), ruleSets) { ruleError ->
-                logger.log(LogLevel.ERROR,
-                        "Lint error > $relativePath:${ruleError.line}:${ruleError.col}: ${ruleError.detail}")
-                hasLintErrors = true
-            }
-            if (hasLintErrors) {
-                throw GradleException("Kotlin source failed lint check.")
-            }
+        if (errors.isNotEmpty()) {
+            report.writeText(errors)
+            throw GradleException("Kotlin source failed lint check.")
+        } else {
+            report.writeText("ok")
         }
     }
 }

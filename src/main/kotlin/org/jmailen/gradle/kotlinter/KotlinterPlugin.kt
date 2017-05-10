@@ -2,12 +2,10 @@ package org.jmailen.gradle.kotlinter
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.HasConvention
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.SourceTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jmailen.gradle.kotlinter.support.resolveRuleSets
 import org.jmailen.gradle.kotlinter.tasks.LintTask
@@ -24,11 +22,13 @@ class KotlinterPlugin : Plugin<Project> {
         val ruleSets = resolveRuleSets()
 
         val lintTasks = project.kotlinSourceSets().map { sourceSet ->
-            val sourceSetId = sourceSet.name.split(" ").first().capitalize()
+            val sourceSetId = sourceSet.name.split(" ").first()
+            val taskName = "lintKotlin${sourceSetId.capitalize()}"
 
-            project.tasks.create("lintKotlin$sourceSetId", LintTask::class.java) { task ->
-                task.source(sourceSet)
+            project.tasks.create(taskName, LintTask::class.java) { task ->
+                task.source(sourceSet.sourceDirectories.files)
                 task.ruleSets = ruleSets
+                task.report = project.file("${project.buildDir}/reports/ktlint/$sourceSetId-lint.txt")
             }
         }
 

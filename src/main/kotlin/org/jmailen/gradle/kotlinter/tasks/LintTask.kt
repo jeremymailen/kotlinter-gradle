@@ -24,7 +24,7 @@ open class LintTask : SourceTask() {
     fun run() {
         var errors = ""
 
-        this.getSource().forEach { file ->
+        getSource().forEach { file ->
             val relativePath = file.toRelativeString(project.projectDir)
 
             logger.log(LogLevel.DEBUG, "linting: $relativePath")
@@ -37,9 +37,10 @@ open class LintTask : SourceTask() {
                     null
                 }
             }
+
             lintFunc?.invoke(file.readText(), ruleSets) { (line, col, detail) ->
                 val errorStr = "$relativePath:$line:$col: $detail"
-                logger.log(LogLevel.ERROR, "Lint error > $errorStr")
+                logger.log(LogLevel.QUIET, "Lint error > $errorStr")
                 errors += "$errorStr\n"
             }
         }

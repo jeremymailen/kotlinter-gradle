@@ -12,13 +12,12 @@ repositories {
 
 dependencies {
     compile 'com.github.shyiko:ktlint:0.6.1'
-    compileOnly gradleApi()
     compileOnly 'org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.2'
     compileOnly 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.2'
     testCompile 'junit:junit:4.12'
 }
 
-version = '0.4.0'
+version = '0.5.0'
 group = 'org.jmailen.gradle'
 def pluginId = 'org.jmailen.kotlinter'
 

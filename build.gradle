@@ -31,8 +31,8 @@ gradlePlugin {
 }
 
 pluginBundle {
-    website = 'https://github.com/jeremymailen/kotlinter'
-    vcsUrl = 'https://github.com/jeremymailen/kotlinter'
+    website = 'https://github.com/jeremymailen/kotlinter-gradle'
+    vcsUrl = 'https://github.com/jeremymailen/kotlinter-gradle'
     tags = ['kotlin', 'ktlint', 'lint', 'format', 'style']
 
     plugins {

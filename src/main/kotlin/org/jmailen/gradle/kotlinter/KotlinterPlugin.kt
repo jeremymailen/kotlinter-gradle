@@ -19,6 +19,8 @@ class KotlinterPlugin : Plugin<Project> {
         project?.let { p ->
             p.plugins.withType(KotlinPluginWrapper::class.java) {
 
+                p.extensions.create("kotlinter", KotlinterExtension::class.java)
+
                 KotlinterApplier(p, p.kotlinSourceSets(), resolveRuleSets()).createTasks()
             }
         }
@@ -38,9 +40,7 @@ class KotlinterPlugin : Plugin<Project> {
 class KotlinterApplier(val project: Project, val kotlinSourceSets: List<SourceDirectorySet>, val ruleSets: List<RuleSet>) {
 
     fun createTasks() {
-        val ruleSets = resolveRuleSets()
-
-        val formatTasks = createFormatTasks(ruleSets)
+        val formatTasks = createFormatTasks()
 
         project.tasks.create("formatKotlin") {
             it.group = "formatting"
@@ -48,7 +48,7 @@ class KotlinterApplier(val project: Project, val kotlinSourceSets: List<SourceDi
             it.dependsOn(formatTasks)
         }
 
-        val lintTasks = createLintTasks(ruleSets)
+        val lintTasks = createLintTasks()
 
         val lintKotlin = project.tasks.create("lintKotlin") {
             it.group = "verification"
@@ -61,7 +61,7 @@ class KotlinterApplier(val project: Project, val kotlinSourceSets: List<SourceDi
         }
     }
 
-    fun createFormatTasks(ruleSets: List<RuleSet>) =
+    fun createFormatTasks() =
             kotlinSourceSets.map { sourceSet ->
                 val taskName = "formatKotlin${sourceSet.id().capitalize()}"
 
@@ -72,7 +72,7 @@ class KotlinterApplier(val project: Project, val kotlinSourceSets: List<SourceDi
                 }
             }
 
-    fun createLintTasks(ruleSets: List<RuleSet>) =
+    fun createLintTasks() =
             kotlinSourceSets.map { sourceSet ->
                 val taskName = "lintKotlin${sourceSet.id().capitalize()}"
 

@@ -4,11 +4,13 @@ import com.github.shyiko.ktlint.core.KtLint
 import com.github.shyiko.ktlint.core.RuleSet
 import org.gradle.api.GradleException
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
+import org.jmailen.gradle.kotlinter.KotlinterExtension
 import java.io.File
 
 @ParallelizableTask
@@ -19,6 +21,10 @@ open class LintTask : SourceTask() {
 
     @OutputFile
     lateinit var report: File
+
+    @Input
+    fun ignoreFailures() =
+            project.extensions.getByType(KotlinterExtension::class.java).ignoreFailures
 
     @TaskAction
     fun run() {
@@ -47,7 +53,9 @@ open class LintTask : SourceTask() {
 
         if (errors.isNotEmpty()) {
             report.writeText(errors)
-            throw GradleException("Kotlin source failed lint check.")
+            if (!ignoreFailures()) {
+                throw GradleException("Kotlin source failed lint check.")
+            }
         } else {
             report.writeText("ok")
         }

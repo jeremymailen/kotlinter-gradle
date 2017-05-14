@@ -10,10 +10,9 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version '0.6.0'
+    id 'org.jmailen.kotlinter' version '0.7.0'
 }
 ```
-_Requires_: use of one of the JetBrains Kotlin Gradle plugins in your project.
 
 ### Features
 - Linting and formatting tasks
@@ -23,6 +22,8 @@ _Requires_: use of one of the JetBrains Kotlin Gradle plugins in your project.
 
 ### Tasks
 
+If your project uses the JetBrains Kotlin JVM Gradle plugin, standard tasks will created:
+
 `formatKotlin`: format Kotlin source code according to ktlint rules (when possible to auto-format).
 
 `lintKotlin`: check Kotlin source code for lint formatting error and (by default) fail the build.
@@ -30,6 +31,17 @@ _Requires_: use of one of the JetBrains Kotlin Gradle plugins in your project.
 Additionally the `check` task becomes dependent on `lintKotlin`.
 
 Granular tasks also exist for each source set in the project: `formatKotlin`*`SourceSet`* and `lintKotlin`*`SourceSet`*.
+
+If you haven't applied the Kotlin JVM plugin you can still create custom tasks:
+
+```groovy
+import org.jmailen.gradle.kotlinter.tasks.LintTask
+
+task ktLint(type: LintTask, group: 'verification') {
+    source files('src/kotlin')
+    report = file('build/lint-report.txt')
+}
+```
 
 ### Configuration
 Options are configured in the `kotlinter` extension. Defaults shown.

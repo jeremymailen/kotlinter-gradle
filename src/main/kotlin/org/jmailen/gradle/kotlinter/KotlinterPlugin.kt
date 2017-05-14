@@ -1,15 +1,12 @@
 package org.jmailen.gradle.kotlinter
 
-import com.github.shyiko.ktlint.core.RuleSet
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.HasConvention
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jmailen.gradle.kotlinter.support.resolveRuleSets
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
 
@@ -17,11 +14,11 @@ class KotlinterPlugin : Plugin<Project> {
 
     override fun apply(project: Project?) {
         project?.let { p ->
-            p.plugins.withType(KotlinPluginWrapper::class.java) {
+            p.extensions.create("kotlinter", KotlinterExtension::class.java)
 
-                p.extensions.create("kotlinter", KotlinterExtension::class.java)
-
-                KotlinterApplier(p, p.kotlinSourceSets(), resolveRuleSets()).createTasks()
+            // for known kotlin plugins, create tasks by convention.
+            p.plugins.withId("org.jetbrains.kotlin.jvm") {
+                KotlinterApplier(p).createTasks(p.kotlinSourceSets())
             }
         }
     }
@@ -37,10 +34,10 @@ class KotlinterPlugin : Plugin<Project> {
             (this as HasConvention).convention.plugins[name]
 }
 
-class KotlinterApplier(val project: Project, val kotlinSourceSets: List<SourceDirectorySet>, val ruleSets: List<RuleSet>) {
+class KotlinterApplier(val project: Project) {
 
-    fun createTasks() {
-        val formatTasks = createFormatTasks()
+    fun createTasks(kotlinSourceSets: List<SourceDirectorySet>) {
+        val formatTasks = kotlinSourceSets.map { createFormatTask(it) }
 
         project.tasks.create("formatKotlin") {
             it.group = "formatting"
@@ -48,7 +45,7 @@ class KotlinterApplier(val project: Project, val kotlinSourceSets: List<SourceDi
             it.dependsOn(formatTasks)
         }
 
-        val lintTasks = createLintTasks()
+        val lintTasks = kotlinSourceSets.map { createLintTask(it) }
 
         val lintKotlin = project.tasks.create("lintKotlin") {
             it.group = "verification"
@@ -61,26 +58,16 @@ class KotlinterApplier(val project: Project, val kotlinSourceSets: List<SourceDi
         }
     }
 
-    fun createFormatTasks() =
-            kotlinSourceSets.map { sourceSet ->
-                val taskName = "formatKotlin${sourceSet.id().capitalize()}"
-
-                project.tasks.create(taskName, FormatTask::class.java) { task ->
-                    task.source(sourceSet.sourceDirectories.files)
-                    task.ruleSets = ruleSets
-                    task.report = reportFile("${sourceSet.id()}-format.txt")
-                }
+    fun createFormatTask(sourceSet: SourceDirectorySet) =
+            project.tasks.create("formatKotlin${sourceSet.id().capitalize()}", FormatTask::class.java) {
+                it.source(sourceSet.sourceDirectories.files)
+                it.report = reportFile("${sourceSet.id()}-format.txt")
             }
 
-    fun createLintTasks() =
-            kotlinSourceSets.map { sourceSet ->
-                val taskName = "lintKotlin${sourceSet.id().capitalize()}"
-
-                project.tasks.create(taskName, LintTask::class.java) { task ->
-                    task.source(sourceSet.sourceDirectories.files)
-                    task.ruleSets = ruleSets
-                    task.report = reportFile("${sourceSet.id()}-lint.txt")
-                }
+    fun createLintTask(sourceSet: SourceDirectorySet) =
+            project.tasks.create("lintKotlin${sourceSet.id().capitalize()}", LintTask::class.java) { task ->
+                task.source(sourceSet.sourceDirectories.files)
+                task.report = reportFile("${sourceSet.id()}-lint.txt")
             }
 
     private fun reportFile(name: String) = project.file("${project.buildDir}/reports/ktlint/$name")

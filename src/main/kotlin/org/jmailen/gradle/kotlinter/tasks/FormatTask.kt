@@ -1,18 +1,14 @@
 package org.jmailen.gradle.kotlinter.tasks
 
 import com.github.shyiko.ktlint.core.KtLint
-import com.github.shyiko.ktlint.core.RuleSet
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
+import org.jmailen.gradle.kotlinter.support.resolveRuleSets
 import java.io.File
 
 open class FormatTask : SourceTask() {
-
-    @Internal
-    lateinit var ruleSets: List<RuleSet>
 
     @OutputFile
     lateinit var report: File
@@ -20,6 +16,7 @@ open class FormatTask : SourceTask() {
     @TaskAction
     fun run() {
         var fixes = ""
+        val ruleSets = resolveRuleSets()
 
         getSource().forEach { file ->
             val relativePath = file.toRelativeString(project.projectDir)

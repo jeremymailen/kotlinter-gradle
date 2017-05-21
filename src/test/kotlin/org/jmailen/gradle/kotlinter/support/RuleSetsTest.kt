@@ -4,9 +4,9 @@ import com.github.shyiko.ktlint.core.Rule
 import com.github.shyiko.ktlint.core.RuleSet
 import com.github.shyiko.ktlint.core.RuleSetProvider
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class RuleSetsTest {
 

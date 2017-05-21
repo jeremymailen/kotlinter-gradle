@@ -10,36 +10,45 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version '0.8.1'
+    id 'org.jmailen.kotlinter' version '0.9.0'
 }
 ```
 
 ### Features
-- Linting and formatting tasks
+- Extends Kotlin JVM and Android projects with lint and format tasks for each `SourceSet`
+- Standalone `LintTask` and `FormatTask` types for defining custom tasks
 - Incremental build support
 - `.kt` and `.kts` source support
 - Report and console outputs
 
 ### Tasks
 
-If your project uses the JetBrains Kotlin JVM Gradle plugin, standard tasks will created:
+If your project uses the JetBrains Kotlin JVM or Android Gradle plugins, standard tasks are created:
 
-`formatKotlin`: format Kotlin source code according to `ktlint` rules (when possible to auto-format).
+`formatKotlin`: format Kotlin source code according to `ktlint` rules or warn when auto-format not possible.
 
-`lintKotlin`: check Kotlin source code for lint formatting error and (by default) fail the build.
+`lintKotlin`: report Kotlin lint errors and by default fail the build.
 
-Additionally the `check` task becomes dependent on `lintKotlin`.
+Also `check` becomes dependent on `lintKotlin`.
 
-Granular tasks also exist for each source set in the project: `formatKotlin`*`SourceSet`* and `lintKotlin`*`SourceSet`*.
+Granular tasks exist for each source set in the project: `formatKotlin`*`SourceSet`* and `lintKotlin`*`SourceSet`*.
 
-If you haven't applied the Kotlin JVM plugin you can still create custom tasks:
+### Custom Tasks
+
+If you haven't applied these plugins you can create custom tasks:
 
 ```groovy
 import org.jmailen.gradle.kotlinter.tasks.LintTask
+import org.jmailen.gradle.kotlinter.tasks.FormatTask
 
 task ktLint(type: LintTask, group: 'verification') {
     source files('src/kotlin')
     report = file('build/lint-report.txt')
+}
+
+task ktFormat(type: FormatTask, group: 'formatting') {
+    source files('src/kotlin')
+    report = file('build/format-report.txt')
 }
 ```
 
@@ -65,11 +74,7 @@ If you need to use a different version of `ktlint` you can override the dependen
 ```groovy
 buildscript {
     configurations.classpath {
-        resolutionStrategy { force 'com.github.shyiko:ktlint:0.6.1' }
+        resolutionStrategy { force 'com.github.shyiko:ktlint:0.7.1' }
     }
 }
 ```
-
-### Planned Features
-- dependency configuration for adding ktlint [rulesets](https://github.com/shyiko/ktlint#creating-a-ruleset)
-- additional configurability along the lines of [checkstyle](https://docs.gradle.org/current/userguide/checkstyle_plugin.html)

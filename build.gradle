@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.1.2'
+    id 'org.jetbrains.kotlin.jvm' version '1.1.2-2'
     id 'com.gradle.plugin-publish' version '0.9.7'
     id 'java-gradle-plugin'
     id 'maven-publish'
@@ -11,12 +11,12 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.shyiko:ktlint:0.6.1'
+    compile 'com.github.shyiko:ktlint:0.6.2'
     compileOnly 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.2-2'
     testCompile 'junit:junit:4.12'
 }
 
-version = '0.7.0'
+version = '0.8.0'
 group = 'org.jmailen.gradle'
 def pluginId = 'org.jmailen.kotlinter'
 

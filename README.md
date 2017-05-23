@@ -24,7 +24,7 @@ plugins {
 
 If your project uses the JetBrains Kotlin JVM Gradle plugin, standard tasks will created:
 
-`formatKotlin`: format Kotlin source code according to ktlint rules (when possible to auto-format).
+`formatKotlin`: format Kotlin source code according to `ktlint` rules (when possible to auto-format).
 
 `lintKotlin`: check Kotlin source code for lint formatting error and (by default) fail the build.
 
@@ -57,6 +57,16 @@ so you can customize includes, excludes, and source.
 ```groovy
 lintKotlinMain {
     exclude '**/*Generated.kt'
+}
+```
+
+If you need to use a different version of `ktlint` you can override the dependency.
+
+```groovy
+buildscript {
+    configurations.classpath {
+        resolutionStrategy { force 'com.github.shyiko:ktlint:0.6.1' }
+    }
 }
 ```
 

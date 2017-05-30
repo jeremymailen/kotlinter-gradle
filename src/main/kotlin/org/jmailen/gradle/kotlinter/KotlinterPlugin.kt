@@ -1,7 +1,10 @@
 package org.jmailen.gradle.kotlinter
 
+import com.android.build.gradle.AppExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
+import org.gradle.api.file.FileTree
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.HasConvention
 import org.gradle.api.plugins.JavaPluginConvention
@@ -12,12 +15,19 @@ import org.jmailen.gradle.kotlinter.tasks.LintTask
 
 class KotlinterPlugin : Plugin<Project> {
 
+    val extendablePlugins = mapOf(
+            "org.jetbrains.kotlin.jvm" to this::kotlinSourceSets,
+            "kotlin-android" to this::androidSourceSets)
+
     override fun apply(project: Project) {
         val kotlinterExtention = project.extensions.create("kotlinter", KotlinterExtension::class.java)
 
         // for known kotlin plugins, create tasks by convention.
-        project.plugins.withId("org.jetbrains.kotlin.jvm") {
-            KotlinterApplier(project).createTasks(project.kotlinSourceSets())
+        extendablePlugins.forEach { pluginId, sourceResolver ->
+            project.plugins.withId(pluginId) {
+                val sourceSets = sourceResolver(project)
+                KotlinterApplier(project).createTasks(sourceSets)
+            }
         }
 
         project.afterEvaluate {
@@ -27,7 +37,30 @@ class KotlinterPlugin : Plugin<Project> {
         }
     }
 
-    private fun Project.kotlinSourceSets() = sourceSets().map { it.kotlin }.filterNotNull()
+    private fun kotlinSourceSets(project: Project): List<SourceSetInfo> {
+        return project.sourceSets().map { it.kotlin }.filterNotNull().map {
+            SourceSetInfo(it.name, it.sourceDirectories)
+        }
+    }
+
+    private fun androidSourceSets(project: Project): List<SourceSetInfo> {
+        val android = project.extensions.findByName("android")
+        val sourceSetInfos = (android as? AppExtension)?.let {
+            it.sourceSets.map { androidSourceSet ->
+
+                val kotlinSourceTree = androidSourceSet.java.srcDirs.map { dir ->
+                    project.fileTree(dir) {
+                        it.include("**/*.kt")
+                    }
+                }.reduce { merged: FileTree, tree ->
+                    merged.plus(tree)
+                }
+
+                SourceSetInfo(androidSourceSet.name, kotlinSourceTree)
+            }
+        }
+        return sourceSetInfos ?: emptyList()
+    }
 
     private fun Project.sourceSets() = convention.getPlugin(JavaPluginConvention::class.java).sourceSets
 
@@ -40,7 +73,8 @@ class KotlinterPlugin : Plugin<Project> {
 
 class KotlinterApplier(val project: Project) {
 
-    fun createTasks(kotlinSourceSets: List<SourceDirectorySet>) {
+    fun createTasks(kotlinSourceSets: List<SourceSetInfo>) {
+
         val formatTasks = kotlinSourceSets.map { createFormatTask(it) }
 
         project.tasks.create("formatKotlin") {
@@ -62,19 +96,24 @@ class KotlinterApplier(val project: Project) {
         }
     }
 
-    fun createFormatTask(sourceSet: SourceDirectorySet) =
+    fun createFormatTask(sourceSet: SourceSetInfo) =
             project.tasks.create("formatKotlin${sourceSet.id().capitalize()}", FormatTask::class.java) {
-                it.source(sourceSet.sourceDirectories.files)
+                it.source(sourceSet.files())
                 it.report = reportFile("${sourceSet.id()}-format.txt")
             }
 
-    fun createLintTask(sourceSet: SourceDirectorySet) =
+    fun createLintTask(sourceSet: SourceSetInfo) =
             project.tasks.create("lintKotlin${sourceSet.id().capitalize()}", LintTask::class.java) { task ->
-                task.source(sourceSet.sourceDirectories.files)
+                task.source(sourceSet.files())
                 task.report = reportFile("${sourceSet.id()}-lint.txt")
             }
 
     private fun reportFile(name: String) = project.file("${project.buildDir}/reports/ktlint/$name")
+}
 
-    private fun SourceDirectorySet.id() = name.split(" ").first()
+class SourceSetInfo(val name: String, val sourceDirectories: FileCollection) {
+
+    fun id() = name.split(" ").first()
+
+    fun files() = sourceDirectories.files
 }

@@ -8,15 +8,20 @@ plugins {
 
 repositories {
     jcenter()
+    maven { url 'https://maven.google.com' }
 }
 
 dependencies {
     compile 'com.github.shyiko:ktlint:0.6.2'
     compileOnly 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.2-2'
+    compileOnly 'com.android.tools.build:gradle:2.3.2'
     testCompile 'junit:junit:4.12'
+    testRuntime 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.2-2'
+    testRuntime 'com.android.tools.build:gradle:2.3.2'
 }
 
-version = '0.8.1'
+
+version = '0.9.0'
 group = 'org.jmailen.gradle'
 def pluginId = 'org.jmailen.kotlinter'
 

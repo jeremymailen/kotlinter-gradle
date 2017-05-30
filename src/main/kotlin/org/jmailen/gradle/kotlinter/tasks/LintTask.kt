@@ -19,8 +19,7 @@ open class LintTask : SourceTask() {
     lateinit var report: File
 
     @Input
-    fun ignoreFailures() =
-            project.extensions.getByType(KotlinterExtension::class.java).ignoreFailures
+    var ignoreFailures = false
 
     @TaskAction
     fun run() {
@@ -50,7 +49,7 @@ open class LintTask : SourceTask() {
 
         if (errors.isNotEmpty()) {
             report.writeText(errors)
-            if (!ignoreFailures()) {
+            if (!ignoreFailures) {
                 throw GradleException("Kotlin source failed lint check.")
             }
         } else {

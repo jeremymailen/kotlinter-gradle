@@ -16,7 +16,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-version = '0.8.0'
+version = '0.8.1'
 group = 'org.jmailen.gradle'
 def pluginId = 'org.jmailen.kotlinter'
 

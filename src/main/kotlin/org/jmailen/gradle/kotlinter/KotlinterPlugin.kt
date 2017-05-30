@@ -12,13 +12,17 @@ import org.jmailen.gradle.kotlinter.tasks.LintTask
 
 class KotlinterPlugin : Plugin<Project> {
 
-    override fun apply(project: Project?) {
-        project?.let { p ->
-            p.extensions.create("kotlinter", KotlinterExtension::class.java)
+    override fun apply(project: Project) {
+        val kotlinterExtention = project.extensions.create("kotlinter", KotlinterExtension::class.java)
 
-            // for known kotlin plugins, create tasks by convention.
-            p.plugins.withId("org.jetbrains.kotlin.jvm") {
-                KotlinterApplier(p).createTasks(p.kotlinSourceSets())
+        // for known kotlin plugins, create tasks by convention.
+        project.plugins.withId("org.jetbrains.kotlin.jvm") {
+            KotlinterApplier(project).createTasks(project.kotlinSourceSets())
+        }
+
+        project.afterEvaluate {
+            project.tasks.withType(LintTask::class.java) { lintTask ->
+                lintTask.ignoreFailures = kotlinterExtention.ignoreFailures
             }
         }
     }

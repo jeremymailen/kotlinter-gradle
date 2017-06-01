@@ -2,7 +2,7 @@
 
 [![Build Status](https://api.travis-ci.org/jeremymailen/kotlinter-gradle.svg?branch=master)](https://travis-ci.org/jeremymailen/kotlinter-gradle)
 
-Gradle plugin for linting and formatting Kotlin source files using the awesome [ktlint](https://github.com/shyiko/ktlint) engine.
+Gradle plugin for linting and formatting Kotlin source files using the awesome [ktlint](https://ktlint.github.io) engine.
 
 ### Installation
 
@@ -10,7 +10,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version '0.9.0'
+    id 'org.jmailen.kotlinter' version '0.9.1'
 }
 ```
 

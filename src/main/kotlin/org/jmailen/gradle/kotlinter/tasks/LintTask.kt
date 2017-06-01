@@ -1,6 +1,7 @@
 package org.jmailen.gradle.kotlinter.tasks
 
 import com.github.shyiko.ktlint.core.KtLint
+import com.github.shyiko.ktlint.core.RuleSet
 import org.gradle.api.GradleException
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.Input
@@ -8,7 +9,6 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
-import org.jmailen.gradle.kotlinter.KotlinterExtension
 import org.jmailen.gradle.kotlinter.support.resolveRuleSets
 import java.io.File
 
@@ -32,15 +32,15 @@ open class LintTask : SourceTask() {
             logger.log(LogLevel.DEBUG, "linting: $relativePath")
 
             val lintFunc = when (file.extension) {
-                "kt" -> KtLint::lint
-                "kts" -> KtLint::lintScript
+                "kt" -> this::lintKt
+                "kts" -> this::lintKts
                 else -> {
                     logger.log(LogLevel.DEBUG, "ignoring non Kotlin file: $relativePath")
                     null
                 }
             }
 
-            lintFunc?.invoke(file.readText(), ruleSets) { (line, col, detail) ->
+            lintFunc?.invoke(file, ruleSets) { line, col, detail ->
                 val errorStr = "$relativePath:$line:$col: $detail"
                 logger.log(LogLevel.QUIET, "Lint error > $errorStr")
                 errors += "$errorStr\n"
@@ -54,6 +54,18 @@ open class LintTask : SourceTask() {
             }
         } else {
             report.writeText("ok")
+        }
+    }
+
+    private fun lintKt(file: File, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String) -> Unit) {
+        KtLint.lint(file.readText(), ruleSets) { error ->
+            onError(error.line, error.col, error.detail)
+        }
+    }
+
+    private fun lintKts(file: File, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String) -> Unit) {
+        KtLint.lintScript(file.readText(), ruleSets) { error ->
+            onError(error.line, error.col, error.detail)
         }
     }
 }

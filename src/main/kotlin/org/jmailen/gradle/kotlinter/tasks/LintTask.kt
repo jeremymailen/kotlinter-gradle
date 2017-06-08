@@ -29,13 +29,13 @@ open class LintTask : SourceTask() {
         getSource().forEach { file ->
             val relativePath = file.toRelativeString(project.projectDir)
 
-            logger.log(LogLevel.DEBUG, "linting: $relativePath")
+            logger.log(LogLevel.DEBUG, "$name linting: $relativePath")
 
             val lintFunc = when (file.extension) {
                 "kt" -> this::lintKt
                 "kts" -> this::lintKts
                 else -> {
-                    logger.log(LogLevel.DEBUG, "ignoring non Kotlin file: $relativePath")
+                    logger.log(LogLevel.DEBUG, "$name ignoring non Kotlin file: $relativePath")
                     null
                 }
             }

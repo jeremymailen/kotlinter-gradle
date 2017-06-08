@@ -1,6 +1,7 @@
 package org.jmailen.gradle.kotlinter
 
 import com.android.build.gradle.AppExtension
+import com.android.build.gradle.BaseExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
@@ -45,7 +46,7 @@ class KotlinterPlugin : Plugin<Project> {
 
     private fun androidSourceSets(project: Project): List<SourceSetInfo> {
         val android = project.extensions.findByName("android")
-        val sourceSetInfos = (android as? AppExtension)?.let {
+        val sourceSetInfos = (android as? BaseExtension)?.let {
             it.sourceSets.map { androidSourceSet ->
 
                 val kotlinSourceTree = androidSourceSet.java.srcDirs.map { dir ->

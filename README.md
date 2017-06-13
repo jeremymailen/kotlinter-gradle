@@ -78,3 +78,16 @@ buildscript {
     }
 }
 ```
+
+### Custom Rules
+
+You can add custom ktlint RuleSets using the `buildscript` classpath:
+
+```groovy
+buildscript {
+    dependencies {
+        classpath files('libs/my-custom-ktlint-rules.jar')
+        classpath 'org.other.ktlint:custom-rules:1.0'
+    }
+}
+```

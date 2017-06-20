@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.1.2-2'
+    id 'org.jetbrains.kotlin.jvm' version '1.1.2-5'
     id 'com.gradle.plugin-publish' version '0.9.7'
     id 'java-gradle-plugin'
     id 'maven-publish'
@@ -13,10 +13,10 @@ repositories {
 
 dependencies {
     compile 'com.github.shyiko:ktlint:0.8.3'
-    compileOnly 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.2-2'
+    compileOnly 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.2-5'
     compileOnly 'com.android.tools.build:gradle:2.3.2'
     testCompile 'junit:junit:4.12'
-    testRuntime 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.2-2'
+    testRuntime 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.2-5'
     testRuntime 'com.android.tools.build:gradle:2.3.2'
 }
 

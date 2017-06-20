@@ -87,7 +87,7 @@ class KotlinterApplier(val project: Project) {
         val lintTasks = kotlinSourceSets.map { createLintTask(it) }
 
         val lintKotlin = project.tasks.create("lintKotlin") {
-            it.group = "verification"
+            it.group = "formatting"
             it.description = "Runs lint on the Kotlin source files."
             it.dependsOn(lintTasks)
         }

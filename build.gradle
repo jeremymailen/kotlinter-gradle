@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.shyiko:ktlint:0.8.2'
+    compile 'com.github.shyiko:ktlint:0.8.3'
     compileOnly 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.2-2'
     compileOnly 'com.android.tools.build:gradle:2.3.2'
     testCompile 'junit:junit:4.12'
@@ -21,7 +21,7 @@ dependencies {
 }
 
 
-version = '0.9.3'
+version = '1.0.0'
 group = 'org.jmailen.gradle'
 def pluginId = 'org.jmailen.kotlinter'
 
@@ -37,13 +37,13 @@ gradlePlugin {
 pluginBundle {
     website = 'https://github.com/jeremymailen/kotlinter-gradle'
     vcsUrl = 'https://github.com/jeremymailen/kotlinter-gradle'
-    tags = ['kotlin', 'ktlint', 'lint', 'format', 'style']
+    tags = ['kotlin', 'ktlint', 'lint', 'format', 'style', 'android']
 
     plugins {
         kotlinterPlugin {
             id = pluginId
             displayName = 'Kotlin Lint plugin'
-            description = 'Linting and formatting for Kotlin source code using ktlint'
+            description = 'Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects'
         }
     }
 }
@@ -57,5 +57,5 @@ publishing {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.5'
+    gradleVersion = '4.0'
 }

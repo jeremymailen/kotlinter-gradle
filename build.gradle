@@ -14,14 +14,13 @@ repositories {
 dependencies {
     compile 'com.github.shyiko:ktlint:0.8.3'
     compileOnly 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.2-5'
-    compileOnly 'com.android.tools.build:gradle:2.3.2'
+    compileOnly 'com.android.tools.build:gradle:2.3.3'
     testCompile 'junit:junit:4.12'
     testRuntime 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.2-5'
-    testRuntime 'com.android.tools.build:gradle:2.3.2'
+    testRuntime 'com.android.tools.build:gradle:2.3.3'
 }
 
-
-version = '1.0.0'
+version = '1.1.0'
 group = 'org.jmailen.gradle'
 def pluginId = 'org.jmailen.kotlinter'
 

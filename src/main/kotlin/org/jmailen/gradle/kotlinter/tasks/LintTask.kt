@@ -67,7 +67,7 @@ open class LintTask : SourceTask() {
     }
 
     private fun lintKts(file: File, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String) -> Unit) {
-        KtLint.lintScript(file.readText(), ruleSets) { error ->
+        KtLint.lintScript(file.readText(), ruleSets, mapOf("indent_size" to indentSize.toString())) { error ->
             onError(error.line, error.col, error.detail)
         }
     }

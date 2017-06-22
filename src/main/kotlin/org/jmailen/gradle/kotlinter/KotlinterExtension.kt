@@ -4,4 +4,6 @@ open class KotlinterExtension {
 
     /** Don't fail build on lint issues */
     var ignoreFailures = false
+
+    var indentSize = 4
 }

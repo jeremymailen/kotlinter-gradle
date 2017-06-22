@@ -7,7 +7,9 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
+import org.jmailen.gradle.kotlinter.KotlinterExtension
 import org.jmailen.gradle.kotlinter.support.resolveRuleSets
+import org.jmailen.gradle.kotlinter.support.userData
 import java.io.File
 
 open class FormatTask : SourceTask() {
@@ -16,7 +18,7 @@ open class FormatTask : SourceTask() {
     lateinit var report: File
 
     @Input
-    var indentSize = 4
+    var indentSize = KotlinterExtension.DEFAULT_INDENT_SIZE
 
     @TaskAction
     fun run() {
@@ -63,13 +65,13 @@ open class FormatTask : SourceTask() {
     }
 
     private fun formatKt(file: File, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit): String {
-        return KtLint.format(file.readText(), ruleSets, mapOf("indent_size" to indentSize.toString())) { error, corrected ->
+        return KtLint.format(file.readText(), ruleSets, userData(indentSize = indentSize)) { error, corrected ->
             onError(error.line, error.col, error.detail, corrected)
         }
     }
 
     private fun formatKts(file: File, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit): String {
-        return KtLint.formatScript(file.readText(), ruleSets, mapOf("indent_size" to indentSize.toString())) { error, corrected ->
+        return KtLint.formatScript(file.readText(), ruleSets, userData(indentSize = indentSize)) { error, corrected ->
             onError(error.line, error.col, error.detail, corrected)
         }
     }

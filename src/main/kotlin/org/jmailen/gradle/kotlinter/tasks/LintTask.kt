@@ -21,6 +21,9 @@ open class LintTask : SourceTask() {
     @Input
     var ignoreFailures = false
 
+    @Input
+    var indentSize = 4
+
     @TaskAction
     fun run() {
         var errors = ""
@@ -58,7 +61,7 @@ open class LintTask : SourceTask() {
     }
 
     private fun lintKt(file: File, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String) -> Unit) {
-        KtLint.lint(file.readText(), ruleSets) { error ->
+        KtLint.lint(file.readText(), ruleSets, mapOf("indent_size" to indentSize.toString())) { error ->
             onError(error.line, error.col, error.detail)
         }
     }

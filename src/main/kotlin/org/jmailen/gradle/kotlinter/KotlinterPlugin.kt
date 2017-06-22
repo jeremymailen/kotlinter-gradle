@@ -36,6 +36,9 @@ class KotlinterPlugin : Plugin<Project> {
                 lintTask.ignoreFailures = kotlinterExtention.ignoreFailures
                 lintTask.indentSize = kotlinterExtention.indentSize
             }
+            project.tasks.withType(FormatTask::class.java) { formatTask ->
+                formatTask.indentSize = kotlinterExtention.indentSize
+            }
         }
     }
 

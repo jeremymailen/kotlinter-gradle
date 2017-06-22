@@ -9,7 +9,9 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
+import org.jmailen.gradle.kotlinter.KotlinterExtension
 import org.jmailen.gradle.kotlinter.support.resolveRuleSets
+import org.jmailen.gradle.kotlinter.support.userData
 import java.io.File
 
 @ParallelizableTask
@@ -19,10 +21,10 @@ open class LintTask : SourceTask() {
     lateinit var report: File
 
     @Input
-    var ignoreFailures = false
+    var ignoreFailures = KotlinterExtension.DEFAULT_IGNORE_FAILURES
 
     @Input
-    var indentSize = 4
+    var indentSize = KotlinterExtension.DEFAULT_INDENT_SIZE
 
     @TaskAction
     fun run() {
@@ -61,13 +63,13 @@ open class LintTask : SourceTask() {
     }
 
     private fun lintKt(file: File, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String) -> Unit) {
-        KtLint.lint(file.readText(), ruleSets, mapOf("indent_size" to indentSize.toString())) { error ->
+        KtLint.lint(file.readText(), ruleSets, userData(indentSize = indentSize)) { error ->
             onError(error.line, error.col, error.detail)
         }
     }
 
     private fun lintKts(file: File, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String) -> Unit) {
-        KtLint.lintScript(file.readText(), ruleSets) { error ->
+        KtLint.lintScript(file.readText(), ruleSets, userData(indentSize = indentSize)) { error ->
             onError(error.line, error.col, error.detail)
         }
     }

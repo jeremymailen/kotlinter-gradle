@@ -10,9 +10,15 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version '1.1.0'
+    id 'org.jmailen.kotlinter' version '1.2.0'
 }
 ```
+
+### Compatibility
+
+Kotlinter 1.2.0 and later compatible with Kotlin Gradle plugins 1.1.3+
+
+Kotlinter 1.1.0 and earlier compatible with Kotlin Gradle plugins 1.1 - 1.1.2-5
 
 ### Features
 - Extends Kotlin JVM and Android projects with lint and format tasks for each `SourceSet`

@@ -1,6 +1,5 @@
 package org.jmailen.gradle.kotlinter
 
-import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -11,6 +10,7 @@ import org.gradle.api.internal.HasConvention
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jmailen.gradle.kotlinter.support.reporterFileExtension
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
 
@@ -35,6 +35,9 @@ class KotlinterPlugin : Plugin<Project> {
             project.tasks.withType(LintTask::class.java) { lintTask ->
                 lintTask.ignoreFailures = kotlinterExtention.ignoreFailures
                 lintTask.indentSize = kotlinterExtention.indentSize
+                lintTask.reporter = kotlinterExtention.reporter
+                lintTask.report = project.reportFile(
+                        "${lintTask.sourceSetId}-lint.${reporterFileExtension(kotlinterExtention.reporter)}")
             }
             project.tasks.withType(FormatTask::class.java) { formatTask ->
                 formatTask.indentSize = kotlinterExtention.indentSize
@@ -104,16 +107,14 @@ class KotlinterApplier(val project: Project) {
     fun createFormatTask(sourceSet: SourceSetInfo) =
             project.tasks.create("formatKotlin${sourceSet.id().capitalize()}", FormatTask::class.java) {
                 it.source(sourceSet.files())
-                it.report = reportFile("${sourceSet.id()}-format.txt")
+                it.report = project.reportFile("${sourceSet.id()}-format.txt")
             }
 
     fun createLintTask(sourceSet: SourceSetInfo) =
-            project.tasks.create("lintKotlin${sourceSet.id().capitalize()}", LintTask::class.java) { task ->
-                task.source(sourceSet.files())
-                task.report = reportFile("${sourceSet.id()}-lint.txt")
+            project.tasks.create("lintKotlin${sourceSet.id().capitalize()}", LintTask::class.java) {
+                it.source(sourceSet.files())
+                it.sourceSetId = sourceSet.id()
             }
-
-    private fun reportFile(name: String) = project.file("${project.buildDir}/reports/ktlint/$name")
 }
 
 class SourceSetInfo(val name: String, val sourceDirectories: FileCollection) {
@@ -122,3 +123,5 @@ class SourceSetInfo(val name: String, val sourceDirectories: FileCollection) {
 
     fun files() = sourceDirectories.files
 }
+
+fun Project.reportFile(name: String) = file("${project.buildDir}/reports/ktlint/$name")

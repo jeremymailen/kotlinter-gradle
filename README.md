@@ -10,7 +10,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version '1.2.1'
+    id 'org.jmailen.kotlinter' version '1.3.0'
 }
 ```
 
@@ -25,7 +25,7 @@ Kotlinter 1.1.0 and earlier compatible with Kotlin Gradle plugins 1.1 - 1.1.2-5
 - Standalone `LintTask` and `FormatTask` types for defining custom tasks
 - Incremental build support
 - `.kt` and `.kts` source support
-- Report and console outputs
+- Console output and configurable reporters
 
 ### Tasks
 
@@ -64,8 +64,14 @@ Options are configured in the `kotlinter` extension. Defaults shown.
 kotlinter {
     ignoreFailures = false
     indentSize = 4
+    reporter = 'checkstyle'
 }
 ```
+Options for `reporter`: checkstyle, json, plain
+
+Reporters behave as described at: https://github.com/shyiko/ktlint
+
+### Customizing Tasks
 
 The `formatKotlin`*`SourceSet`* and `lintKotlin`*`SourceSet`* tasks inherit from [SourceTask](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.SourceTask.html)
 so you can customize includes, excludes, and source.
@@ -75,6 +81,8 @@ lintKotlinMain {
     exclude '**/*Generated.kt'
 }
 ```
+
+### Custom ktlint version
 
 If you need to use a different version of `ktlint` you can override the dependency.
 

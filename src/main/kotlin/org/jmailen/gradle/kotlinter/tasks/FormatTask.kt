@@ -23,7 +23,6 @@ open class FormatTask : SourceTask() {
     @TaskAction
     fun run() {
         var fixes = ""
-        val ruleSets = resolveRuleSets()
 
         getSource().forEach { file ->
             val relativePath = file.toRelativeString(project.projectDir)
@@ -40,7 +39,7 @@ open class FormatTask : SourceTask() {
             }
 
             var wasFormatted = false
-            val formattedText = formatFunc?.invoke(file, ruleSets) { line, col, detail, corrected ->
+            val formattedText = formatFunc?.invoke(file, resolveRuleSets()) { line, col, detail, corrected ->
                 val errorStr = "$relativePath:$line:$col: $detail"
                 val msg = when (corrected) {
                     true -> "Format fixed > $errorStr"

@@ -39,7 +39,6 @@ open class LintTask : SourceTask() {
     fun run() {
         var hasErrors = false
         var fileReporter = reporterFor(reporter, report)
-        val ruleSets = resolveRuleSets()
 
         fileReporter.beforeAll()
 
@@ -57,7 +56,7 @@ open class LintTask : SourceTask() {
                 }
             }
 
-            lintFunc?.invoke(file, ruleSets) { error ->
+            lintFunc?.invoke(file, resolveRuleSets()) { error ->
                 fileReporter.onLintError(relativePath, error, false)
 
                 val errorStr = "$relativePath:${error.line}:${error.col}: ${error.detail}"

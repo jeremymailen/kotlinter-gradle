@@ -1,6 +1,6 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.1.4-3'
-    id 'com.gradle.plugin-publish' version '0.9.7'
+    id 'org.jetbrains.kotlin.jvm' version '1.1.51'
+    id 'com.gradle.plugin-publish' version '0.9.8'
     id 'java-gradle-plugin'
     id 'maven-publish'
     id 'idea'
@@ -20,7 +20,7 @@ dependencies {
     testRuntime 'com.android.tools.build:gradle:2.3.3'
 }
 
-version = '1.3.1'
+version = '1.3.2'
 group = 'org.jmailen.gradle'
 def pluginId = 'org.jmailen.kotlinter'
 
@@ -56,5 +56,5 @@ publishing {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.1'
+    gradleVersion = '4.2'
 }

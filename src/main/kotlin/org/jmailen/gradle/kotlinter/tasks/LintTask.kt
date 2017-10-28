@@ -40,7 +40,7 @@ open class LintTask : SourceTask() {
             reporterFor(reporter, report)
         }
 
-        fileReporters.onEach {it.beforeAll() }
+        fileReporters.onEach { it.beforeAll() }
 
         getSource().forEach { file ->
             val relativePath = file.toRelativeString(project.projectDir)

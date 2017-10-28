@@ -69,7 +69,7 @@ kotlinter {
     reporters = ['checkstyle', 'plain']
 }
 ```
-Options for `reporter`: checkstyle, json, plain
+Options for `reporters`: checkstyle, json, plain
 
 *Note: `reporter` with a single value is deprecated but supported for backwards compatibility.
 

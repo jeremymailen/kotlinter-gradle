@@ -8,6 +8,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.OutputFiles
 import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
@@ -20,11 +21,8 @@ import java.io.File
 @ParallelizableTask
 open class LintTask : SourceTask() {
 
-    @OutputFile
-    lateinit var report: File
-
-    @Input
-    var reporter = KotlinterExtension.DEFAULT_REPORTER
+    @OutputFiles
+    lateinit var reports: Map<String, File>
 
     @Input
     var ignoreFailures = KotlinterExtension.DEFAULT_IGNORE_FAILURES
@@ -38,13 +36,15 @@ open class LintTask : SourceTask() {
     @TaskAction
     fun run() {
         var hasErrors = false
-        var fileReporter = reporterFor(reporter, report)
+        val fileReporters = reports.map { (reporter, report) ->
+            reporterFor(reporter, report)
+        }
 
-        fileReporter.beforeAll()
+        fileReporters.onEach { it.beforeAll() }
 
         getSource().forEach { file ->
             val relativePath = file.toRelativeString(project.projectDir)
-            fileReporter.before(relativePath)
+            fileReporters.onEach { it.before(relativePath) }
             logger.log(LogLevel.DEBUG, "$name linting: $relativePath")
 
             val lintFunc = when (file.extension) {
@@ -57,7 +57,7 @@ open class LintTask : SourceTask() {
             }
 
             lintFunc?.invoke(file, resolveRuleSets()) { error ->
-                fileReporter.onLintError(relativePath, error, false)
+                fileReporters.onEach { it.onLintError(relativePath, error, false) }
 
                 val errorStr = "$relativePath:${error.line}:${error.col}: ${error.detail}"
                 logger.log(LogLevel.QUIET, "Lint error > $errorStr")
@@ -65,10 +65,10 @@ open class LintTask : SourceTask() {
                 hasErrors = true
             }
 
-            fileReporter.after(relativePath)
+            fileReporters.onEach { it.after(relativePath) }
         }
 
-        fileReporter.afterAll()
+        fileReporters.onEach { it.afterAll() }
         if (hasErrors && !ignoreFailures) {
             throw GradleException("Kotlin source failed lint check.")
         }

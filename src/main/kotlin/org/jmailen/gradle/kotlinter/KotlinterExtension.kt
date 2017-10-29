@@ -12,7 +12,12 @@ open class KotlinterExtension {
 
     var indentSize = DEFAULT_INDENT_SIZE
 
-    var reporter = DEFAULT_REPORTER
+    var reporter: String? = null
+
+    var reporters = arrayOf(DEFAULT_REPORTER)
+
+    // for backwards compatibility
+    fun reporters() = reporter?.let { arrayOf(it) } ?: reporters
 }
 
 enum class ReporterType {

@@ -10,7 +10,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version '1.4.1'
+    id 'org.jmailen.kotlinter' version '1.5.0'
 }
 ```
 
@@ -66,10 +66,12 @@ Options are configured in the `kotlinter` extension. Defaults shown.
 kotlinter {
     ignoreFailures = false
     indentSize = 4
-    reporter = 'checkstyle'
+    reporters = ['checkstyle', 'plain']
 }
 ```
-Options for `reporter`: checkstyle, json, plain
+Options for `reporters`: checkstyle, json, plain
+
+*Note: `reporter` with a single value is deprecated but supported for backwards compatibility.
 
 Reporters behave as described at: https://github.com/shyiko/ktlint
 

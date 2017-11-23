@@ -10,7 +10,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version '1.5.0'
+    id 'org.jmailen.kotlinter' version '1.5.1'
 }
 ```
 
@@ -93,7 +93,7 @@ If you need to use a different version of `ktlint` you can override the dependen
 ```groovy
 buildscript {
     configurations.classpath {
-        resolutionStrategy { force 'com.github.shyiko:ktlint:0.7.1' }
+        resolutionStrategy { force 'com.github.shyiko:ktlint:0.11.1' }
     }
 }
 ```

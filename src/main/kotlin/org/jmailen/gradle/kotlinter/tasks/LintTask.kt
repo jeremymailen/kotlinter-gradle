@@ -7,7 +7,6 @@ import org.gradle.api.GradleException
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.OutputFiles
 import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.SourceTask
@@ -29,6 +28,9 @@ open class LintTask : SourceTask() {
 
     @Input
     var indentSize = KotlinterExtension.DEFAULT_INDENT_SIZE
+
+    @Input
+    var continuationIndentSize = KotlinterExtension.DEFAULT_CONTINUATION_INDENT_SIZE
 
     @Internal
     var sourceSetId = ""
@@ -75,8 +77,21 @@ open class LintTask : SourceTask() {
     }
 
     private fun lintKt(file: File, ruleSets: List<RuleSet>, onError: (error: LintError) -> Unit) =
-            KtLint.lint(file.readText(), ruleSets, userData(indentSize = indentSize), onError)
+            KtLint.lint(
+                    file.readText(),
+                    ruleSets,
+                    userData(
+                            indentSize = indentSize,
+                            continuationIndentSize = continuationIndentSize),
+                    onError)
+
 
     private fun lintKts(file: File, ruleSets: List<RuleSet>, onError: (error: LintError) -> Unit) =
-            KtLint.lintScript(file.readText(), ruleSets, userData(indentSize = indentSize), onError)
+            KtLint.lintScript(
+                    file.readText(),
+                    ruleSets,
+                    userData(
+                            indentSize = indentSize,
+                            continuationIndentSize = continuationIndentSize),
+                    onError)
 }

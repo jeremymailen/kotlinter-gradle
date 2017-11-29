@@ -35,12 +35,14 @@ class KotlinterPlugin : Plugin<Project> {
             project.tasks.withType(LintTask::class.java) { lintTask ->
                 lintTask.ignoreFailures = kotlinterExtention.ignoreFailures
                 lintTask.indentSize = kotlinterExtention.indentSize
+                lintTask.continuationIndentSize = kotlinterExtention.continuationIndentSize
                 lintTask.reports = kotlinterExtention.reporters().associate { reporter ->
                     reporter to project.reportFile("${lintTask.sourceSetId}-lint.${reporterFileExtension(reporter)}")
                 }
             }
             project.tasks.withType(FormatTask::class.java) { formatTask ->
                 formatTask.indentSize = kotlinterExtention.indentSize
+                formatTask.continuationIndentSize = kotlinterExtention.continuationIndentSize
             }
         }
     }

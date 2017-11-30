@@ -20,6 +20,9 @@ open class FormatTask : SourceTask() {
     @Input
     var indentSize = KotlinterExtension.DEFAULT_INDENT_SIZE
 
+    @Input
+    var continuationIndentSize = KotlinterExtension.DEFAULT_CONTINUATION_INDENT_SIZE
+
     @TaskAction
     fun run() {
         var fixes = ""
@@ -64,14 +67,26 @@ open class FormatTask : SourceTask() {
     }
 
     private fun formatKt(file: File, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit): String {
-        return KtLint.format(file.readText(), ruleSets, userData(indentSize = indentSize)) { error, corrected ->
-            onError(error.line, error.col, error.detail, corrected)
+        return KtLint.format(
+                file.readText(),
+                ruleSets,
+                userData(
+                        indentSize = indentSize,
+                        continuationIndentSize = continuationIndentSize
+                )) { error, corrected ->
+        onError(error.line, error.col, error.detail, corrected)
         }
     }
 
     private fun formatKts(file: File, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit): String {
-        return KtLint.formatScript(file.readText(), ruleSets, userData(indentSize = indentSize)) { error, corrected ->
-            onError(error.line, error.col, error.detail, corrected)
+        return KtLint.formatScript(
+                file.readText(),
+                ruleSets,
+                userData(
+                        indentSize = indentSize,
+                        continuationIndentSize = continuationIndentSize
+                )) { error, corrected ->
+        onError(error.line, error.col, error.detail, corrected)
         }
     }
 }

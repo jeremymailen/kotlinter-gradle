@@ -10,7 +10,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version '1.5.2'
+    id 'org.jmailen.kotlinter' version '1.6.0'
 }
 ```
 
@@ -50,22 +50,26 @@ import org.jmailen.gradle.kotlinter.tasks.LintTask
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 
 task ktLint(type: LintTask, group: 'verification') {
-    source files('src/kotlin')
-    report = file('build/lint-report.txt')
+    source files('src')
+    reports = [
+            'plain': file('build/lint-report.txt'),
+            'json': file('build/lint-report.json')
+    ]
 }
 
 task ktFormat(type: FormatTask, group: 'formatting') {
-    source files('src/kotlin')
+    source files('src')
     report = file('build/format-report.txt')
 }
 ```
 
 ### Configuration
-Options are configured in the `kotlinter` extension. Defaults shown.
+Options are configured in the `kotlinter` extension. Defaults shown (you may omit the configuration block entirely if you want these values).
 ```groovy
 kotlinter {
     ignoreFailures = false
     indentSize = 4
+    continuationIndentSize = 8
     reporters = ['checkstyle', 'plain']
 }
 ```

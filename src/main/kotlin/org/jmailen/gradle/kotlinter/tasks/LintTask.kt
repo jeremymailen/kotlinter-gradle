@@ -85,7 +85,6 @@ open class LintTask : SourceTask() {
                             continuationIndentSize = continuationIndentSize),
                     onError)
 
-
     private fun lintKts(file: File, ruleSets: List<RuleSet>, onError: (error: LintError) -> Unit) =
             KtLint.lintScript(
                     file.readText(),

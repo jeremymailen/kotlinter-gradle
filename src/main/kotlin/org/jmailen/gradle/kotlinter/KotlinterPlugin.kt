@@ -24,15 +24,16 @@ class KotlinterPlugin : Plugin<Project> {
         val kotlinterExtention = project.extensions.create("kotlinter", KotlinterExtension::class.java)
 
         // for known kotlin plugins, create tasks by convention.
+        val kotlinApplier = KotlinterApplier(project)
         extendablePlugins.forEach { pluginId, sourceResolver ->
             project.plugins.withId(pluginId) {
                 val sourceSets = sourceResolver(project)
-                KotlinterApplier(project).createTasks(sourceSets)
+                kotlinApplier.createTasks(sourceSets)
             }
         }
 
         project.afterEvaluate {
-            project.tasks.withType(LintTask::class.java) { lintTask ->
+            kotlinApplier.lintTasks.forEach { lintTask ->
                 lintTask.ignoreFailures = kotlinterExtention.ignoreFailures
                 lintTask.indentSize = kotlinterExtention.indentSize
                 lintTask.continuationIndentSize = kotlinterExtention.continuationIndentSize
@@ -40,7 +41,7 @@ class KotlinterPlugin : Plugin<Project> {
                     reporter to project.reportFile("${lintTask.sourceSetId}-lint.${reporterFileExtension(reporter)}")
                 }
             }
-            project.tasks.withType(FormatTask::class.java) { formatTask ->
+            kotlinApplier.formatTasks.forEach { formatTask ->
                 formatTask.indentSize = kotlinterExtention.indentSize
                 formatTask.continuationIndentSize = kotlinterExtention.continuationIndentSize
             }
@@ -83,9 +84,12 @@ class KotlinterPlugin : Plugin<Project> {
 
 class KotlinterApplier(val project: Project) {
 
+    val formatTasks = mutableListOf<FormatTask>()
+    val lintTasks = mutableListOf<LintTask>()
+
     fun createTasks(kotlinSourceSets: List<SourceSetInfo>) {
 
-        val formatTasks = kotlinSourceSets.map { createFormatTask(it) }
+        formatTasks += kotlinSourceSets.map { createFormatTask(it) }
 
         project.tasks.create("formatKotlin") {
             it.group = "formatting"
@@ -93,7 +97,7 @@ class KotlinterApplier(val project: Project) {
             it.dependsOn(formatTasks)
         }
 
-        val lintTasks = kotlinSourceSets.map { createLintTask(it) }
+        lintTasks += kotlinSourceSets.map { createLintTask(it) }
 
         val lintKotlin = project.tasks.create("lintKotlin") {
             it.group = "formatting"

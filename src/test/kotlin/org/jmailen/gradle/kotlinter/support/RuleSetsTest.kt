@@ -1,5 +1,6 @@
 package org.jmailen.gradle.kotlinter.support
 
+import com.github.shyiko.ktlint.core.KtLint
 import com.github.shyiko.ktlint.core.Rule
 import com.github.shyiko.ktlint.core.RuleSet
 import com.github.shyiko.ktlint.core.RuleSetProvider
@@ -29,6 +30,11 @@ class RuleSetsTest {
         assertEquals(3, result.size)
         assertEquals(standard.ruleSet, result.first())
         assertTrue(result.containsAll(listOf(extra1.ruleSet, extra2.ruleSet)))
+    }
+
+    @Test
+    fun `test compatibility`() {
+        KtLint.lint("""fun someFunc() = """"", resolveRuleSets(), {})
     }
 }
 

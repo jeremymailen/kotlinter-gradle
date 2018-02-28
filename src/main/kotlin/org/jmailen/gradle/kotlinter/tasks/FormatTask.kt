@@ -28,34 +28,32 @@ open class FormatTask : SourceTask() {
         var fixes = ""
 
         getSource().forEach { file ->
+            val sourceText = file.readText()
             val relativePath = file.toRelativeString(project.projectDir)
 
             logger.log(LogLevel.DEBUG, "checking format: $relativePath")
 
-            val formatFunc = when (file.extension) {
+            when (file.extension) {
                 "kt" -> this::formatKt
                 "kts" -> this::formatKts
                 else -> {
                     logger.log(LogLevel.DEBUG, "ignoring non Kotlin file: $relativePath")
                     null
                 }
-            }
-
-            var wasFormatted = false
-            val formattedText = formatFunc?.invoke(file, resolveRuleSets()) { line, col, detail, corrected ->
-                val errorStr = "$relativePath:$line:$col: $detail"
-                val msg = when (corrected) {
-                    true -> "Format fixed > $errorStr"
-                    false -> "Format could not fix > $errorStr"
+            }?.let { formatFunc ->
+                val formattedText = formatFunc.invoke(sourceText, resolveRuleSets()) { line, col, detail, corrected ->
+                    val errorStr = "$relativePath:$line:$col: $detail"
+                    val msg = when (corrected) {
+                        true -> "Format fixed > $errorStr"
+                        false -> "Format could not fix > $errorStr"
+                    }
+                    logger.log(LogLevel.QUIET, msg)
+                    fixes += "$msg\n"
                 }
-                logger.log(LogLevel.QUIET, msg)
-                fixes += "$msg\n"
-                if (corrected) {
-                    wasFormatted = true
+                if (formattedText !== sourceText) {
+                    logger.log(LogLevel.QUIET, "Format fixed > $relativePath")
+                    file.writeText(formattedText)
                 }
-            }
-            if (wasFormatted && formattedText != null) {
-                file.writeText(formattedText)
             }
         }
 
@@ -66,9 +64,9 @@ open class FormatTask : SourceTask() {
         }
     }
 
-    private fun formatKt(file: File, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit): String {
+    private fun formatKt(sourceText: String, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit): String {
         return KtLint.format(
-                file.readText(),
+                sourceText,
                 ruleSets,
                 userData(
                         indentSize = indentSize,
@@ -78,9 +76,9 @@ open class FormatTask : SourceTask() {
         }
     }
 
-    private fun formatKts(file: File, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit): String {
+    private fun formatKts(sourceText: String, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit): String {
         return KtLint.formatScript(
-                file.readText(),
+                sourceText,
                 ruleSets,
                 userData(
                         indentSize = indentSize,

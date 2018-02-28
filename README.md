@@ -10,11 +10,12 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version '1.7.0'
+    id 'org.jmailen.kotlinter' version '1.8.0'
 }
 ```
 
 ### Compatibility
+Kotlinter 1.8.0 and later compatible with Kotlin Gradle plugins 1.2.21+ and Java 9/8.
 
 Kotlinter 1.7.0 and later compatible with Kotlin Gradle plugins 1.2.20+
 
@@ -99,7 +100,7 @@ If you need to use a different version of `ktlint` you can override the dependen
 ```groovy
 buildscript {
     configurations.classpath {
-        resolutionStrategy { force 'com.github.shyiko:ktlint:0.11.1' }
+        resolutionStrategy { force 'com.github.shyiko:ktlint:0.15.0' }
     }
 }
 ```

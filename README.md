@@ -10,7 +10,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version '1.8.3'
+    id 'org.jmailen.kotlinter' version '1.9.0'
 }
 ```
 
@@ -72,7 +72,7 @@ Options are configured in the `kotlinter` extension. Defaults shown (you may omi
 kotlinter {
     ignoreFailures = false
     indentSize = 4
-    continuationIndentSize = 8
+    continuationIndentSize = 4
     reporters = ['checkstyle', 'plain']
 }
 ```

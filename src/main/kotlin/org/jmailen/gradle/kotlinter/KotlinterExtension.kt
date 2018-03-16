@@ -4,7 +4,7 @@ open class KotlinterExtension {
     companion object {
         const val DEFAULT_IGNORE_FAILURES = false
         const val DEFAULT_INDENT_SIZE = 4
-        const val DEFAULT_CONTINUATION_INDENT_SIZE = 8
+        const val DEFAULT_CONTINUATION_INDENT_SIZE = 4
         val DEFAULT_REPORTER = ReporterType.checkstyle.name
     }
 

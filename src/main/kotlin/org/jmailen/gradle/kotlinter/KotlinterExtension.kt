@@ -1,5 +1,7 @@
 package org.jmailen.gradle.kotlinter
 
+import org.jmailen.gradle.kotlinter.support.ReporterType
+
 open class KotlinterExtension {
     companion object {
         const val DEFAULT_IGNORE_FAILURES = false
@@ -21,10 +23,4 @@ open class KotlinterExtension {
 
     // for backwards compatibility
     fun reporters() = reporter?.let { arrayOf(it) } ?: reporters
-}
-
-enum class ReporterType {
-    checkstyle,
-    json,
-    plain
 }

@@ -9,12 +9,11 @@ plugins {
 repositories {
     jcenter()
     maven { url 'https://maven.google.com' }
-    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     compile 'com.github.shyiko:ktlint:0.20.0'
-    compile 'com.github.mcassiano:ktlint-html-reporter:0.0.1'
+    compile 'me.cassiano:ktlint-html-reporter:0.1.1'
     compileOnly 'org.jetbrains.kotlin:kotlin-gradle-plugin'
     compileOnly 'com.android.tools.build:gradle:3.0.1'
     testCompile 'junit:junit:4.12'

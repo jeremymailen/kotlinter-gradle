@@ -10,7 +10,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version '1.10.0'
+    id 'org.jmailen.kotlinter' version '1.11.0'
 }
 ```
 
@@ -76,11 +76,13 @@ kotlinter {
     reporters = ['checkstyle', 'plain']
 }
 ```
-Options for `reporters`: checkstyle, json, plain
+Options for `reporters`: checkstyle, html, json, plain
 
-*Note: `reporter` with a single value is deprecated but supported for backwards compatibility.
+The html reporter is provided by [ktlint-html-reporter](https://github.com/mcassiano/ktlint-html-reporter).
 
 Reporters behave as described at: https://github.com/shyiko/ktlint
+
+*Note: `reporter` with a single value is deprecated but supported for backwards compatibility.
 
 ### Customizing Tasks
 
@@ -100,7 +102,7 @@ If you need to use a different version of `ktlint` you can override the dependen
 ```groovy
 buildscript {
     configurations.classpath {
-        resolutionStrategy { force 'com.github.shyiko:ktlint:0.15.0' }
+        resolutionStrategy { force 'com.github.shyiko:ktlint:0.19.0' }
     }
 }
 ```

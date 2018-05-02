@@ -10,7 +10,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version '1.11.2'
+    id 'org.jmailen.kotlinter' version '1.11.3'
 }
 ```
 

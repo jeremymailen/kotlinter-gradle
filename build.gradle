@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.2.40'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.41'
     id 'com.gradle.plugin-publish' version '0.9.10'
     id 'java-gradle-plugin'
     id 'maven-publish'
@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.shyiko:ktlint:0.22.0'
+    compile 'com.github.shyiko:ktlint:0.23.1'
     compile 'me.cassiano:ktlint-html-reporter:0.1.2'
     compileOnly 'org.jetbrains.kotlin:kotlin-gradle-plugin'
     compileOnly 'com.android.tools.build:gradle:3.0.1'
@@ -21,7 +21,7 @@ dependencies {
     testRuntime 'com.android.tools.build:gradle:3.0.1'
 }
 
-version = '1.11.3'
+version = '1.12.0'
 group = 'org.jmailen.gradle'
 def pluginId = 'org.jmailen.kotlinter'
 

@@ -10,11 +10,13 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version '1.11.3'
+    id 'org.jmailen.kotlinter' version '1.12.0'
 }
 ```
 
 ### Compatibility
+Kotlinter 1.12.0 and later compatible with Kotlin Gradle plugins 1.2.41+ and Java 9/8.
+
 Kotlinter 1.8.0 and later compatible with Kotlin Gradle plugins 1.2.21+ and Java 9/8.
 
 Kotlinter 1.7.0 and later compatible with Kotlin Gradle plugins 1.2.20+

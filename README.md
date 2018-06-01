@@ -10,7 +10,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version '1.12.0'
+    id 'org.jmailen.kotlinter' version '2.0.0'
 }
 ```
 
@@ -89,11 +89,13 @@ Reporters behave as described at: https://github.com/shyiko/ktlint
 ### Customizing Tasks
 
 The `formatKotlin`*`SourceSet`* and `lintKotlin`*`SourceSet`* tasks inherit from [SourceTask](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.SourceTask.html)
-so you can customize includes, excludes, and source.
+so you can customize includes, excludes, and source. You must do this in `project.afterEvaluate` since tasks are dynamically created based on SourceSets.
 
 ```groovy
-lintKotlinMain {
-    exclude '**/*Generated.kt'
+afterEvaluate {
+    lintKotlinMain {
+        exclude '**/*Generated.kt'
+    }
 }
 ```
 

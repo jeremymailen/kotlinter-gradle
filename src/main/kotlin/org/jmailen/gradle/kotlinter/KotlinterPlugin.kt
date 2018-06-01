@@ -21,29 +21,29 @@ class KotlinterPlugin : Plugin<Project> {
             "kotlin-android" to this::androidSourceSets)
 
     override fun apply(project: Project) {
-        val kotlinterExtention = project.extensions.create("kotlinter", KotlinterExtension::class.java)
-
-        // for known kotlin plugins, create tasks by convention.
-        val kotlinApplier = KotlinterApplier(project)
-        extendablePlugins.forEach { pluginId, sourceResolver ->
-            project.plugins.withId(pluginId) {
-                val sourceSets = sourceResolver(project)
-                kotlinApplier.createTasks(sourceSets)
-            }
-        }
+        val kotlinterExtension = project.extensions.create("kotlinter", KotlinterExtension::class.java)
 
         project.afterEvaluate {
+            // for known kotlin plugins, create tasks by convention.
+            val kotlinApplier = KotlinterApplier(project)
+            extendablePlugins.forEach { pluginId, sourceResolver ->
+                project.plugins.withId(pluginId) {
+                    val sourceSets = sourceResolver(project)
+                    kotlinApplier.createTasks(sourceSets)
+                }
+            }
+
             kotlinApplier.lintTasks.forEach { lintTask ->
-                lintTask.ignoreFailures = kotlinterExtention.ignoreFailures
-                lintTask.indentSize = kotlinterExtention.indentSize
-                lintTask.continuationIndentSize = kotlinterExtention.continuationIndentSize
-                lintTask.reports = kotlinterExtention.reporters().associate { reporter ->
+                lintTask.ignoreFailures = kotlinterExtension.ignoreFailures
+                lintTask.indentSize = kotlinterExtension.indentSize
+                lintTask.continuationIndentSize = kotlinterExtension.continuationIndentSize
+                lintTask.reports = kotlinterExtension.reporters().associate { reporter ->
                     reporter to project.reportFile("${lintTask.sourceSetId}-lint.${reporterFileExtension(reporter)}")
                 }
             }
             kotlinApplier.formatTasks.forEach { formatTask ->
-                formatTask.indentSize = kotlinterExtention.indentSize
-                formatTask.continuationIndentSize = kotlinterExtention.continuationIndentSize
+                formatTask.indentSize = kotlinterExtension.indentSize
+                formatTask.continuationIndentSize = kotlinterExtension.continuationIndentSize
             }
         }
     }

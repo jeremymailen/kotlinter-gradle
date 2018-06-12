@@ -11,14 +11,29 @@ repositories {
     maven { url 'https://maven.google.com' }
 }
 
+configurations {
+    testkit
+}
+
 dependencies {
     compile 'com.github.shyiko:ktlint:0.23.1'
     compile 'me.cassiano:ktlint-html-reporter:0.1.2'
     compileOnly 'org.jetbrains.kotlin:kotlin-gradle-plugin'
     compileOnly 'com.android.tools.build:gradle:3.0.1'
+
     testCompile 'junit:junit:4.12'
+    testCompile 'org.assertj:assertj-core:3.9.1'
+    testCompile 'com.mkobit.gradle.test:assertj-gradle:0.2.0'
+    testCompile 'com.mkobit.gradle.test:gradle-test-kotlin-extensions:0.3.0'
     testRuntime 'org.jetbrains.kotlin:kotlin-gradle-plugin'
     testRuntime 'com.android.tools.build:gradle:3.0.1'
+
+    testkit 'org.jetbrains.kotlin:kotlin-gradle-plugin'
+    testkit 'com.android.tools.build:gradle:3.0.1'
+}
+
+pluginUnderTestMetadata {
+    pluginClasspath = sourceSets.main.runtimeClasspath + configurations.testkit
 }
 
 version = '1.12.0'

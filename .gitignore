@@ -5,3 +5,5 @@ out
 *.iml
 TODO.md
 .idea
+.gradle/
+reports/

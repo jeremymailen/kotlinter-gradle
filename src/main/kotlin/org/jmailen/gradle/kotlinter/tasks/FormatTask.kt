@@ -41,7 +41,7 @@ open class FormatTask : SourceTask() {
                     null
                 }
             }?.let { formatFunc ->
-                val formattedText = formatFunc.invoke(sourceText, resolveRuleSets()) { line, col, detail, corrected ->
+                val formattedText = formatFunc.invoke(file, resolveRuleSets()) { line, col, detail, corrected ->
                     val errorStr = "$relativePath:$line:$col: $detail"
                     val msg = when (corrected) {
                         true -> "Format fixed > $errorStr"
@@ -64,25 +64,27 @@ open class FormatTask : SourceTask() {
         }
     }
 
-    private fun formatKt(sourceText: String, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit): String {
+    private fun formatKt(file: File, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit): String {
         return KtLint.format(
-                sourceText,
+                file.readText(),
                 ruleSets,
                 userData(
-                        indentSize = indentSize,
-                        continuationIndentSize = continuationIndentSize
+                    indentSize = indentSize,
+                    continuationIndentSize = continuationIndentSize,
+                    filePath = file.path
                 )) { error, corrected ->
         onError(error.line, error.col, error.detail, corrected)
         }
     }
 
-    private fun formatKts(sourceText: String, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit): String {
+    private fun formatKts(file: File, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit): String {
         return KtLint.formatScript(
-                sourceText,
+                file.readText(),
                 ruleSets,
                 userData(
-                        indentSize = indentSize,
-                        continuationIndentSize = continuationIndentSize
+                    indentSize = indentSize,
+                    continuationIndentSize = continuationIndentSize,
+                    filePath = file.path
                 )) { error, corrected ->
         onError(error.line, error.col, error.detail, corrected)
         }

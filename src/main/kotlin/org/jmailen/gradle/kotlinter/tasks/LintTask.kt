@@ -79,16 +79,18 @@ open class LintTask : SourceTask() {
                     file.readText(),
                     ruleSets,
                     userData(
-                            indentSize = indentSize,
-                            continuationIndentSize = continuationIndentSize),
-                    onError)
+                        indentSize = indentSize,
+                        continuationIndentSize = continuationIndentSize,
+                        filePath = file.path
+                    ), onError)
 
     private fun lintKts(file: File, ruleSets: List<RuleSet>, onError: (error: LintError) -> Unit) =
             KtLint.lintScript(
                     file.readText(),
                     ruleSets,
                     userData(
-                            indentSize = indentSize,
-                            continuationIndentSize = continuationIndentSize),
-                    onError)
+                        indentSize = indentSize,
+                        continuationIndentSize = continuationIndentSize,
+                        filePath = file.path
+                    ), onError)
 }

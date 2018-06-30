@@ -50,7 +50,7 @@ open class FormatTask : SourceTask() {
                     logger.log(LogLevel.QUIET, msg)
                     fixes += "$msg\n"
                 }
-                if (formattedText !== sourceText) {
+                if (!formattedText.contentEquals(sourceText)) {
                     logger.log(LogLevel.QUIET, "Format fixed > $relativePath")
                     file.writeText(formattedText)
                 }

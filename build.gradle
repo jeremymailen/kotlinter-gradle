@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.shyiko:ktlint:0.23.1'
+    compile 'com.github.shyiko:ktlint:0.24.0'
     compile 'me.cassiano:ktlint-html-reporter:0.1.2'
     compileOnly 'org.jetbrains.kotlin:kotlin-gradle-plugin'
     compileOnly 'com.android.tools.build:gradle:3.0.1'
@@ -21,7 +21,7 @@ dependencies {
     testRuntime 'com.android.tools.build:gradle:3.0.1'
 }
 
-version = '1.13.0'
+version = '1.14.0'
 group = 'org.jmailen.gradle'
 def pluginId = 'org.jmailen.kotlinter'
 

@@ -33,9 +33,10 @@ class KotlinterPlugin : Plugin<Project> {
                 sourceResolver.applyToAll(project) { id, files ->
                     taskCreator.createSourceSetTasks(id, files)
                 }
+
+                taskCreator.createParentTasks()
             }
         }
-        taskCreator.createParentTasks()
 
         project.afterEvaluate {
             taskCreator.lintTasks.forEach { lintTask ->

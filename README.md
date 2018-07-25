@@ -8,10 +8,31 @@ Gradle plugin for linting and formatting Kotlin source files using the awesome [
 
 Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jmailen.kotlinter
 
+#### Single module
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version '1.15.0'
+    id 'org.jmailen.kotlinter' version '1.15.1'
 }
+```
+
+#### Multi-module and Android
+
+Root `build.gradle`
+```groovy
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath 'gradle.plugin.org.jmailen.gradle:kotlinter-gradle:1.15.1'
+    }
+}
+```
+Each module `build.gradle` with Kotlin source
+```groovy
+apply plugin: 'org.jmailen.kotlinter'
 ```
 
 ### Compatibility

@@ -21,7 +21,7 @@ dependencies {
     testRuntime 'com.android.tools.build:gradle:3.0.1'
 }
 
-version = '1.15.0'
+version = '1.15.1'
 group = 'org.jmailen.gradle'
 def pluginId = 'org.jmailen.kotlinter'
 

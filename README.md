@@ -11,7 +11,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 #### Single module
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version '1.15.1'
+    id 'org.jmailen.kotlinter' version '1.16.0'
 }
 ```
 
@@ -26,7 +26,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'gradle.plugin.org.jmailen.gradle:kotlinter-gradle:1.15.1'
+        classpath 'gradle.plugin.org.jmailen.gradle:kotlinter-gradle:1.16.0'
     }
 }
 ```

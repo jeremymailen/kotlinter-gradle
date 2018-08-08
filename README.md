@@ -26,7 +26,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'gradle.plugin.org.jmailen.gradle:kotlinter-gradle:1.16.0'
+        classpath 'org.jmailen.gradle:kotlinter-gradle:1.16.0'
     }
 }
 ```

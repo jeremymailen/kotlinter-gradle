@@ -5,6 +5,7 @@ import com.github.shyiko.ktlint.core.LintError
 import com.github.shyiko.ktlint.core.RuleSet
 import org.gradle.api.GradleException
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFiles
@@ -16,6 +17,7 @@ import org.jmailen.gradle.kotlinter.support.resolveRuleSets
 import org.jmailen.gradle.kotlinter.support.userData
 import java.io.File
 
+@CacheableTask
 open class LintTask : SourceTask() {
 
     @OutputFiles

@@ -122,7 +122,6 @@ object KotlinJvmSourceSetResolver : SourceSetResolver {
         (this as HasConvention).convention.plugins[name]
 }
 
-
 object AndroidSourceSetResolver : SourceSetResolver {
 
     override fun applyToAll(project: Project, action: SourceSetAction) {

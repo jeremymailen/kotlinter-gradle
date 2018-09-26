@@ -9,6 +9,8 @@ import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFiles
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.jmailen.gradle.kotlinter.KotlinterExtension
@@ -21,6 +23,7 @@ import java.io.File
 open class LintTask : SourceTask() {
 
     @OutputFiles
+    @PathSensitive(PathSensitivity.RELATIVE)
     lateinit var reports: Map<String, File>
 
     @Input

@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.shyiko:ktlint:0.28.0'
+    compile 'com.github.shyiko:ktlint:0.29.0'
     compile 'me.cassiano:ktlint-html-reporter:0.2.0'
     compileOnly 'org.jetbrains.kotlin:kotlin-gradle-plugin'
     compileOnly 'com.android.tools.build:gradle:3.0.1'

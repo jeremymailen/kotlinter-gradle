@@ -4,7 +4,7 @@ import com.github.shyiko.ktlint.core.KtLint
 import com.github.shyiko.ktlint.core.RuleSet
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.jmailen.gradle.kotlinter.KotlinterExtension
@@ -14,7 +14,7 @@ import java.io.File
 
 open class FormatTask : SourceTask() {
 
-    @Internal
+    @OutputFile
     lateinit var report: File
 
     @Input
@@ -22,6 +22,10 @@ open class FormatTask : SourceTask() {
 
     @Input
     var continuationIndentSize = KotlinterExtension.DEFAULT_CONTINUATION_INDENT_SIZE
+
+    init {
+        outputs.upToDateWhen { false }
+    }
 
     @TaskAction
     fun run() {

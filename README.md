@@ -140,6 +140,24 @@ task ktFormat(type: FormatTask, group: 'formatting') {
 
 ### Configuration
 Options are configured in the `kotlinter` extension. Defaults shown (you may omit the configuration block entirely if you want these values).
+
+<details open>
+<summary>Kotlin</summary>
+
+```kotlin
+kotliner {
+    ignoreFailures = false
+    indentSize = 4
+    continuationIndentSize = 4
+    reporter = arrayOf("checkstyle", "plain")
+}
+```
+
+</details>
+
+<details>
+<summary>Groovy</summary>
+
 ```groovy
 kotlinter {
     ignoreFailures = false
@@ -148,6 +166,9 @@ kotlinter {
     reporters = ['checkstyle', 'plain']
 }
 ```
+
+</details>
+
 Options for `reporters`: checkstyle, html, json, plain
 
 The html reporter is provided by [ktlint-html-reporter](https://github.com/mcassiano/ktlint-html-reporter).

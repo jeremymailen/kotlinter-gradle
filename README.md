@@ -12,20 +12,24 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 <details open>
 <summary>Kotlin</summary>
+
 ```kotlin
 plugins {
   id("org.jmailen.kotlinter") version "1.20.1"
 }
 ```
+
 </details>
 
 <details>
 <summary>Groovy</summary>
+
 ```groovy
 plugins {
   id "org.jmailen.kotlinter" version "1.20.1"
 }
 ```
+
 </details>
 
 #### Multi-module and Android
@@ -48,14 +52,17 @@ buildscript {
 ```
 
 Each module `build.gradle.kts` with Kotlin source
+
 ```kotlin
 apply(plugin = "org.jmailen.kotlinter")
 ```
+
 </details>
 
 <details>
 <summary>Groovy</summary>
 Root `build.gradle`
+
 ```groovy
 buildscript {
   repositories {
@@ -70,9 +77,11 @@ buildscript {
 ```
 
 Each module `build.gradle` with Kotlin source
+
 ```groovy
 apply plugin: "org.jmailen.kotlinter"
 ```
+
 </details>
 
 ### Compatibility

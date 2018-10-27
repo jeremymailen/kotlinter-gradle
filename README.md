@@ -9,31 +9,71 @@ Gradle plugin for linting and formatting Kotlin source files using the awesome [
 Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jmailen.kotlinter
 
 #### Single module
-```groovy
+
+<details open>
+<summary>Kotlin</summary>
+```kotlin
 plugins {
-    id 'org.jmailen.kotlinter' version '1.20.1'
+  id("org.jmailen.kotlinter") version "1.20.1"
 }
 ```
+</details>
+
+<details>
+<summary>Groovy</summary>
+```groovy
+plugins {
+  id "org.jmailen.kotlinter" version "1.20.1"
+}
+```
+</details>
 
 #### Multi-module and Android
 
+<details open>
+<summary>Kotlin</summary>
+Root `build.gradle.kts`
+
+```kotlin
+buildscript {
+  repositories {
+    maven {
+      url = uri("https://plugins.gradle.org/m2/")
+    }
+  }
+  dependencies {
+    classpath("org.jmailen.gradle:kotlinter-gradle:1.20.1")
+  }
+}
+```
+
+Each module `build.gradle.kts` with Kotlin source
+```kotlin
+apply(plugin = "org.jmailen.kotlinter")
+```
+</details>
+
+<details>
+<summary>Groovy</summary>
 Root `build.gradle`
 ```groovy
 buildscript {
-    repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
     }
-    dependencies {
-        classpath 'org.jmailen.gradle:kotlinter-gradle:1.20.1'
-    }
+  }
+  dependencies {
+    classpath "org.jmailen.gradle:kotlinter-gradle:1.20.1"
+  }
 }
 ```
+
 Each module `build.gradle` with Kotlin source
 ```groovy
-apply plugin: 'org.jmailen.kotlinter'
+apply plugin: "org.jmailen.kotlinter"
 ```
+</details>
 
 ### Compatibility
 Kotlinter 1.12.0 and later compatible with Kotlin Gradle plugins 1.2.41+ and Java 9/8.

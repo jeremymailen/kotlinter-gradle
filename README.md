@@ -120,6 +120,34 @@ Granular tasks exist for each source set in the project: `formatKotlin`*`SourceS
 
 If you haven't applied these plugins you can create custom tasks:
 
+<details open>
+<summary>Kotlin</summary>
+
+```kotlin
+import org.jmailen.gradle.kotlinter.tasks.LintTask
+import org.jmailen.gradle.kotlinter.tasks.FormatTask
+
+val ktLint by tasks.creating(LintTask::class) {
+    group = "verification"
+    source(files("src"))
+    reports = mapOf(
+        "plain" to file("build/lint-report.txt"),
+        "json" to file("build/lint-report.json")
+    )
+}
+
+val ktFormat by tasks.creating(FormatTask::class) {
+    group = "formatting"
+    source(files("src"))
+    report = file("build/format-report.txt")
+}
+```
+
+</details>
+
+<details>
+<summary>Groovy</summary>
+
 ```groovy
 import org.jmailen.gradle.kotlinter.tasks.LintTask
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
@@ -137,6 +165,8 @@ task ktFormat(type: FormatTask, group: 'formatting') {
     report = file('build/format-report.txt')
 }
 ```
+
+</details>
 
 ### Configuration
 Options are configured in the `kotlinter` extension. Defaults shown (you may omit the configuration block entirely if you want these values).

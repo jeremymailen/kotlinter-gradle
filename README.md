@@ -15,7 +15,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-  id("org.jmailen.kotlinter") version "1.20.1"
+    id("org.jmailen.kotlinter") version "1.20.1"
 }
 ```
 
@@ -26,7 +26,7 @@ plugins {
 
 ```groovy
 plugins {
-  id "org.jmailen.kotlinter" version "1.20.1"
+    id "org.jmailen.kotlinter" version "1.20.1"
 }
 ```
 
@@ -40,14 +40,14 @@ Root `build.gradle.kts`
 
 ```kotlin
 buildscript {
-  repositories {
-    maven {
-      url = uri("https://plugins.gradle.org/m2/")
+    repositories {
+        maven {
+            url = uri("https://plugins.gradle.org/m2/")
+        }
     }
-  }
-  dependencies {
-    classpath("org.jmailen.gradle:kotlinter-gradle:1.20.1")
-  }
+    dependencies {
+        classpath("org.jmailen.gradle:kotlinter-gradle:1.20.1")
+    }
 }
 ```
 
@@ -65,14 +65,14 @@ Root `build.gradle`
 
 ```groovy
 buildscript {
-  repositories {
-    maven {
-      url "https://plugins.gradle.org/m2/"
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
-  }
-  dependencies {
-    classpath "org.jmailen.gradle:kotlinter-gradle:1.20.1"
-  }
+    dependencies {
+        classpath "org.jmailen.gradle:kotlinter-gradle:1.20.1"
+    }
 }
 ```
 
@@ -212,6 +212,21 @@ lintKotlinMain {
 
 If you need to use a different version of `ktlint` you can override the dependency.
 
+<details open>
+<summary>Kotlin</summary>
+
+```kotlin
+buildscript {
+    configurations.classpath
+        .resolutionStrategy.force("com.github.shyiko:ktlint:0.28.0")
+}
+```
+
+</details>
+
+<details>
+<summary>Groovy</summary>
+
 ```groovy
 buildscript {
     configurations.classpath {
@@ -220,9 +235,28 @@ buildscript {
 }
 ```
 
+</details>
+
 ### Custom Rules
 
 You can add custom ktlint RuleSets using the `buildscript` classpath:
+
+<details open>
+<summary>Kotlin</summary>
+
+```kotlin
+buildscript {
+    dependencies {
+        classpath(files("libs/my-custom-ktlint-rules.jar"))
+        classpath("org.other.ktlint:custom-rules:1.0")
+    }
+}
+```
+
+</details>
+
+<details>
+<summary>Groovy</summary>
 
 ```groovy
 buildscript {
@@ -232,3 +266,5 @@ buildscript {
     }
 }
 ```
+
+</details>

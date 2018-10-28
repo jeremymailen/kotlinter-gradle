@@ -260,7 +260,7 @@ buildscript {
 ```groovy
 buildscript {
     configurations.classpath {
-        resolutionStrategy { force 'com.github.shyiko:ktlint:0.19.0' }
+        resolutionStrategy { force 'com.github.shyiko:ktlint:0.28.0' }
     }
 }
 ```

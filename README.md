@@ -145,7 +145,7 @@ Options are configured in the `kotlinter` extension. Defaults shown (you may omi
 <summary>Kotlin</summary>
 
 ```kotlin
-kotliner {
+kotlinter {
     ignoreFailures = false
     indentSize = 4
     continuationIndentSize = 4
@@ -182,11 +182,31 @@ Reporters behave as described at: https://github.com/shyiko/ktlint
 The `formatKotlin`*`SourceSet`* and `lintKotlin`*`SourceSet`* tasks inherit from [SourceTask](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.SourceTask.html)
 so you can customize includes, excludes, and source.
 
+<details open>
+<summary>Kotlin</summary>
+
+```kotlin
+import org.jmailen.gradle.kotlinter.tasks.LintTask
+
+tasks {
+    "lintKotlinMain"(LintTask::class) {
+        exclude("**/*Generated.kt")
+    }
+}
+```
+
+</details>
+
+<details>
+<summary>Groovy</summary>
+
 ```groovy
 lintKotlinMain {
     exclude '**/*Generated.kt'
 }
 ```
+
+</details>
 
 ### Custom ktlint version
 

@@ -15,7 +15,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "1.20.1"
+    id("org.jmailen.kotlinter") version "1.21.0"
 }
 ```
 
@@ -26,7 +26,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "1.20.1"
+    id "org.jmailen.kotlinter" version "1.21.0"
 }
 ```
 
@@ -46,7 +46,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jmailen.gradle:kotlinter-gradle:1.20.1")
+        classpath("org.jmailen.gradle:kotlinter-gradle:1.21.0")
     }
 }
 ```
@@ -71,7 +71,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.jmailen.gradle:kotlinter-gradle:1.20.1"
+        classpath "org.jmailen.gradle:kotlinter-gradle:1.21.0"
     }
 }
 ```
@@ -85,6 +85,8 @@ apply plugin: "org.jmailen.kotlinter"
 </details>
 
 ### Compatibility
+Kotlinter 1.21.0 and later compatible with Kotlin Gradle plugins 1.3.20+ and Java 11/10/9/8.
+
 Kotlinter 1.12.0 and later compatible with Kotlin Gradle plugins 1.2.41+ and Java 9/8.
 
 Kotlinter 1.8.0 and later compatible with Kotlin Gradle plugins 1.2.21+ and Java 9/8.

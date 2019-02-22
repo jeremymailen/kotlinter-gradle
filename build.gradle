@@ -14,12 +14,16 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.shyiko:ktlint:0.30.0'
-    compile 'me.cassiano:ktlint-html-reporter:0.2.0'
-    compileOnly 'org.jetbrains.kotlin:kotlin-gradle-plugin'
-    compileOnly 'com.android.tools.build:gradle:3.0.1'
-    testCompile 'junit:junit:4.12'
-    testRuntime 'org.jetbrains.kotlin:kotlin-gradle-plugin'
+    implementation 'com.github.shyiko:ktlint:0.30.0'
+    implementation 'me.cassiano:ktlint-html-reporter:0.2.0'
+    implementation 'org.jetbrains.kotlin:kotlin-gradle-plugin'
+    
+    compileOnly 'com.android.tools.build:gradle:3.0.1' // TODO this is a different version than the testRuntime dependency
+    compileOnly('org.jetbrains.kotlin:kotlin-reflect') {
+        because 'AGP has a transitive dependency on this, and we want to pin to a particular version'
+    }
+
+    testImplementation 'junit:junit:4.12'
     testRuntime 'com.android.tools.build:gradle:3.1.3'
 }
 

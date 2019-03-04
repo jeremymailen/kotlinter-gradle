@@ -36,22 +36,18 @@ class FunctionalTest {
         val className = "KotlinClass"
         kotlinSourceFile("$className.kt", """
             class $className {
-                private fun(){
+                private fun hi(){
                     println ("hi")
                 }
             }
         """.trimIndent()
         )
 
-        val result: BuildResult = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
-                .withArguments("lintKotlinMain")
-                .withPluginClasspath()
-                .buildAndFail()
-
-        assertTrue(result.output.contains("Lint error >.*$className.kt.*Missing spacing before \"\\{\"".toRegex()))
-        assertTrue(result.output.contains("Lint error >.*$className.kt.*Unexpected spacing before \"\\(\"".toRegex()))
-        assertEquals(FAILED, result.task(":lintKotlinMain")?.outcome)
+        buildAndFail("lintKotlinMain").apply {
+            assertTrue(output.contains("Lint error >.*$className.kt.*Missing spacing before \"\\{\"".toRegex()))
+            assertTrue(output.contains("Lint error >.*$className.kt.*Unexpected spacing before \"\\(\"".toRegex()))
+            assertEquals(FAILED, task(":lintKotlinMain")?.outcome)
+        }
     }
 
     @Test
@@ -60,20 +56,27 @@ class FunctionalTest {
         buildFile()
         kotlinSourceFile("KotlinClass.kt", """
             class KotlinClass {
-                private fun() {
+                private fun hi() {
                     println("hi")
                 }
             }
         """.trimIndent()
         )
 
-        val result: BuildResult = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
-                .withArguments("lintKotlinMain")
-                .withPluginClasspath()
-                .build()
+        build("lintKotlinMain").apply {
+            assertEquals(SUCCESS, task(":lintKotlinMain")?.outcome)
+        }
+    }
 
-        assertEquals(SUCCESS, result.task(":lintKotlinMain")?.outcome)
+    private fun build(vararg args: String): BuildResult = gradleRunnerFor(*args).build()
+
+    private fun buildAndFail(vararg args: String): BuildResult = gradleRunnerFor(*args).buildAndFail()
+
+    private fun gradleRunnerFor(vararg args: String): GradleRunner {
+        return GradleRunner.create()
+            .withProjectDir(testProjectDir.root)
+            .withArguments(args.toList() + "--stacktrace")
+            .withPluginClasspath()
     }
 
     private fun settingsFile() = settingsFile.apply {

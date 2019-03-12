@@ -15,7 +15,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "1.21.0"
+    id("org.jmailen.kotlinter") version "1.22.0"
 }
 ```
 
@@ -26,7 +26,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "1.21.0"
+    id "org.jmailen.kotlinter" version "1.22.0"
 }
 ```
 
@@ -46,7 +46,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jmailen.gradle:kotlinter-gradle:1.21.0")
+        classpath("org.jmailen.gradle:kotlinter-gradle:1.22.0")
     }
 }
 ```
@@ -71,7 +71,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.jmailen.gradle:kotlinter-gradle:1.21.0"
+        classpath "org.jmailen.gradle:kotlinter-gradle:1.22.0"
     }
 }
 ```
@@ -182,6 +182,7 @@ kotlinter {
     indentSize = 4
     continuationIndentSize = 4
     reporter = arrayOf("checkstyle", "plain")
+    experimentalRules = false
 }
 ```
 
@@ -196,6 +197,7 @@ kotlinter {
     indentSize = 4
     continuationIndentSize = 4
     reporters = ['checkstyle', 'plain']
+    experimentalRules = false
 }
 ```
 
@@ -208,6 +210,8 @@ The html reporter is provided by [ktlint-html-reporter](https://github.com/mcass
 Reporters behave as described at: https://github.com/shyiko/ktlint
 
 *Note: `reporter` with a single value is deprecated but supported for backwards compatibility.
+
+The `experimentalRules` property enables rules which are part of ktlint's experimental rule set.
 
 ### Customizing Tasks
 

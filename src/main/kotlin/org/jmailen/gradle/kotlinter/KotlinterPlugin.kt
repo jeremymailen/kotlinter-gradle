@@ -46,10 +46,12 @@ class KotlinterPlugin : Plugin<Project> {
                 lintTask.reports = kotlinterExtension.reporters().associate { reporter ->
                     reporter to project.reportFile("${lintTask.sourceSetId}-lint.${reporterFileExtension(reporter)}")
                 }
+                lintTask.experimentalRules = kotlinterExtension.experimentalRules
             }
             taskCreator.formatTasks.forEach { formatTask ->
                 formatTask.indentSize = kotlinterExtension.indentSize
                 formatTask.continuationIndentSize = kotlinterExtension.continuationIndentSize
+                formatTask.experimentalRules = kotlinterExtension.experimentalRules
             }
         }
     }

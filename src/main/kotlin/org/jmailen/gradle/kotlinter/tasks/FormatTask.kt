@@ -23,6 +23,9 @@ open class FormatTask : SourceTask() {
     @Input
     var continuationIndentSize = KotlinterExtension.DEFAULT_CONTINUATION_INDENT_SIZE
 
+    @Input
+    var experimentalRules = KotlinterExtension.DEFAULT_EXPERIMENTAL_RULES
+
     init {
         outputs.upToDateWhen { false }
     }
@@ -45,7 +48,7 @@ open class FormatTask : SourceTask() {
                     null
                 }
             }?.let { formatFunc ->
-                val formattedText = formatFunc.invoke(file, resolveRuleSets()) { line, col, detail, corrected ->
+                val formattedText = formatFunc.invoke(file, resolveRuleSets(experimentalRules)) { line, col, detail, corrected ->
                     val errorStr = "$relativePath:$line:$col: $detail"
                     val msg = when (corrected) {
                         true -> "Format fixed > $errorStr"

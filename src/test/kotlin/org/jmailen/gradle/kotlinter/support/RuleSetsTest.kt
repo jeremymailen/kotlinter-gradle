@@ -15,8 +15,14 @@ class RuleSetsTest {
     fun `resolveRuleSets loads from classpath providers`() {
         val result = resolveRuleSets()
 
-        assertEquals(1, result.size)
-        assertEquals("standard", result.first().id)
+        assertEquals(listOf("standard"), result.map { it.id })
+    }
+
+    @Test
+    fun `resolveRuleSets loads from classpath providers including experimental rules`() {
+        val result = resolveRuleSets(includeExperimentalRules = true)
+
+        assertEquals(listOf("standard", "experimental"), result.map { it.id })
     }
 
     @Test
@@ -25,7 +31,7 @@ class RuleSetsTest {
         val extra1 = TestRuleSetProvider(RuleSet("extra-one", TestRule("two")))
         val extra2 = TestRuleSetProvider(RuleSet("extra-two", TestRule("three")))
 
-        val result = resolveRuleSets(listOf(extra2, standard, extra1))
+        val result = resolveRuleSets(providers = listOf(extra2, standard, extra1))
 
         assertEquals(3, result.size)
         assertEquals(standard.ruleSet, result.first())

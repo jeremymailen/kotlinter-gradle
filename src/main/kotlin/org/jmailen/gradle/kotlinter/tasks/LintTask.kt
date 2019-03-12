@@ -40,6 +40,9 @@ open class LintTask : SourceTask() {
     @Input
     var continuationIndentSize = KotlinterExtension.DEFAULT_CONTINUATION_INDENT_SIZE
 
+    @Input
+    var experimentalRules = KotlinterExtension.DEFAULT_EXPERIMENTAL_RULES
+
     @Internal
     var sourceSetId = ""
 
@@ -66,7 +69,7 @@ open class LintTask : SourceTask() {
                 }
             }
 
-            lintFunc?.invoke(file, resolveRuleSets()) { error ->
+            lintFunc?.invoke(file, resolveRuleSets(experimentalRules)) { error ->
                 fileReporters.onEach { it.onLintError(relativePath, error, false) }
 
                 val errorStr = "$relativePath:${error.line}:${error.col}: ${error.detail}"

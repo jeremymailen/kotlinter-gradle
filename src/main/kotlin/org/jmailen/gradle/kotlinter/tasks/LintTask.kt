@@ -55,31 +55,34 @@ open class LintTask : SourceTask() {
 
         fileReporters.onEach { it.beforeAll() }
 
-        getSource().forEach { file ->
-            val relativePath = file.toRelativeString(project.projectDir)
-            fileReporters.onEach { it.before(relativePath) }
-            logger.log(LogLevel.DEBUG, "$name linting: $relativePath")
+        getSource()
+            .toList()
+            .parallelStream()
+            .forEach { file ->
+                val relativePath = file.toRelativeString(project.projectDir)
+                fileReporters.onEach { it.before(relativePath) }
+                logger.log(LogLevel.DEBUG, "$name linting: $relativePath")
 
-            val lintFunc = when (file.extension) {
-                "kt" -> this::lintKt
-                "kts" -> this::lintKts
-                else -> {
-                    logger.log(LogLevel.DEBUG, "$name ignoring non Kotlin file: $relativePath")
-                    null
+                val lintFunc = when (file.extension) {
+                    "kt" -> this::lintKt
+                    "kts" -> this::lintKts
+                    else -> {
+                        logger.log(LogLevel.DEBUG, "$name ignoring non Kotlin file: $relativePath")
+                        null
+                    }
                 }
+
+                lintFunc?.invoke(file, resolveRuleSets(experimentalRules)) { error ->
+                    fileReporters.onEach { it.onLintError(relativePath, error, false) }
+
+                    val errorStr = "$relativePath:${error.line}:${error.col}: ${error.detail}"
+                    logger.log(LogLevel.QUIET, "Lint error > $errorStr")
+
+                    hasErrors = true
+                }
+
+                fileReporters.onEach { it.after(relativePath) }
             }
-
-            lintFunc?.invoke(file, resolveRuleSets(experimentalRules)) { error ->
-                fileReporters.onEach { it.onLintError(relativePath, error, false) }
-
-                val errorStr = "$relativePath:${error.line}:${error.col}: ${error.detail}"
-                logger.log(LogLevel.QUIET, "Lint error > $errorStr")
-
-                hasErrors = true
-            }
-
-            fileReporters.onEach { it.after(relativePath) }
-        }
 
         fileReporters.onEach { it.afterAll() }
         if (hasErrors && !ignoreFailures) {

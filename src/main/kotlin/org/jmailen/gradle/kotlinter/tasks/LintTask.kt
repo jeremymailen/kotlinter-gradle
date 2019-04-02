@@ -1,10 +1,6 @@
 package org.jmailen.gradle.kotlinter.tasks
 
-import com.github.shyiko.ktlint.core.KtLint
-import com.github.shyiko.ktlint.core.LintError
-import com.github.shyiko.ktlint.core.RuleSet
 import org.gradle.api.GradleException
-import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
@@ -14,14 +10,22 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
+import org.gradle.workers.WorkerExecutor
 import org.jmailen.gradle.kotlinter.KotlinterExtension
+import org.jmailen.gradle.kotlinter.support.ExecutionContext
+import org.jmailen.gradle.kotlinter.support.HasErrorReporter
+import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
 import org.jmailen.gradle.kotlinter.support.reporterFor
-import org.jmailen.gradle.kotlinter.support.resolveRuleSets
-import org.jmailen.gradle.kotlinter.support.userData
+import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerConfigurationAction
+import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerParameters
+import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerRunnable
 import java.io.File
+import javax.inject.Inject
 
 @CacheableTask
-open class LintTask : SourceTask() {
+open class LintTask @Inject constructor(
+    private val workerExecutor: WorkerExecutor
+) : SourceTask() {
 
     @OutputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -43,67 +47,46 @@ open class LintTask : SourceTask() {
     @Input
     var experimentalRules = KotlinterExtension.DEFAULT_EXPERIMENTAL_RULES
 
+    @Input
+    var fileChunkSize = KotlinterExtension.DEFAULT_FILE_CHUNK_SIZE
+
     @Internal
     var sourceSetId = ""
 
     @TaskAction
     fun run() {
-        var hasErrors = false
-        val fileReporters = reports.map { (reporter, report) ->
+        val hasErrorReporter = HasErrorReporter()
+        val reporters = reports.map { (reporter, report) ->
             reporterFor(reporter, report)
-        }
+        } + hasErrorReporter
+        val reporterRepository = ExecutionContextRepository.instance
+        val executionContextRepositoryId = reporterRepository.registerExecutionContext(ExecutionContext(reporters, logger))
 
-        fileReporters.onEach { it.beforeAll() }
+        reporters.onEach { it.beforeAll() }
 
-        getSource().forEach { file ->
-            val relativePath = file.toRelativeString(project.projectDir)
-            fileReporters.onEach { it.before(relativePath) }
-            logger.log(LogLevel.DEBUG, "$name linting: $relativePath")
-
-            val lintFunc = when (file.extension) {
-                "kt" -> this::lintKt
-                "kts" -> this::lintKts
-                else -> {
-                    logger.log(LogLevel.DEBUG, "$name ignoring non Kotlin file: $relativePath")
-                    null
-                }
+        getSource()
+            .toList()
+            .chunked(fileChunkSize)
+            .map { files ->
+                LintWorkerParameters(
+                    files = files,
+                    projectDirectory = project.projectDir,
+                    executionContextRepositoryId = executionContextRepositoryId,
+                    name = name,
+                    experimentalRules = experimentalRules,
+                    indentSize = indentSize,
+                    continuationIndentSize = continuationIndentSize
+                )
             }
-
-            lintFunc?.invoke(file, resolveRuleSets(experimentalRules)) { error ->
-                fileReporters.onEach { it.onLintError(relativePath, error, false) }
-
-                val errorStr = "$relativePath:${error.line}:${error.col}: ${error.detail}"
-                logger.log(LogLevel.QUIET, "Lint error > $errorStr")
-
-                hasErrors = true
+            .forEach { parameters ->
+                workerExecutor.submit(LintWorkerRunnable::class.java, LintWorkerConfigurationAction(parameters))
             }
+        workerExecutor.await()
+        reporterRepository.unregisterExecutionContext(executionContextRepositoryId)
 
-            fileReporters.onEach { it.after(relativePath) }
-        }
-
-        fileReporters.onEach { it.afterAll() }
-        if (hasErrors && !ignoreFailures) {
+        reporters.onEach { it.afterAll() }
+        if (hasErrorReporter.hasError && !ignoreFailures) {
             throw GradleException("Kotlin source failed lint check.")
         }
     }
-
-    private fun lintKt(file: File, ruleSets: List<RuleSet>, onError: (error: LintError) -> Unit) =
-            KtLint.lint(
-                    file.readText(),
-                    ruleSets,
-                    userData(
-                        indentSize = indentSize,
-                        continuationIndentSize = continuationIndentSize,
-                        filePath = file.path
-                    ), onError)
-
-    private fun lintKts(file: File, ruleSets: List<RuleSet>, onError: (error: LintError) -> Unit) =
-            KtLint.lintScript(
-                    file.readText(),
-                    ruleSets,
-                    userData(
-                        indentSize = indentSize,
-                        continuationIndentSize = continuationIndentSize,
-                        filePath = file.path
-                    ), onError)
 }

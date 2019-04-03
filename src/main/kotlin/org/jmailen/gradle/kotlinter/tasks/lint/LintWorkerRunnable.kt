@@ -12,7 +12,7 @@ import java.io.File
 import javax.inject.Inject
 
 /**
- * Runnable used in the Gradle Worker API to run lint on a chunk of files.
+ * Runnable used in the Gradle Worker API to run lint on a batch of files.
  */
 class LintWorkerRunnable @Inject constructor(
     parameters: LintWorkerParameters

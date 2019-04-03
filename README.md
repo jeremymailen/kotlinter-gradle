@@ -183,7 +183,7 @@ kotlinter {
     continuationIndentSize = 4
     reporter = arrayOf("checkstyle", "plain")
     experimentalRules = false
-    fileChunkSize = 30
+    fileBatchSize = 30
 }
 ```
 
@@ -199,7 +199,7 @@ kotlinter {
     continuationIndentSize = 4
     reporters = ['checkstyle', 'plain']
     experimentalRules = false
-    fileChunkSize = 30
+    fileBatchSize = 30
 }
 ```
 
@@ -215,7 +215,7 @@ Reporters behave as described at: https://github.com/shyiko/ktlint
 
 The `experimentalRules` property enables rules which are part of ktlint's experimental rule set.
 
-The `fileChunkSize` property configures the number of files that are processes in one Gradle Worker API call.
+The `fileBatchSize` property configures the number of files that are processes in one Gradle Worker API call.
 
 ### Customizing Tasks
 

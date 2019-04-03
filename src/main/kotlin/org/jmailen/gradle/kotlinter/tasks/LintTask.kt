@@ -48,7 +48,7 @@ open class LintTask @Inject constructor(
     var experimentalRules = KotlinterExtension.DEFAULT_EXPERIMENTAL_RULES
 
     @Input
-    var fileChunkSize = KotlinterExtension.DEFAULT_FILE_CHUNK_SIZE
+    var fileBatchSize = KotlinterExtension.DEFAULT_FILE_BATCH_SIZE
 
     @Internal
     var sourceSetId = ""
@@ -66,7 +66,7 @@ open class LintTask @Inject constructor(
 
         getSource()
             .toList()
-            .chunked(fileChunkSize)
+            .chunked(fileBatchSize)
             .map { files ->
                 LintWorkerParameters(
                     files = files,

@@ -18,7 +18,7 @@ class LintWorkerRunnable @Inject constructor(
     parameters: LintWorkerParameters
 ) : Runnable {
 
-    private val executionContext = ExecutionContextRepository.instance.retrieveExecutionContext(parameters.executionContextRepositoryId)
+    private val executionContext = ExecutionContextRepository.instance.get(parameters.executionContextRepositoryId)
     private val reporters: List<Reporter> = executionContext.reporters
     private val logger: Logger = executionContext.logger
     private val files: List<File> = parameters.files

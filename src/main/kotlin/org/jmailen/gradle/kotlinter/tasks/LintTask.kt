@@ -60,7 +60,7 @@ open class LintTask @Inject constructor(
             reporterFor(reporter, report)
         } + hasErrorReporter
         val reporterRepository = ExecutionContextRepository.instance
-        val executionContextRepositoryId = reporterRepository.registerExecutionContext(ExecutionContext(reporters, logger))
+        val executionContextRepositoryId = reporterRepository.register(ExecutionContext(reporters, logger))
 
         reporters.onEach { it.beforeAll() }
 
@@ -82,7 +82,7 @@ open class LintTask @Inject constructor(
                 workerExecutor.submit(LintWorkerRunnable::class.java, LintWorkerConfigurationAction(parameters))
             }
         workerExecutor.await()
-        reporterRepository.unregisterExecutionContext(executionContextRepositoryId)
+        reporterRepository.unregister(executionContextRepositoryId)
 
         reporters.onEach { it.afterAll() }
         if (hasErrorReporter.hasError && !ignoreFailures) {

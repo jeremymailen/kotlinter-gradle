@@ -7,23 +7,23 @@ import org.junit.Test
 class ExecutionContextRepositoryTest {
 
     @Test
-    fun retrievingRegisteredContextWorks() {
+    fun getRegisteredContextWorks() {
         val repository = ExecutionContextRepository.instance
         val executionContext = ExecutionContext(emptyList(), mock())
-        val id = repository.registerExecutionContext(executionContext)
+        val id = repository.register(executionContext)
 
-        val result = repository.retrieveExecutionContext(id)
+        val result = repository.get(id)
 
         assertEquals(executionContext, result)
     }
 
     @Test(expected = NoSuchElementException::class)
-    fun retrievingUnregisteredContextFails() {
+    fun getUnregisteredContextFails() {
         val repository = ExecutionContextRepository.instance
         val executionContext = ExecutionContext(emptyList(), mock())
-        val id = repository.registerExecutionContext(executionContext)
-        repository.unregisterExecutionContext(id)
+        val id = repository.register(executionContext)
+        repository.unregister(id)
 
-        repository.retrieveExecutionContext(id)
+        repository.get(id)
     }
 }

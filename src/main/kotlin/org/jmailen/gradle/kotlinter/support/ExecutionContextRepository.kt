@@ -15,16 +15,16 @@ class ExecutionContextRepository {
 
     private val executionContextById: ConcurrentMap<UUID, ExecutionContext> = ConcurrentHashMap<UUID, ExecutionContext>()
 
-    fun registerExecutionContext(executionContext: ExecutionContext): UUID {
+    fun register(executionContext: ExecutionContext): UUID {
         val id = UUID.randomUUID()
         executionContextById[id] = executionContext
         return id
     }
 
-    fun retrieveExecutionContext(id: UUID): ExecutionContext =
+    fun get(id: UUID): ExecutionContext =
         executionContextById.getValue(id)
 
-    fun unregisterExecutionContext(id: UUID) {
+    fun unregister(id: UUID) {
         executionContextById.remove(id)
     }
 }

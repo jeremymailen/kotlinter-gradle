@@ -21,6 +21,7 @@ dependencies {
     compileOnly 'com.android.tools.build:gradle:3.3.1'
 
     testImplementation 'junit:junit:4.12'
+    testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0'
     testRuntime 'com.android.tools.build:gradle:3.3.1'
 }
 

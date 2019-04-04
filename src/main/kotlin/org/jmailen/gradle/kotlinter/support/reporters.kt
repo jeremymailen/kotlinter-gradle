@@ -17,12 +17,14 @@ enum class ReporterType {
 
 fun reporterFor(reporterName: String, output: File): Reporter {
     val out = PrintStream(output)
-    return when (ReporterType.valueOf(reporterName)) {
-        ReporterType.checkstyle -> CheckStyleReporter(out)
-        ReporterType.html -> HtmlReporter(out)
-        ReporterType.json -> JsonReporter(out)
-        ReporterType.plain -> PlainReporter(out)
-    }
+    return SortedThreadSafeReporterWrapper(
+        when (ReporterType.valueOf(reporterName)) {
+            ReporterType.checkstyle -> CheckStyleReporter(out)
+            ReporterType.html -> HtmlReporter(out)
+            ReporterType.json -> JsonReporter(out)
+            ReporterType.plain -> PlainReporter(out)
+        }
+    )
 }
 
 fun reporterFileExtension(reporterName: String) = when (ReporterType.valueOf(reporterName)) {

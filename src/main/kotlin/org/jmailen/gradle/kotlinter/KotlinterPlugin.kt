@@ -47,6 +47,7 @@ class KotlinterPlugin : Plugin<Project> {
                     reporter to project.reportFile("${lintTask.sourceSetId}-lint.${reporterFileExtension(reporter)}")
                 }
                 lintTask.experimentalRules = kotlinterExtension.experimentalRules
+                lintTask.fileBatchSize = kotlinterExtension.fileBatchSize
             }
             taskCreator.formatTasks.forEach { formatTask ->
                 formatTask.indentSize = kotlinterExtension.indentSize

@@ -3,7 +3,7 @@ plugins {
     id 'com.gradle.plugin-publish' version '0.10.0'
     id 'java-gradle-plugin'
     id 'maven-publish'
-    id 'org.jmailen.kotlinter' version '1.21.0'
+    id 'org.jmailen.kotlinter' version '1.22.0'
     id 'idea'
 }
 
@@ -30,7 +30,7 @@ tasks.withType(PluginUnderTestMetadata).configureEach {
     pluginClasspath.from(configurations.compileOnly)
 }
 
-version = '1.22.0'
+version = '1.23.0'
 group = 'org.jmailen.gradle'
 def pluginId = 'org.jmailen.kotlinter'
 
@@ -66,5 +66,5 @@ publishing {
 }
 
 wrapper {
-    gradleVersion = '5.1.1'
+    gradleVersion = '5.3.1'
 }

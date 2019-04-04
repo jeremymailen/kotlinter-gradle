@@ -15,7 +15,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "1.22.0"
+    id("org.jmailen.kotlinter") version "1.23.0"
 }
 ```
 
@@ -26,7 +26,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "1.22.0"
+    id "org.jmailen.kotlinter" version "1.23.0"
 }
 ```
 
@@ -46,7 +46,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jmailen.gradle:kotlinter-gradle:1.22.0")
+        classpath("org.jmailen.gradle:kotlinter-gradle:1.23.0")
     }
 }
 ```
@@ -71,7 +71,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.jmailen.gradle:kotlinter-gradle:1.22.0"
+        classpath "org.jmailen.gradle:kotlinter-gradle:1.23.0"
     }
 }
 ```
@@ -215,7 +215,7 @@ Reporters behave as described at: https://github.com/shyiko/ktlint
 
 The `experimentalRules` property enables rules which are part of ktlint's experimental rule set.
 
-The `fileBatchSize` property configures the number of files that are processes in one Gradle Worker API call.
+The `fileBatchSize` property configures the number of files that are processed in one Gradle Worker API call.
 
 ### Customizing Tasks
 

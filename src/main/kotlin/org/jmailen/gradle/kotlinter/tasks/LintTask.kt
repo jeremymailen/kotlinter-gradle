@@ -12,10 +12,10 @@ import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
 import org.jmailen.gradle.kotlinter.KotlinterExtension
-import org.jmailen.gradle.kotlinter.support.ExecutionContext
 import org.jmailen.gradle.kotlinter.support.HasErrorReporter
 import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
 import org.jmailen.gradle.kotlinter.support.reporterFor
+import org.jmailen.gradle.kotlinter.tasks.lint.LintExecutionContext
 import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerConfigurationAction
 import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerParameters
 import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerRunnable
@@ -59,12 +59,12 @@ open class LintTask @Inject constructor(
         val reporters = reports.map { (reporter, report) ->
             reporterFor(reporter, report)
         } + hasErrorReporter
-        val reporterRepository = ExecutionContextRepository.instance
-        val executionContextRepositoryId = reporterRepository.register(ExecutionContext(reporters, logger))
+        val executionContextRepository = ExecutionContextRepository.lintInstance
+        val executionContextRepositoryId = executionContextRepository.register(LintExecutionContext(reporters, logger))
 
         reporters.onEach { it.beforeAll() }
 
-        getSource()
+        source
             .toList()
             .chunked(fileBatchSize)
             .map { files ->
@@ -82,7 +82,7 @@ open class LintTask @Inject constructor(
                 workerExecutor.submit(LintWorkerRunnable::class.java, LintWorkerConfigurationAction(parameters))
             }
         workerExecutor.await()
-        reporterRepository.unregister(executionContextRepositoryId)
+        executionContextRepository.unregister(executionContextRepositoryId)
 
         reporters.onEach { it.afterAll() }
         if (hasErrorReporter.hasError && !ignoreFailures) {

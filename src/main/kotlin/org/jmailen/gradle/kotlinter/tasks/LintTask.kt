@@ -48,7 +48,7 @@ open class LintTask @Inject constructor(
     var experimentalRules = KotlinterExtension.DEFAULT_EXPERIMENTAL_RULES
 
     @Input
-    var fileBatchSize = KotlinterExtension.DEFAULT_FILE_BATCH_SIZE
+    var fileBatchSize = KotlinterExtension.DEFAULT_LINT_FILE_BATCH_SIZE
 
     @Internal
     var sourceSetId = ""

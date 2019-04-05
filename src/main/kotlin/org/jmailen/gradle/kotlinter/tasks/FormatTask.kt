@@ -31,7 +31,7 @@ open class FormatTask @Inject constructor(
     var experimentalRules = KotlinterExtension.DEFAULT_EXPERIMENTAL_RULES
 
     @Input
-    var fileBatchSize = KotlinterExtension.DEFAULT_FILE_BATCH_SIZE
+    var fileBatchSize = KotlinterExtension.DEFAULT_FORMAT_FILE_BATCH_SIZE
 
     init {
         outputs.upToDateWhen { false }

@@ -9,8 +9,7 @@ open class KotlinterExtension {
         const val DEFAULT_CONTINUATION_INDENT_SIZE = 4
         val DEFAULT_REPORTER = ReporterType.checkstyle.name
         const val DEFAULT_EXPERIMENTAL_RULES = false
-        const val DEFAULT_LINT_FILE_BATCH_SIZE = 30
-        const val DEFAULT_FORMAT_FILE_BATCH_SIZE = 20
+        const val DEFAULT_FILE_BATCH_SIZE = 30
     }
 
     /** Don't fail build on lint issues */
@@ -27,7 +26,7 @@ open class KotlinterExtension {
     var experimentalRules = DEFAULT_EXPERIMENTAL_RULES
 
     /** The file list is split into batches and processed together on a Worker API call */
-    var fileBatchSize: Int? = null
+    var fileBatchSize = DEFAULT_FILE_BATCH_SIZE
 
     // for backwards compatibility
     fun reporters() = reporter?.let { arrayOf(it) } ?: reporters

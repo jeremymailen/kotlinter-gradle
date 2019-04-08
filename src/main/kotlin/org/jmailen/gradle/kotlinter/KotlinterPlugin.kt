@@ -47,13 +47,13 @@ class KotlinterPlugin : Plugin<Project> {
                     reporter to project.reportFile("${lintTask.sourceSetId}-lint.${reporterFileExtension(reporter)}")
                 }
                 lintTask.experimentalRules = kotlinterExtension.experimentalRules
-                lintTask.fileBatchSize = kotlinterExtension.fileBatchSize ?: KotlinterExtension.DEFAULT_LINT_FILE_BATCH_SIZE
+                lintTask.fileBatchSize = kotlinterExtension.fileBatchSize
             }
             taskCreator.formatTasks.forEach { formatTask ->
                 formatTask.indentSize = kotlinterExtension.indentSize
                 formatTask.continuationIndentSize = kotlinterExtension.continuationIndentSize
                 formatTask.experimentalRules = kotlinterExtension.experimentalRules
-                formatTask.fileBatchSize = kotlinterExtension.fileBatchSize ?: KotlinterExtension.DEFAULT_FORMAT_FILE_BATCH_SIZE
+                formatTask.fileBatchSize = kotlinterExtension.fileBatchSize
             }
         }
     }

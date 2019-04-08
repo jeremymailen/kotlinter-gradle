@@ -216,7 +216,6 @@ Reporters behave as described at: https://github.com/shyiko/ktlint
 The `experimentalRules` property enables rules which are part of ktlint's experimental rule set.
 
 The `fileBatchSize` property configures the number of files that are processed in one Gradle Worker API call.
-Default value is 30 for linting and 20 for formatting.
 
 ### Customizing Tasks
 

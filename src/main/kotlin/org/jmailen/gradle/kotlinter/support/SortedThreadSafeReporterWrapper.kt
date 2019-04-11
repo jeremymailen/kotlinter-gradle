@@ -4,6 +4,7 @@ import com.github.shyiko.ktlint.core.LintError
 import com.github.shyiko.ktlint.core.Reporter
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
+import java.util.concurrent.ConcurrentSkipListSet
 
 /**
  * A wrapper for a Reporter that guarantees thread safety and consistent ordering of all the calls to the reporter.
@@ -14,7 +15,7 @@ class SortedThreadSafeReporterWrapper(
 ) : Reporter {
 
     private val callsToBefore: ConcurrentMap<String, Unit> = ConcurrentHashMap()
-    private val lintErrorReports: ConcurrentMap<String, LintErrorReport> = ConcurrentHashMap()
+    private val lintErrorReports: ConcurrentMap<String, ConcurrentSkipListSet<LintErrorReport>> = ConcurrentHashMap()
     private val callsToAfter: ConcurrentMap<String, Unit> = ConcurrentHashMap()
 
     override fun beforeAll() {
@@ -26,7 +27,8 @@ class SortedThreadSafeReporterWrapper(
     }
 
     override fun onLintError(file: String, err: LintError, corrected: Boolean) {
-        lintErrorReports[file] = LintErrorReport(err, corrected)
+        lintErrorReports.putIfAbsent(file, ConcurrentSkipListSet())
+        lintErrorReports[file]!!.add(LintErrorReport(err, corrected))
     }
 
     override fun after(file: String) {
@@ -40,8 +42,10 @@ class SortedThreadSafeReporterWrapper(
                 if (callsToBefore.contains(fileName)) {
                     wrapped.before(fileName)
                 }
-                lintErrorReports[fileName]?.let { lintErrorReport ->
-                    wrapped.onLintError(fileName, lintErrorReport.lintError, lintErrorReport.corrected)
+                lintErrorReports[fileName]?.let { lintErrorReports ->
+                    lintErrorReports.forEach {
+                        wrapped.onLintError(fileName, it.lintError, it.corrected)
+                    }
                 }
                 if (callsToAfter.contains(fileName)) {
                     wrapped.after(fileName)
@@ -54,5 +58,10 @@ class SortedThreadSafeReporterWrapper(
     private data class LintErrorReport(
         val lintError: LintError,
         val corrected: Boolean
-    )
+    ) : Comparable<LintErrorReport> {
+        override fun compareTo(other: LintErrorReport) = when (lintError.line == other.lintError.line) {
+            true -> lintError.col.compareTo(other.lintError.col)
+            false -> lintError.line.compareTo(other.lintError.line)
+        }
+    }
 }

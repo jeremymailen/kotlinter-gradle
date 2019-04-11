@@ -98,12 +98,16 @@ class SortedThreadSafeReporterWrapperTest {
         val firstCorrected = true
         val secondFileName = "a"
         val secondLintError = LintError(1, 0, "", "")
+        val secondLintError2 = LintError(3, 2, "", "")
+        val secondLintError3 = LintError(2, 6, "", "")
         val secondCorrected = false
         reporter.before(firstFileName)
         reporter.onLintError(firstFileName, firstLintError, firstCorrected)
         reporter.after(firstFileName)
         reporter.before(secondFileName)
         reporter.onLintError(secondFileName, secondLintError, secondCorrected)
+        reporter.onLintError(secondFileName, secondLintError2, secondCorrected)
+        reporter.onLintError(secondFileName, secondLintError3, secondCorrected)
         reporter.after(secondFileName)
 
         reporter.afterAll()
@@ -111,6 +115,8 @@ class SortedThreadSafeReporterWrapperTest {
         val inOrder = inOrder(wrapped)
         inOrder.verify(wrapped).before(secondFileName)
         inOrder.verify(wrapped).onLintError(secondFileName, secondLintError, secondCorrected)
+        inOrder.verify(wrapped).onLintError(secondFileName, secondLintError3, secondCorrected)
+        inOrder.verify(wrapped).onLintError(secondFileName, secondLintError2, secondCorrected)
         inOrder.verify(wrapped).after(secondFileName)
         inOrder.verify(wrapped).before(firstFileName)
         inOrder.verify(wrapped).onLintError(firstFileName, firstLintError, firstCorrected)

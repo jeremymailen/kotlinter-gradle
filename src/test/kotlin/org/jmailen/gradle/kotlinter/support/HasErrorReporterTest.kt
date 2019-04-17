@@ -1,6 +1,6 @@
 package org.jmailen.gradle.kotlinter.support
 
-import com.github.shyiko.ktlint.core.LintError
+import com.pinterest.ktlint.core.LintError
 import org.junit.Assert.assertTrue
 import org.junit.Assert.assertFalse
 import org.junit.Before

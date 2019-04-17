@@ -1,9 +1,9 @@
 package org.jmailen.gradle.kotlinter.support
 
-import com.github.shyiko.ktlint.core.KtLint
-import com.github.shyiko.ktlint.core.Rule
-import com.github.shyiko.ktlint.core.RuleSet
-import com.github.shyiko.ktlint.core.RuleSetProvider
+import com.pinterest.ktlint.core.KtLint
+import com.pinterest.ktlint.core.Rule
+import com.pinterest.ktlint.core.RuleSet
+import com.pinterest.ktlint.core.RuleSetProvider
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue

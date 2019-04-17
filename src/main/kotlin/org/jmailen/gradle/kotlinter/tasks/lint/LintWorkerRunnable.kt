@@ -1,9 +1,9 @@
 package org.jmailen.gradle.kotlinter.tasks.lint
 
-import com.github.shyiko.ktlint.core.KtLint
-import com.github.shyiko.ktlint.core.LintError
-import com.github.shyiko.ktlint.core.Reporter
-import com.github.shyiko.ktlint.core.RuleSet
+import com.pinterest.ktlint.core.KtLint
+import com.pinterest.ktlint.core.LintError
+import com.pinterest.ktlint.core.Reporter
+import com.pinterest.ktlint.core.RuleSet
 import org.gradle.api.logging.Logger
 import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
 import org.jmailen.gradle.kotlinter.support.resolveRuleSets

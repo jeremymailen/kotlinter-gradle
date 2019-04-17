@@ -1,7 +1,7 @@
 package org.jmailen.gradle.kotlinter.tasks
 
-import com.github.shyiko.ktlint.core.KtLint
-import com.github.shyiko.ktlint.core.RuleSet
+import com.pinterest.ktlint.core.KtLint
+import com.pinterest.ktlint.core.RuleSet
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile

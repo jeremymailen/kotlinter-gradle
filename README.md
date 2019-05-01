@@ -15,7 +15,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "1.23.1"
+    id("org.jmailen.kotlinter") version "1.24.0"
 }
 ```
 
@@ -26,7 +26,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "1.23.1"
+    id "org.jmailen.kotlinter" version "1.24.0"
 }
 ```
 
@@ -46,7 +46,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jmailen.gradle:kotlinter-gradle:1.23.1")
+        classpath("org.jmailen.gradle:kotlinter-gradle:1.24.0")
     }
 }
 ```
@@ -71,7 +71,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.jmailen.gradle:kotlinter-gradle:1.23.1"
+        classpath "org.jmailen.gradle:kotlinter-gradle:1.24.0"
     }
 }
 ```
@@ -85,6 +85,8 @@ apply plugin: "org.jmailen.kotlinter"
 </details>
 
 ### Compatibility
+Kotlinter 1.24.0 and later compatible with Kotlin Gradle plugins 1.3.30+ and Java 11/10/9/8.
+
 Kotlinter 1.21.0 and later compatible with Kotlin Gradle plugins 1.3.20+ and Java 11/10/9/8.
 
 Kotlinter 1.12.0 and later compatible with Kotlin Gradle plugins 1.2.41+ and Java 9/8.
@@ -181,7 +183,7 @@ kotlinter {
     ignoreFailures = false
     indentSize = 4
     continuationIndentSize = 4
-    reporter = arrayOf("checkstyle", "plain")
+    reporters = arrayOf("checkstyle", "plain")
     experimentalRules = false
     fileBatchSize = 30
 }
@@ -209,7 +211,7 @@ Options for `reporters`: checkstyle, html, json, plain
 
 The html reporter is provided by [ktlint-html-reporter](https://github.com/mcassiano/ktlint-html-reporter).
 
-Reporters behave as described at: https://github.com/shyiko/ktlint
+Reporters behave as described at: https://github.com/pinterest/ktlint
 
 *Note: `reporter` with a single value is deprecated but supported for backwards compatibility.
 
@@ -258,7 +260,7 @@ If you need to use a different version of `ktlint` you can override the dependen
 ```kotlin
 buildscript {
     configurations.classpath
-        .resolutionStrategy.force("com.github.shyiko:ktlint:0.28.0")
+        .resolutionStrategy.force("com.github.pinterest:ktlint:0.31.0")
 }
 ```
 
@@ -270,7 +272,7 @@ buildscript {
 ```groovy
 buildscript {
     configurations.classpath {
-        resolutionStrategy { force 'com.github.shyiko:ktlint:0.28.0' }
+        resolutionStrategy { force 'com.github.pinterest:ktlint:0.31.0' }
     }
 }
 ```

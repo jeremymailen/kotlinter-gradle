@@ -1,10 +1,9 @@
 package org.jmailen.gradle.kotlinter.support
 
-import com.github.shyiko.ktlint.core.Reporter
-import com.github.shyiko.ktlint.reporter.checkstyle.CheckStyleReporter
-import com.github.shyiko.ktlint.reporter.json.JsonReporter
-import com.github.shyiko.ktlint.reporter.plain.PlainReporter
-import me.cassiano.ktlint.reporter.html.HtmlReporter
+import com.pinterest.ktlint.core.Reporter
+import com.pinterest.ktlint.reporter.checkstyle.CheckStyleReporter
+import com.pinterest.ktlint.reporter.json.JsonReporter
+import com.pinterest.ktlint.reporter.plain.PlainReporter
 import java.io.File
 import java.io.PrintStream
 
@@ -20,7 +19,7 @@ fun reporterFor(reporterName: String, output: File): Reporter {
     return SortedThreadSafeReporterWrapper(
         when (ReporterType.valueOf(reporterName)) {
             ReporterType.checkstyle -> CheckStyleReporter(out)
-            ReporterType.html -> HtmlReporter(out)
+            ReporterType.html -> throw NotImplementedError("html reporter not yet compatible with version") // HtmlReporter(out)
             ReporterType.json -> JsonReporter(out)
             ReporterType.plain -> PlainReporter(out)
         }

@@ -1,8 +1,8 @@
 package org.jmailen.gradle.kotlinter.support
 
-import com.github.shyiko.ktlint.core.RuleSet
-import com.github.shyiko.ktlint.core.RuleSetProvider
-import com.github.shyiko.ktlint.ruleset.experimental.ExperimentalRuleSetProvider
+import com.pinterest.ktlint.core.RuleSet
+import com.pinterest.ktlint.core.RuleSetProvider
+import com.pinterest.ktlint.ruleset.experimental.ExperimentalRuleSetProvider
 import java.util.ServiceLoader
 import kotlin.comparisons.compareBy
 

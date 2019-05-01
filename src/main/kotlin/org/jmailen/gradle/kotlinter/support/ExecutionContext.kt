@@ -1,6 +1,6 @@
 package org.jmailen.gradle.kotlinter.support
 
-import com.github.shyiko.ktlint.core.Reporter
+import com.pinterest.ktlint.core.Reporter
 import org.gradle.api.logging.Logger
 
 /**

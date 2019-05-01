@@ -1,7 +1,7 @@
 package org.jmailen.gradle.kotlinter.support
 
-import com.github.shyiko.ktlint.core.LintError
-import com.github.shyiko.ktlint.core.Reporter
+import com.pinterest.ktlint.core.LintError
+import com.pinterest.ktlint.core.Reporter
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.ConcurrentSkipListSet

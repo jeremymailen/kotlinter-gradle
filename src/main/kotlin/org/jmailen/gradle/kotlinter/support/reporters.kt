@@ -4,14 +4,15 @@ import com.pinterest.ktlint.core.Reporter
 import com.pinterest.ktlint.reporter.checkstyle.CheckStyleReporter
 import com.pinterest.ktlint.reporter.json.JsonReporter
 import com.pinterest.ktlint.reporter.plain.PlainReporter
+import me.cassiano.ktlint.reporter.html.HtmlReporter
 import java.io.File
 import java.io.PrintStream
 
-enum class ReporterType {
-    checkstyle,
-    html,
-    json,
-    plain
+enum class ReporterType(val fileExtension: String) {
+    checkstyle("xml"),
+    html("html"),
+    json("json"),
+    plain("txt")
 }
 
 fun reporterFor(reporterName: String, output: File): Reporter {
@@ -19,16 +20,11 @@ fun reporterFor(reporterName: String, output: File): Reporter {
     return SortedThreadSafeReporterWrapper(
         when (ReporterType.valueOf(reporterName)) {
             ReporterType.checkstyle -> CheckStyleReporter(out)
-            ReporterType.html -> throw NotImplementedError("html reporter not yet compatible with version") // HtmlReporter(out)
+            ReporterType.html -> HtmlReporter(out)
             ReporterType.json -> JsonReporter(out)
             ReporterType.plain -> PlainReporter(out)
         }
     )
 }
 
-fun reporterFileExtension(reporterName: String) = when (ReporterType.valueOf(reporterName)) {
-    ReporterType.checkstyle -> "xml"
-    ReporterType.html -> "html"
-    ReporterType.json -> "json"
-    ReporterType.plain -> "txt"
-}
+fun reporterFileExtension(reporterName: String) = ReporterType.valueOf(reporterName).fileExtension

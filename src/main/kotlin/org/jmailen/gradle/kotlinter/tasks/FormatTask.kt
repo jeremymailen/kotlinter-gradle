@@ -1,18 +1,22 @@
 package org.jmailen.gradle.kotlinter.tasks
 
-import com.pinterest.ktlint.core.KtLint
-import com.pinterest.ktlint.core.RuleSet
-import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
+import org.gradle.workers.WorkerExecutor
 import org.jmailen.gradle.kotlinter.KotlinterExtension
-import org.jmailen.gradle.kotlinter.support.resolveRuleSets
-import org.jmailen.gradle.kotlinter.support.userData
+import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
+import org.jmailen.gradle.kotlinter.tasks.format.FormatExecutionContext
+import org.jmailen.gradle.kotlinter.tasks.format.FormatWorkerConfigurationAction
+import org.jmailen.gradle.kotlinter.tasks.format.FormatWorkerParameters
+import org.jmailen.gradle.kotlinter.tasks.format.FormatWorkerRunnable
 import java.io.File
+import javax.inject.Inject
 
-open class FormatTask : SourceTask() {
+open class FormatTask @Inject constructor(
+    private val workerExecutor: WorkerExecutor
+) : SourceTask() {
 
     @OutputFile
     lateinit var report: File
@@ -26,74 +30,43 @@ open class FormatTask : SourceTask() {
     @Input
     var experimentalRules = KotlinterExtension.DEFAULT_EXPERIMENTAL_RULES
 
+    @Input
+    var fileBatchSize = KotlinterExtension.DEFAULT_FILE_BATCH_SIZE
+
     init {
         outputs.upToDateWhen { false }
     }
 
     @TaskAction
     fun run() {
-        var fixes = ""
+        val executionContextRepository = ExecutionContextRepository.formatInstance
+        val executionContext = FormatExecutionContext(logger)
+        val executionContextRepositoryId = executionContextRepository.register(executionContext)
 
-        getSource().forEach { file ->
-            val sourceText = file.readText()
-            val relativePath = file.toRelativeString(project.projectDir)
-
-            logger.log(LogLevel.DEBUG, "checking format: $relativePath")
-
-            when (file.extension) {
-                "kt" -> this::formatKt
-                "kts" -> this::formatKts
-                else -> {
-                    logger.log(LogLevel.DEBUG, "ignoring non Kotlin file: $relativePath")
-                    null
-                }
-            }?.let { formatFunc ->
-                val formattedText = formatFunc.invoke(file, resolveRuleSets(experimentalRules)) { line, col, detail, corrected ->
-                    val errorStr = "$relativePath:$line:$col: $detail"
-                    val msg = when (corrected) {
-                        true -> "Format fixed > $errorStr"
-                        false -> "Format could not fix > $errorStr"
-                    }
-                    logger.log(LogLevel.QUIET, msg)
-                    fixes += "$msg\n"
-                }
-                if (!formattedText.contentEquals(sourceText)) {
-                    logger.log(LogLevel.QUIET, "Format fixed > $relativePath")
-                    file.writeText(formattedText)
-                }
+        source
+            .toList()
+            .chunked(fileBatchSize)
+            .map { files ->
+                FormatWorkerParameters(
+                    files = files,
+                    projectDirectory = project.projectDir,
+                    executionContextRepositoryId = executionContextRepositoryId,
+                    experimentalRules = experimentalRules,
+                    indentSize = indentSize,
+                    continuationIndentSize = continuationIndentSize
+                )
             }
-        }
+            .forEach { parameters ->
+                workerExecutor.submit(FormatWorkerRunnable::class.java, FormatWorkerConfigurationAction(parameters))
+            }
 
-        if (fixes.isNotEmpty()) {
-            report.writeText(fixes)
+        workerExecutor.await()
+        executionContextRepository.unregister(executionContextRepositoryId)
+
+        if (executionContext.fixes.isNotEmpty()) {
+            report.writeText(executionContext.fixes.joinToString("\n"))
         } else {
             report.writeText("ok")
-        }
-    }
-
-    private fun formatKt(file: File, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit): String {
-        return KtLint.format(
-                file.readText(),
-                ruleSets,
-                userData(
-                    indentSize = indentSize,
-                    continuationIndentSize = continuationIndentSize,
-                    filePath = file.path
-                )) { error, corrected ->
-        onError(error.line, error.col, error.detail, corrected)
-        }
-    }
-
-    private fun formatKts(file: File, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit): String {
-        return KtLint.formatScript(
-                file.readText(),
-                ruleSets,
-                userData(
-                    indentSize = indentSize,
-                    continuationIndentSize = continuationIndentSize,
-                    filePath = file.path
-                )) { error, corrected ->
-        onError(error.line, error.col, error.detail, corrected)
         }
     }
 }

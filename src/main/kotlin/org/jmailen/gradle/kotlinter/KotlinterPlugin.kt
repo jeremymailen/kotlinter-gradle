@@ -53,6 +53,7 @@ class KotlinterPlugin : Plugin<Project> {
                 formatTask.indentSize = kotlinterExtension.indentSize
                 formatTask.continuationIndentSize = kotlinterExtension.continuationIndentSize
                 formatTask.experimentalRules = kotlinterExtension.experimentalRules
+                formatTask.fileBatchSize = kotlinterExtension.fileBatchSize
             }
         }
     }

@@ -15,6 +15,7 @@ import org.jmailen.gradle.kotlinter.KotlinterExtension
 import org.jmailen.gradle.kotlinter.support.HasErrorReporter
 import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
 import org.jmailen.gradle.kotlinter.support.reporterFor
+import org.jmailen.gradle.kotlinter.support.resolveRuleSets
 import org.jmailen.gradle.kotlinter.tasks.lint.LintExecutionContext
 import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerConfigurationAction
 import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerParameters
@@ -55,12 +56,13 @@ open class LintTask @Inject constructor(
 
     @TaskAction
     fun run() {
+        val ruleSets = resolveRuleSets(experimentalRules)
         val hasErrorReporter = HasErrorReporter()
         val reporters = reports.map { (reporter, report) ->
             reporterFor(reporter, report)
         } + hasErrorReporter
         val executionContextRepository = ExecutionContextRepository.lintInstance
-        val executionContextRepositoryId = executionContextRepository.register(LintExecutionContext(reporters, logger))
+        val executionContextRepositoryId = executionContextRepository.register(LintExecutionContext(ruleSets, reporters, logger))
 
         reporters.onEach { it.beforeAll() }
 

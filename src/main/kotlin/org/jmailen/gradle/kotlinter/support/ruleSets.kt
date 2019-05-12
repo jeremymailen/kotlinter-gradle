@@ -7,8 +7,8 @@ import java.util.ServiceLoader
 import kotlin.comparisons.compareBy
 
 fun resolveRuleSets(
-    includeExperimentalRules: Boolean = false,
-    providers: Iterable<RuleSetProvider> = ServiceLoader.load(RuleSetProvider::class.java)
+    providers: Iterable<RuleSetProvider>,
+    includeExperimentalRules: Boolean = false
 ): List<RuleSet> {
     return providers
         .filter { includeExperimentalRules || it !is ExperimentalRuleSetProvider }
@@ -20,3 +20,5 @@ fun resolveRuleSets(
             }
         })
 }
+
+fun defaultProviders() = ServiceLoader.load(RuleSetProvider::class.java)

@@ -41,7 +41,8 @@ class FormatWorkerRunnable @Inject constructor(
                         null
                     }
                 }?.let { formatFunc ->
-                    val formattedText = formatFunc.invoke(file, resolveRuleSets(experimentalRules)) { line, col, detail, corrected ->
+                    val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, experimentalRules)
+                    val formattedText = formatFunc.invoke(file, ruleSets) { line, col, detail, corrected ->
                         val errorStr = "$relativePath:$line:$col: $detail"
                         val msg = when (corrected) {
                             true -> "Format fixed > $errorStr"

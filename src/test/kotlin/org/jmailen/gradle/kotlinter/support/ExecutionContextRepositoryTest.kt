@@ -10,7 +10,7 @@ class ExecutionContextRepositoryTest {
     @Test
     fun getRegisteredContextWorks() {
         val repository = ExecutionContextRepository.lintInstance
-        val executionContext = LintExecutionContext(emptyList(), mock())
+        val executionContext = LintExecutionContext(mock(), emptyList(), mock())
         val id = repository.register(executionContext)
 
         val result = repository.get(id)
@@ -21,7 +21,7 @@ class ExecutionContextRepositoryTest {
     @Test(expected = NoSuchElementException::class)
     fun getUnregisteredContextFails() {
         val repository = ExecutionContextRepository.lintInstance
-        val executionContext = LintExecutionContext(emptyList(), mock())
+        val executionContext = LintExecutionContext(mock(), emptyList(), mock())
         val id = repository.register(executionContext)
         repository.unregister(id)
 

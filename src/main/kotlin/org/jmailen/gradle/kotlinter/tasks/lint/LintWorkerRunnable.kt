@@ -44,7 +44,8 @@ class LintWorkerRunnable @Inject constructor(
                     }
                 }
 
-                lintFunc?.invoke(file, resolveRuleSets(experimentalRules)) { error ->
+                val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, experimentalRules)
+                lintFunc?.invoke(file, ruleSets) { error ->
                     reporters.onEach { it.onLintError(relativePath, error, false) }
 
                     val errorStr = "$relativePath:${error.line}:${error.col}: ${error.detail}"

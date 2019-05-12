@@ -6,6 +6,7 @@ import com.pinterest.ktlint.core.Reporter
 import com.pinterest.ktlint.core.RuleSet
 import org.gradle.api.logging.Logger
 import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
+import org.jmailen.gradle.kotlinter.support.resolveRuleSets
 import org.jmailen.gradle.kotlinter.support.userData
 import java.io.File
 import javax.inject.Inject
@@ -43,7 +44,8 @@ class LintWorkerRunnable @Inject constructor(
                     }
                 }
 
-                lintFunc?.invoke(file, executionContext.ruleSets) { error ->
+                val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, experimentalRules)
+                lintFunc?.invoke(file, ruleSets) { error ->
                     reporters.onEach { it.onLintError(relativePath, error, false) }
 
                     val errorStr = "$relativePath:${error.line}:${error.col}: ${error.detail}"

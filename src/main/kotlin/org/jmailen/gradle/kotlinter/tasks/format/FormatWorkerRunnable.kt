@@ -5,6 +5,7 @@ import com.pinterest.ktlint.core.RuleSet
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.Logger
 import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
+import org.jmailen.gradle.kotlinter.support.resolveRuleSets
 import org.jmailen.gradle.kotlinter.support.userData
 import java.io.File
 import javax.inject.Inject
@@ -40,7 +41,8 @@ class FormatWorkerRunnable @Inject constructor(
                         null
                     }
                 }?.let { formatFunc ->
-                    val formattedText = formatFunc.invoke(file, executionContext.ruleSets) { line, col, detail, corrected ->
+                    val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, experimentalRules)
+                    val formattedText = formatFunc.invoke(file, ruleSets) { line, col, detail, corrected ->
                         val errorStr = "$relativePath:$line:$col: $detail"
                         val msg = when (corrected) {
                             true -> "Format fixed > $errorStr"

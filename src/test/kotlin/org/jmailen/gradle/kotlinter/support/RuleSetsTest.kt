@@ -13,14 +13,14 @@ class RuleSetsTest {
 
     @Test
     fun `resolveRuleSets loads from classpath providers`() {
-        val result = resolveRuleSets(defaultProviders())
+        val result = resolveRuleSets(defaultRuleSetProviders)
 
         assertEquals(listOf("standard"), result.map { it.id })
     }
 
     @Test
     fun `resolveRuleSets loads from classpath providers including experimental rules`() {
-        val result = resolveRuleSets(defaultProviders(), true)
+        val result = resolveRuleSets(defaultRuleSetProviders, true)
 
         assertEquals(listOf("standard", "experimental"), result.map { it.id })
     }
@@ -40,7 +40,7 @@ class RuleSetsTest {
 
     @Test
     fun `test compatibility`() {
-        KtLint.lint("""fun someFunc() = """"", resolveRuleSets(defaultProviders())) {}
+        KtLint.lint("""fun someFunc() = """"", resolveRuleSets(defaultRuleSetProviders)) {}
     }
 }
 

@@ -7,7 +7,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
 import org.jmailen.gradle.kotlinter.KotlinterExtension
 import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
-import org.jmailen.gradle.kotlinter.support.defaultProviders
+import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
 import org.jmailen.gradle.kotlinter.tasks.format.FormatExecutionContext
 import org.jmailen.gradle.kotlinter.tasks.format.FormatWorkerConfigurationAction
 import org.jmailen.gradle.kotlinter.tasks.format.FormatWorkerParameters
@@ -41,7 +41,7 @@ open class FormatTask @Inject constructor(
     @TaskAction
     fun run() {
         val executionContextRepository = ExecutionContextRepository.formatInstance
-        val executionContext = FormatExecutionContext(defaultProviders(), logger)
+        val executionContext = FormatExecutionContext(defaultRuleSetProviders, logger)
         val executionContextRepositoryId = executionContextRepository.register(executionContext)
 
         source

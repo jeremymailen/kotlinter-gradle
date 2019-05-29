@@ -3,7 +3,7 @@ plugins {
     id 'com.gradle.plugin-publish' version '0.10.0'
     id 'java-gradle-plugin'
     id 'maven-publish'
-    id 'org.jmailen.kotlinter' version '1.25.1'
+    id 'org.jmailen.kotlinter' version '1.25.2'
     id 'idea'
 }
 
@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.pinterest:ktlint:0.32.0'
+    implementation 'com.pinterest:ktlint:0.33.0'
     implementation 'me.cassiano:ktlint-html-reporter:0.2.1'
     
     compileOnly 'org.jetbrains.kotlin:kotlin-gradle-plugin'
@@ -30,7 +30,7 @@ tasks.withType(PluginUnderTestMetadata).configureEach {
     pluginClasspath.from(configurations.compileOnly)
 }
 
-version = '1.25.2'
+version = '1.26.0'
 group = 'org.jmailen.gradle'
 def pluginId = 'org.jmailen.kotlinter'
 

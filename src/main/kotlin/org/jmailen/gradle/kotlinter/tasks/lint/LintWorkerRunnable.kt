@@ -25,6 +25,7 @@ class LintWorkerRunnable @Inject constructor(
     private val projectDirectory: File = parameters.projectDirectory
     private val name: String = parameters.name
     private val experimentalRules: Boolean = parameters.experimentalRules
+    private val allowWildcardImports: Boolean = parameters.allowWildcardImports
     private val indentSize: Int = parameters.indentSize
     private val continuationIndentSize: Int = parameters.continuationIndentSize
 
@@ -44,7 +45,7 @@ class LintWorkerRunnable @Inject constructor(
                     }
                 }
 
-                val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, experimentalRules)
+                val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, experimentalRules, allowWildcardImports)
                 lintFunc?.invoke(file, ruleSets) { error ->
                     reporters.onEach { it.onLintError(relativePath, error, false) }
 

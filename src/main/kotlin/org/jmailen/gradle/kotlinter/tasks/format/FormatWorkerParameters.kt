@@ -12,6 +12,7 @@ data class FormatWorkerParameters(
     val projectDirectory: File,
     val executionContextRepositoryId: UUID,
     val experimentalRules: Boolean,
+    val allowWildcardImports: Boolean,
     val indentSize: Int,
     val continuationIndentSize: Int
 ) : Serializable

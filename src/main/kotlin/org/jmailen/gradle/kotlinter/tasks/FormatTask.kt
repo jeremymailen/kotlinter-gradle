@@ -32,6 +32,9 @@ open class FormatTask @Inject constructor(
     var experimentalRules = KotlinterExtension.DEFAULT_EXPERIMENTAL_RULES
 
     @Input
+    var allowWildcardImports = KotlinterExtension.DEFAULT_ALLOW_WILDCARD_IMPORTS
+
+    @Input
     var fileBatchSize = KotlinterExtension.DEFAULT_FILE_BATCH_SIZE
 
     init {
@@ -53,6 +56,7 @@ open class FormatTask @Inject constructor(
                     projectDirectory = project.projectDir,
                     executionContextRepositoryId = executionContextRepositoryId,
                     experimentalRules = experimentalRules,
+                    allowWildcardImports = allowWildcardImports,
                     indentSize = indentSize,
                     continuationIndentSize = continuationIndentSize
                 )

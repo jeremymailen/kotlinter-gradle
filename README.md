@@ -15,7 +15,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "1.25.2"
+    id("org.jmailen.kotlinter") version "1.26.0"
 }
 ```
 
@@ -26,7 +26,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "1.25.2"
+    id "org.jmailen.kotlinter" version "1.26.0"
 }
 ```
 
@@ -46,7 +46,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jmailen.gradle:kotlinter-gradle:1.25.2")
+        classpath("org.jmailen.gradle:kotlinter-gradle:1.26.0")
     }
 }
 ```
@@ -71,7 +71,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.jmailen.gradle:kotlinter-gradle:1.25.2"
+        classpath "org.jmailen.gradle:kotlinter-gradle:1.26.0"
     }
 }
 ```
@@ -185,6 +185,7 @@ kotlinter {
     continuationIndentSize = 4
     reporters = arrayOf("checkstyle", "plain")
     experimentalRules = false
+    allowWildcardImports = true
     fileBatchSize = 30
 }
 ```
@@ -201,6 +202,7 @@ kotlinter {
     continuationIndentSize = 4
     reporters = ['checkstyle', 'plain']
     experimentalRules = false
+    allowWildcardImports = true
     fileBatchSize = 30
 }
 ```
@@ -216,6 +218,8 @@ Reporters behave as described at: https://github.com/pinterest/ktlint
 *Note: `reporter` with a single value is deprecated but supported for backwards compatibility.
 
 The `experimentalRules` property enables rules which are part of ktlint's experimental rule set.
+
+The `allowWildcardImports` property can be set to `false` if you wish to disallow use of wildcard imports.
 
 The `fileBatchSize` property configures the number of files that are processed in one Gradle Worker API call.
 

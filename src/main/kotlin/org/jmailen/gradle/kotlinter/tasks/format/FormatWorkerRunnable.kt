@@ -22,6 +22,7 @@ class FormatWorkerRunnable @Inject constructor(
     private val files: List<File> = parameters.files
     private val projectDirectory: File = parameters.projectDirectory
     private val experimentalRules: Boolean = parameters.experimentalRules
+    private val allowWildcardImports: Boolean = parameters.allowWildcardImports
     private val indentSize: Int = parameters.indentSize
     private val continuationIndentSize: Int = parameters.continuationIndentSize
 
@@ -41,7 +42,7 @@ class FormatWorkerRunnable @Inject constructor(
                         null
                     }
                 }?.let { formatFunc ->
-                    val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, experimentalRules)
+                    val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, experimentalRules, allowWildcardImports)
                     val formattedText = formatFunc.invoke(file, ruleSets) { line, col, detail, corrected ->
                         val errorStr = "$relativePath:$line:$col: $detail"
                         val msg = when (corrected) {

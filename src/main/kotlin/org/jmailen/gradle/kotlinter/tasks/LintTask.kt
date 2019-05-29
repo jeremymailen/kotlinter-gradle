@@ -49,6 +49,9 @@ open class LintTask @Inject constructor(
     var experimentalRules = KotlinterExtension.DEFAULT_EXPERIMENTAL_RULES
 
     @Input
+    var allowWildcardImports = KotlinterExtension.DEFAULT_ALLOW_WILDCARD_IMPORTS
+
+    @Input
     var fileBatchSize = KotlinterExtension.DEFAULT_FILE_BATCH_SIZE
 
     @Internal
@@ -75,6 +78,7 @@ open class LintTask @Inject constructor(
                     executionContextRepositoryId = executionContextRepositoryId,
                     name = name,
                     experimentalRules = experimentalRules,
+                    allowWildcardImports = allowWildcardImports,
                     indentSize = indentSize,
                     continuationIndentSize = continuationIndentSize
                 )

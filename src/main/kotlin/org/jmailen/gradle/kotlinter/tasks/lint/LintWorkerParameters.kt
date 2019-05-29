@@ -13,6 +13,7 @@ data class LintWorkerParameters(
     val name: String,
     val executionContextRepositoryId: UUID,
     val experimentalRules: Boolean,
+    val allowWildcardImports: Boolean,
     val indentSize: Int,
     val continuationIndentSize: Int
 ) : Serializable

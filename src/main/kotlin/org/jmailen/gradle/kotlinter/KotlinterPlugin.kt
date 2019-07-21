@@ -11,6 +11,7 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.reporterFileExtension
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
@@ -41,20 +42,24 @@ class KotlinterPlugin : Plugin<Project> {
         project.afterEvaluate {
             taskCreator.lintTasks.forEach { lintTask ->
                 lintTask.ignoreFailures = kotlinterExtension.ignoreFailures
-                lintTask.indentSize = kotlinterExtension.indentSize
-                lintTask.continuationIndentSize = kotlinterExtension.continuationIndentSize
                 lintTask.reports = kotlinterExtension.reporters().associate { reporter ->
                     reporter to project.reportFile("${lintTask.sourceSetId}-lint.${reporterFileExtension(reporter)}")
                 }
-                lintTask.experimentalRules = kotlinterExtension.experimentalRules
-                lintTask.allowWildcardImports = kotlinterExtension.allowWildcardImports
+                lintTask.ktLintParams = KtLintParams(
+                    kotlinterExtension.indentSize,
+                    kotlinterExtension.continuationIndentSize,
+                    kotlinterExtension.experimentalRules,
+                    kotlinterExtension.allowWildcardImports
+                )
                 lintTask.fileBatchSize = kotlinterExtension.fileBatchSize
             }
             taskCreator.formatTasks.forEach { formatTask ->
-                formatTask.indentSize = kotlinterExtension.indentSize
-                formatTask.continuationIndentSize = kotlinterExtension.continuationIndentSize
-                formatTask.experimentalRules = kotlinterExtension.experimentalRules
-                formatTask.allowWildcardImports = kotlinterExtension.allowWildcardImports
+                formatTask.ktLintParams = KtLintParams(
+                    kotlinterExtension.indentSize,
+                    kotlinterExtension.continuationIndentSize,
+                    kotlinterExtension.experimentalRules,
+                    kotlinterExtension.allowWildcardImports
+                )
                 formatTask.fileBatchSize = kotlinterExtension.fileBatchSize
             }
         }

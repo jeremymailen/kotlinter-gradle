@@ -5,6 +5,7 @@ import com.pinterest.ktlint.core.RuleSet
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.Logger
 import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
+import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.resolveRuleSets
 import org.jmailen.gradle.kotlinter.support.userData
 import java.io.File
@@ -21,10 +22,7 @@ class FormatWorkerRunnable @Inject constructor(
     private val logger: Logger = executionContext.logger
     private val files: List<File> = parameters.files
     private val projectDirectory: File = parameters.projectDirectory
-    private val experimentalRules: Boolean = parameters.experimentalRules
-    private val allowWildcardImports: Boolean = parameters.allowWildcardImports
-    private val indentSize: Int = parameters.indentSize
-    private val continuationIndentSize: Int = parameters.continuationIndentSize
+    private val ktLintParams: KtLintParams = parameters.ktLintParams
 
     override fun run() {
         files
@@ -42,7 +40,7 @@ class FormatWorkerRunnable @Inject constructor(
                         null
                     }
                 }?.let { formatFunc ->
-                    val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, experimentalRules, allowWildcardImports)
+                    val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, ktLintParams.experimentalRules, ktLintParams.allowWildcardImports)
                     val formattedText = formatFunc.invoke(file, ruleSets) { line, col, detail, corrected ->
                         val errorStr = "$relativePath:$line:$col: $detail"
                         val msg = when (corrected) {
@@ -73,7 +71,7 @@ class FormatWorkerRunnable @Inject constructor(
                 text = file.readText(),
                 ruleSets = ruleSets,
                 script = script,
-                userData = userData(indentSize, continuationIndentSize),
+                userData = userData(ktLintParams.indentSize, ktLintParams.continuationIndentSize),
                 cb = { error, corrected ->
                     onError(error.line, error.col, error.detail, corrected)
                 }

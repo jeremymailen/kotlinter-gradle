@@ -12,10 +12,7 @@ import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
 import org.jmailen.gradle.kotlinter.KotlinterExtension
-import org.jmailen.gradle.kotlinter.support.HasErrorReporter
-import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
-import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
-import org.jmailen.gradle.kotlinter.support.reporterFor
+import org.jmailen.gradle.kotlinter.support.*
 import org.jmailen.gradle.kotlinter.tasks.lint.LintExecutionContext
 import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerConfigurationAction
 import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerParameters
@@ -40,22 +37,17 @@ open class LintTask @Inject constructor(
     var ignoreFailures = KotlinterExtension.DEFAULT_IGNORE_FAILURES
 
     @Input
-    var indentSize = KotlinterExtension.DEFAULT_INDENT_SIZE
-
-    @Input
-    var continuationIndentSize = KotlinterExtension.DEFAULT_CONTINUATION_INDENT_SIZE
-
-    @Input
-    var experimentalRules = KotlinterExtension.DEFAULT_EXPERIMENTAL_RULES
-
-    @Input
-    var allowWildcardImports = KotlinterExtension.DEFAULT_ALLOW_WILDCARD_IMPORTS
-
-    @Input
     var fileBatchSize = KotlinterExtension.DEFAULT_FILE_BATCH_SIZE
+
+    @Input
+    var ktLintParams = KtLintParams()
 
     @Internal
     var sourceSetId = ""
+
+    fun setIndentSize(indent: Int) { ktLintParams.indentSize = indent }
+
+    fun setContinuationIndentSize(indent: Int) { ktLintParams.continuationIndentSize = indent }
 
     @TaskAction
     fun run() {
@@ -77,10 +69,7 @@ open class LintTask @Inject constructor(
                     projectDirectory = project.projectDir,
                     executionContextRepositoryId = executionContextRepositoryId,
                     name = name,
-                    experimentalRules = experimentalRules,
-                    allowWildcardImports = allowWildcardImports,
-                    indentSize = indentSize,
-                    continuationIndentSize = continuationIndentSize
+                    ktLintParams = ktLintParams
                 )
             }
             .forEach { parameters ->

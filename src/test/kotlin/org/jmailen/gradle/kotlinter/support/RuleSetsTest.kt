@@ -47,7 +47,22 @@ class RuleSetsTest {
 
     @Test
     fun `test compatibility`() {
-        KtLint.lint("""fun someFunc() = """"", resolveRuleSets(defaultRuleSetProviders)) {}
+        KtLint.lint(
+            KtLint.Params(
+                "/tmp/src/test/KotlinClass.kt",
+                """
+                    package test
+
+                    class KotlinClass {
+                        private fun hi() {
+                            println("hi")
+                        }
+                    }
+
+                """.trimIndent(),
+                resolveRuleSets(defaultRuleSetProviders), cb = { _, _ -> }
+            )
+        )
     }
 }
 

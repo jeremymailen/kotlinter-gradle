@@ -60,29 +60,26 @@ class FormatWorkerRunnable @Inject constructor(
         }
     }
 
-    private fun formatKt(file: File, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit): String {
-        return KtLint.format(
-            file.readText(),
-            ruleSets,
-            userData(
-                indentSize = indentSize,
-                continuationIndentSize = continuationIndentSize,
-                filePath = file.path
-            )) { error, corrected ->
-            onError(error.line, error.col, error.detail, corrected)
-        }
-    }
+    private fun formatKt(file: File, ruleSets: List<RuleSet>, onError: ErrorHandler) =
+        format(file, ruleSets, onError, false)
 
-    private fun formatKts(file: File, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit): String {
-        return KtLint.formatScript(
-            file.readText(),
-            ruleSets,
-            userData(
-                indentSize = indentSize,
-                continuationIndentSize = continuationIndentSize,
-                filePath = file.path
-            )) { error, corrected ->
-            onError(error.line, error.col, error.detail, corrected)
-        }
+    private fun formatKts(file: File, ruleSets: List<RuleSet>, onError: ErrorHandler) =
+        format(file, ruleSets, onError, true)
+
+    private fun format(file: File, ruleSets: List<RuleSet>, onError: ErrorHandler, script: Boolean): String {
+        return KtLint.format(
+            KtLint.Params(
+                fileName = file.path,
+                text = file.readText(),
+                ruleSets = ruleSets,
+                script = script,
+                userData = userData(indentSize, continuationIndentSize),
+                cb = { error, corrected ->
+                    onError(error.line, error.col, error.detail, corrected)
+                }
+            )
+        )
     }
 }
+
+typealias ErrorHandler = (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit

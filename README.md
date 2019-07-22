@@ -133,7 +133,7 @@ kotlinter {
     continuationIndentSize = 4
     reporters = arrayOf("checkstyle", "plain")
     experimentalRules = false
-    allowWildcardImports = true
+    disabledRules = emptyArray<String>()
     fileBatchSize = 30
 }
 ```
@@ -150,7 +150,7 @@ kotlinter {
     continuationIndentSize = 4
     reporters = ['checkstyle', 'plain']
     experimentalRules = false
-    allowWildcardImports = true
+    disabledRules = []
     fileBatchSize = 30
 }
 ```
@@ -163,11 +163,13 @@ The html reporter is provided by [ktlint-html-reporter](https://github.com/mcass
 
 Reporters behave as described at: https://github.com/pinterest/ktlint
 
-*Note: `reporter` with a single value is deprecated but supported for backwards compatibility.
-
 The `experimentalRules` property enables rules which are part of ktlint's experimental rule set.
 
-The `allowWildcardImports` property can be set to `false` if you wish to disallow use of wildcard imports.
+The `disabledRules` property can includes an array of rule ids you wish to disable. For example to allow wildcard imports:
+```groovy
+disabledRules = ["no-wildcard-imports"]
+```
+You must prefix rule ids not part of the standard rule set with `<rule-set-id>:<rule-id>`. For example `experimental:annotation`.
 
 The `fileBatchSize` property configures the number of files that are processed in one Gradle Worker API call.
 

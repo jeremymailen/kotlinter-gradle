@@ -33,10 +33,6 @@ open class FormatTask @Inject constructor(
         outputs.upToDateWhen { false }
     }
 
-    fun setIndentSize(indent: Int) { ktLintParams.indentSize = indent }
-
-    fun setContinuationIndentSize(indent: Int) { ktLintParams.continuationIndentSize = indent }
-
     @TaskAction
     fun run() {
         val executionContextRepository = ExecutionContextRepository.formatInstance

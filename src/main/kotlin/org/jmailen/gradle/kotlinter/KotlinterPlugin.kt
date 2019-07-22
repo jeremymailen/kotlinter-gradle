@@ -44,13 +44,13 @@ class KotlinterPlugin : Plugin<Project> {
                 kotlinterExtension.indentSize,
                 kotlinterExtension.continuationIndentSize,
                 kotlinterExtension.experimentalRules,
-                kotlinterExtension.allowWildcardImports,
+                kotlinterExtension.disabledRules,
                 project.editorConfigPath()
             )
 
             taskCreator.lintTasks.forEach { lintTask ->
                 lintTask.ignoreFailures = kotlinterExtension.ignoreFailures
-                lintTask.reports = kotlinterExtension.reporters().associate { reporter ->
+                lintTask.reports = kotlinterExtension.reporters.associate { reporter ->
                     reporter to project.reportFile("${lintTask.sourceSetId}-lint.${reporterFileExtension(reporter)}")
                 }
                 lintTask.ktLintParams = ktLintParams

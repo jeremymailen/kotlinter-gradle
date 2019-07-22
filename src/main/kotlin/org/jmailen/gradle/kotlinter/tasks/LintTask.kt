@@ -45,10 +45,6 @@ open class LintTask @Inject constructor(
     @Internal
     var sourceSetId = ""
 
-    fun setIndentSize(indent: Int) { ktLintParams.indentSize = indent }
-
-    fun setContinuationIndentSize(indent: Int) { ktLintParams.continuationIndentSize = indent }
-
     @TaskAction
     fun run() {
         val hasErrorReporter = HasErrorReporter()

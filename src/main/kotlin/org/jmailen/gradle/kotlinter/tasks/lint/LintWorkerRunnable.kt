@@ -42,7 +42,7 @@ class LintWorkerRunnable @Inject constructor(
                     }
                 }
 
-                val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, ktLintParams.experimentalRules, ktLintParams.allowWildcardImports)
+                val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, ktLintParams.experimentalRules)
                 lintFunc?.invoke(file, ruleSets) { error ->
                     reporters.onEach { it.onLintError(relativePath, error, false) }
 
@@ -67,7 +67,7 @@ class LintWorkerRunnable @Inject constructor(
                 text = file.readText(),
                 ruleSets = ruleSets,
                 script = script,
-                userData = userData(ktLintParams.indentSize, ktLintParams.continuationIndentSize),
+                userData = userData(ktLintParams),
                 editorConfigPath = ktLintParams.editorConfigPath,
                 cb = { error, _ -> onError(error) }
             )

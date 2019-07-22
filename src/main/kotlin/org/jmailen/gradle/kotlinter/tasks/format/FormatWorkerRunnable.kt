@@ -40,7 +40,7 @@ class FormatWorkerRunnable @Inject constructor(
                         null
                     }
                 }?.let { formatFunc ->
-                    val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, ktLintParams.experimentalRules, ktLintParams.allowWildcardImports)
+                    val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, ktLintParams.experimentalRules)
                     val formattedText = formatFunc.invoke(file, ruleSets) { line, col, detail, corrected ->
                         val errorStr = "$relativePath:$line:$col: $detail"
                         val msg = when (corrected) {
@@ -71,7 +71,7 @@ class FormatWorkerRunnable @Inject constructor(
                 text = file.readText(),
                 ruleSets = ruleSets,
                 script = script,
-                userData = userData(ktLintParams.indentSize, ktLintParams.continuationIndentSize),
+                userData = userData(ktLintParams),
                 editorConfigPath = ktLintParams.editorConfigPath,
                 cb = { error, corrected ->
                     onError(error.line, error.col, error.detail, corrected)

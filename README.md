@@ -120,58 +120,6 @@ Also `check` becomes dependent on `lintKotlin`.
 
 Granular tasks exist for each source set in the project: `formatKotlin`*`SourceSet`* and `lintKotlin`*`SourceSet`*.
 
-### Custom Tasks
-
-If you haven't applied these plugins you can create custom tasks:
-
-<details open>
-<summary>Kotlin</summary>
-
-```kotlin
-import org.jmailen.gradle.kotlinter.tasks.LintTask
-import org.jmailen.gradle.kotlinter.tasks.FormatTask
-
-val ktLint by tasks.creating(LintTask::class) {
-    group = "verification"
-    source(files("src"))
-    reports = mapOf(
-        "plain" to file("build/lint-report.txt"),
-        "json" to file("build/lint-report.json")
-    )
-}
-
-val ktFormat by tasks.creating(FormatTask::class) {
-    group = "formatting"
-    source(files("src"))
-    report = file("build/format-report.txt")
-}
-```
-
-</details>
-
-<details>
-<summary>Groovy</summary>
-
-```groovy
-import org.jmailen.gradle.kotlinter.tasks.LintTask
-import org.jmailen.gradle.kotlinter.tasks.FormatTask
-
-task ktLint(type: LintTask, group: 'verification') {
-    source files('src')
-    reports = [
-            'plain': file('build/lint-report.txt'),
-            'json': file('build/lint-report.json')
-    ]
-}
-
-task ktFormat(type: FormatTask, group: 'formatting') {
-    source files('src')
-    report = file('build/format-report.txt')
-}
-```
-
-</details>
-
 ### Configuration
 Options are configured in the `kotlinter` extension. Defaults shown (you may omit the configuration block entirely if you want these values).
 
@@ -223,6 +171,14 @@ The `allowWildcardImports` property can be set to `false` if you wish to disallo
 
 The `fileBatchSize` property configures the number of files that are processed in one Gradle Worker API call.
 
+### Editorconfig
+
+Kotlinter will configure itself using an `.editorconfig` file if one is present in your root project directory.
+
+For configuration values supported in both the `kotlinter` extension and `.editorconfig`, the `.editorconfig` values will take precedence.
+
+See [Ktlint editorconfig](https://github.com/pinterest/ktlint#editorconfig) for supported values.
+
 ### Customizing Tasks
 
 The `formatKotlin`*`SourceSet`* and `lintKotlin`*`SourceSet`* tasks inherit from [SourceTask](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.SourceTask.html)
@@ -249,6 +205,58 @@ tasks {
 ```groovy
 lintKotlinMain {
     exclude '**/*Generated.kt'
+}
+```
+
+</details>
+
+### Custom Tasks
+
+If you haven't applied these plugins you can create custom tasks:
+
+<details open>
+<summary>Kotlin</summary>
+
+```kotlin
+import org.jmailen.gradle.kotlinter.tasks.LintTask
+import org.jmailen.gradle.kotlinter.tasks.FormatTask
+
+val ktLint by tasks.creating(LintTask::class) {
+    group = "verification"
+    source(files("src"))
+    reports = mapOf(
+        "plain" to file("build/lint-report.txt"),
+        "json" to file("build/lint-report.json")
+    )
+}
+
+val ktFormat by tasks.creating(FormatTask::class) {
+    group = "formatting"
+    source(files("src"))
+    report = file("build/format-report.txt")
+}
+```
+
+</details>
+
+<details>
+<summary>Groovy</summary>
+
+```groovy
+import org.jmailen.gradle.kotlinter.tasks.LintTask
+import org.jmailen.gradle.kotlinter.tasks.FormatTask
+
+task ktLint(type: LintTask, group: 'verification') {
+    source files('src')
+    reports = [
+            'plain': file('build/lint-report.txt'),
+            'json': file('build/lint-report.json')
+    ]
+}
+
+task ktFormat(type: FormatTask, group: 'formatting') {
+    source files('src')
+    report = file('build/format-report.txt')
 }
 ```
 

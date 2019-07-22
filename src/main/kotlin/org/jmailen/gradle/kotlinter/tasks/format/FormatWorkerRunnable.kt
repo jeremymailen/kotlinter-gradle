@@ -72,6 +72,7 @@ class FormatWorkerRunnable @Inject constructor(
                 ruleSets = ruleSets,
                 script = script,
                 userData = userData(ktLintParams.indentSize, ktLintParams.continuationIndentSize),
+                editorConfigPath = ktLintParams.editorConfigPath,
                 cb = { error, corrected ->
                     onError(error.line, error.col, error.detail, corrected)
                 }

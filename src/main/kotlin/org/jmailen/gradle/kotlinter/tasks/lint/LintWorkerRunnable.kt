@@ -68,6 +68,7 @@ class LintWorkerRunnable @Inject constructor(
                 ruleSets = ruleSets,
                 script = script,
                 userData = userData(ktLintParams.indentSize, ktLintParams.continuationIndentSize),
+                editorConfigPath = ktLintParams.editorConfigPath,
                 cb = { error, _ -> onError(error) }
             )
         )

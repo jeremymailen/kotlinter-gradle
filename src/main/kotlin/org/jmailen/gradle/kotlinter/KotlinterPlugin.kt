@@ -40,26 +40,24 @@ class KotlinterPlugin : Plugin<Project> {
         }
 
         project.afterEvaluate {
+            val ktLintParams = KtLintParams(
+                kotlinterExtension.indentSize,
+                kotlinterExtension.continuationIndentSize,
+                kotlinterExtension.experimentalRules,
+                kotlinterExtension.allowWildcardImports,
+                project.editorConfigPath()
+            )
+
             taskCreator.lintTasks.forEach { lintTask ->
                 lintTask.ignoreFailures = kotlinterExtension.ignoreFailures
                 lintTask.reports = kotlinterExtension.reporters().associate { reporter ->
                     reporter to project.reportFile("${lintTask.sourceSetId}-lint.${reporterFileExtension(reporter)}")
                 }
-                lintTask.ktLintParams = KtLintParams(
-                    kotlinterExtension.indentSize,
-                    kotlinterExtension.continuationIndentSize,
-                    kotlinterExtension.experimentalRules,
-                    kotlinterExtension.allowWildcardImports
-                )
+                lintTask.ktLintParams = ktLintParams
                 lintTask.fileBatchSize = kotlinterExtension.fileBatchSize
             }
             taskCreator.formatTasks.forEach { formatTask ->
-                formatTask.ktLintParams = KtLintParams(
-                    kotlinterExtension.indentSize,
-                    kotlinterExtension.continuationIndentSize,
-                    kotlinterExtension.experimentalRules,
-                    kotlinterExtension.allowWildcardImports
-                )
+                formatTask.ktLintParams = ktLintParams
                 formatTask.fileBatchSize = kotlinterExtension.fileBatchSize
             }
         }
@@ -161,3 +159,7 @@ val String.id
     get() = split(" ").first()
 
 fun Project.reportFile(name: String) = file("${project.buildDir}/reports/ktlint/$name")
+
+fun Project.editorConfigPath() = with(rootProject.file(".editorconfig")) {
+    if (this.exists()) this.path else null
+}

@@ -5,6 +5,7 @@ import com.pinterest.ktlint.core.RuleSet
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.Logger
 import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
+import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.resolveRuleSets
 import org.jmailen.gradle.kotlinter.support.userData
 import java.io.File
@@ -21,10 +22,7 @@ class FormatWorkerRunnable @Inject constructor(
     private val logger: Logger = executionContext.logger
     private val files: List<File> = parameters.files
     private val projectDirectory: File = parameters.projectDirectory
-    private val experimentalRules: Boolean = parameters.experimentalRules
-    private val allowWildcardImports: Boolean = parameters.allowWildcardImports
-    private val indentSize: Int = parameters.indentSize
-    private val continuationIndentSize: Int = parameters.continuationIndentSize
+    private val ktLintParams: KtLintParams = parameters.ktLintParams
 
     override fun run() {
         files
@@ -42,7 +40,7 @@ class FormatWorkerRunnable @Inject constructor(
                         null
                     }
                 }?.let { formatFunc ->
-                    val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, experimentalRules, allowWildcardImports)
+                    val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, ktLintParams.experimentalRules)
                     val formattedText = formatFunc.invoke(file, ruleSets) { line, col, detail, corrected ->
                         val errorStr = "$relativePath:$line:$col: $detail"
                         val msg = when (corrected) {
@@ -60,29 +58,27 @@ class FormatWorkerRunnable @Inject constructor(
         }
     }
 
-    private fun formatKt(file: File, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit): String {
-        return KtLint.format(
-            file.readText(),
-            ruleSets,
-            userData(
-                indentSize = indentSize,
-                continuationIndentSize = continuationIndentSize,
-                filePath = file.path
-            )) { error, corrected ->
-            onError(error.line, error.col, error.detail, corrected)
-        }
-    }
+    private fun formatKt(file: File, ruleSets: List<RuleSet>, onError: ErrorHandler) =
+        format(file, ruleSets, onError, false)
 
-    private fun formatKts(file: File, ruleSets: List<RuleSet>, onError: (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit): String {
-        return KtLint.formatScript(
-            file.readText(),
-            ruleSets,
-            userData(
-                indentSize = indentSize,
-                continuationIndentSize = continuationIndentSize,
-                filePath = file.path
-            )) { error, corrected ->
-            onError(error.line, error.col, error.detail, corrected)
-        }
+    private fun formatKts(file: File, ruleSets: List<RuleSet>, onError: ErrorHandler) =
+        format(file, ruleSets, onError, true)
+
+    private fun format(file: File, ruleSets: List<RuleSet>, onError: ErrorHandler, script: Boolean): String {
+        return KtLint.format(
+            KtLint.Params(
+                fileName = file.path,
+                text = file.readText(),
+                ruleSets = ruleSets,
+                script = script,
+                userData = userData(ktLintParams),
+                editorConfigPath = ktLintParams.editorConfigPath,
+                cb = { error, corrected ->
+                    onError(error.line, error.col, error.detail, corrected)
+                }
+            )
+        )
     }
 }
+
+typealias ErrorHandler = (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit

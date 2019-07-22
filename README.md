@@ -15,7 +15,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "1.26.0"
+    id("org.jmailen.kotlinter") version "2.0.0"
 }
 ```
 
@@ -26,7 +26,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "1.26.0"
+    id "org.jmailen.kotlinter" version "2.0.0"
 }
 ```
 
@@ -46,7 +46,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jmailen.gradle:kotlinter-gradle:1.26.0")
+        classpath("org.jmailen.gradle:kotlinter-gradle:2.0.0")
     }
 }
 ```
@@ -71,7 +71,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.jmailen.gradle:kotlinter-gradle:1.26.0"
+        classpath "org.jmailen.gradle:kotlinter-gradle:2.0.0"
     }
 }
 ```
@@ -120,6 +120,98 @@ Also `check` becomes dependent on `lintKotlin`.
 
 Granular tasks exist for each source set in the project: `formatKotlin`*`SourceSet`* and `lintKotlin`*`SourceSet`*.
 
+### Configuration
+Options are configured in the `kotlinter` extension. Defaults shown (you may omit the configuration block entirely if you want these values).
+
+<details open>
+<summary>Kotlin</summary>
+
+```kotlin
+kotlinter {
+    ignoreFailures = false
+    indentSize = 4
+    continuationIndentSize = 4
+    reporters = arrayOf("checkstyle", "plain")
+    experimentalRules = false
+    disabledRules = emptyArray<String>()
+    fileBatchSize = 30
+}
+```
+
+</details>
+
+<details>
+<summary>Groovy</summary>
+
+```groovy
+kotlinter {
+    ignoreFailures = false
+    indentSize = 4
+    continuationIndentSize = 4
+    reporters = ['checkstyle', 'plain']
+    experimentalRules = false
+    disabledRules = []
+    fileBatchSize = 30
+}
+```
+
+</details>
+
+Options for `reporters`: checkstyle, html, json, plain
+
+The html reporter is provided by [ktlint-html-reporter](https://github.com/mcassiano/ktlint-html-reporter).
+
+Reporters behave as described at: https://github.com/pinterest/ktlint
+
+The `experimentalRules` property enables rules which are part of ktlint's experimental rule set.
+
+The `disabledRules` property can includes an array of rule ids you wish to disable. For example to allow wildcard imports:
+```groovy
+disabledRules = ["no-wildcard-imports"]
+```
+You must prefix rule ids not part of the standard rule set with `<rule-set-id>:<rule-id>`. For example `experimental:annotation`.
+
+The `fileBatchSize` property configures the number of files that are processed in one Gradle Worker API call.
+
+### Editorconfig
+
+Kotlinter will configure itself using an `.editorconfig` file if one is present in your root project directory.
+
+For configuration values supported in both the `kotlinter` extension and `.editorconfig`, the `.editorconfig` values will take precedence.
+
+See [Ktlint editorconfig](https://github.com/pinterest/ktlint#editorconfig) for supported values.
+
+### Customizing Tasks
+
+The `formatKotlin`*`SourceSet`* and `lintKotlin`*`SourceSet`* tasks inherit from [SourceTask](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.SourceTask.html)
+so you can customize includes, excludes, and source.
+
+<details open>
+<summary>Kotlin</summary>
+
+```kotlin
+import org.jmailen.gradle.kotlinter.tasks.LintTask
+
+tasks {
+    "lintKotlinMain"(LintTask::class) {
+        exclude("**/*Generated.kt")
+    }
+}
+```
+
+</details>
+
+<details>
+<summary>Groovy</summary>
+
+```groovy
+lintKotlinMain {
+    exclude '**/*Generated.kt'
+}
+```
+
+</details>
+
 ### Custom Tasks
 
 If you haven't applied these plugins you can create custom tasks:
@@ -167,88 +259,6 @@ task ktLint(type: LintTask, group: 'verification') {
 task ktFormat(type: FormatTask, group: 'formatting') {
     source files('src')
     report = file('build/format-report.txt')
-}
-```
-
-</details>
-
-### Configuration
-Options are configured in the `kotlinter` extension. Defaults shown (you may omit the configuration block entirely if you want these values).
-
-<details open>
-<summary>Kotlin</summary>
-
-```kotlin
-kotlinter {
-    ignoreFailures = false
-    indentSize = 4
-    continuationIndentSize = 4
-    reporters = arrayOf("checkstyle", "plain")
-    experimentalRules = false
-    allowWildcardImports = true
-    fileBatchSize = 30
-}
-```
-
-</details>
-
-<details>
-<summary>Groovy</summary>
-
-```groovy
-kotlinter {
-    ignoreFailures = false
-    indentSize = 4
-    continuationIndentSize = 4
-    reporters = ['checkstyle', 'plain']
-    experimentalRules = false
-    allowWildcardImports = true
-    fileBatchSize = 30
-}
-```
-
-</details>
-
-Options for `reporters`: checkstyle, html, json, plain
-
-The html reporter is provided by [ktlint-html-reporter](https://github.com/mcassiano/ktlint-html-reporter).
-
-Reporters behave as described at: https://github.com/pinterest/ktlint
-
-*Note: `reporter` with a single value is deprecated but supported for backwards compatibility.
-
-The `experimentalRules` property enables rules which are part of ktlint's experimental rule set.
-
-The `allowWildcardImports` property can be set to `false` if you wish to disallow use of wildcard imports.
-
-The `fileBatchSize` property configures the number of files that are processed in one Gradle Worker API call.
-
-### Customizing Tasks
-
-The `formatKotlin`*`SourceSet`* and `lintKotlin`*`SourceSet`* tasks inherit from [SourceTask](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.SourceTask.html)
-so you can customize includes, excludes, and source.
-
-<details open>
-<summary>Kotlin</summary>
-
-```kotlin
-import org.jmailen.gradle.kotlinter.tasks.LintTask
-
-tasks {
-    "lintKotlinMain"(LintTask::class) {
-        exclude("**/*Generated.kt")
-    }
-}
-```
-
-</details>
-
-<details>
-<summary>Groovy</summary>
-
-```groovy
-lintKotlinMain {
-    exclude '**/*Generated.kt'
 }
 ```
 

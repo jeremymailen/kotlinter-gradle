@@ -7,6 +7,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
 import org.jmailen.gradle.kotlinter.KotlinterExtension
 import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
+import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
 import org.jmailen.gradle.kotlinter.tasks.format.FormatExecutionContext
 import org.jmailen.gradle.kotlinter.tasks.format.FormatWorkerConfigurationAction
@@ -23,19 +24,10 @@ open class FormatTask @Inject constructor(
     lateinit var report: File
 
     @Input
-    var indentSize = KotlinterExtension.DEFAULT_INDENT_SIZE
-
-    @Input
-    var continuationIndentSize = KotlinterExtension.DEFAULT_CONTINUATION_INDENT_SIZE
-
-    @Input
-    var experimentalRules = KotlinterExtension.DEFAULT_EXPERIMENTAL_RULES
-
-    @Input
-    var allowWildcardImports = KotlinterExtension.DEFAULT_ALLOW_WILDCARD_IMPORTS
-
-    @Input
     var fileBatchSize = KotlinterExtension.DEFAULT_FILE_BATCH_SIZE
+
+    @Input
+    var ktLintParams = KtLintParams()
 
     init {
         outputs.upToDateWhen { false }
@@ -55,10 +47,7 @@ open class FormatTask @Inject constructor(
                     files = files,
                     projectDirectory = project.projectDir,
                     executionContextRepositoryId = executionContextRepositoryId,
-                    experimentalRules = experimentalRules,
-                    allowWildcardImports = allowWildcardImports,
-                    indentSize = indentSize,
-                    continuationIndentSize = continuationIndentSize
+                    ktLintParams = ktLintParams
                 )
             }
             .forEach { parameters ->

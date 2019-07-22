@@ -1,5 +1,6 @@
 package org.jmailen.gradle.kotlinter.tasks.format
 
+import org.jmailen.gradle.kotlinter.support.KtLintParams
 import java.io.File
 import java.io.Serializable
 import java.util.UUID
@@ -11,8 +12,5 @@ data class FormatWorkerParameters(
     val files: List<File>,
     val projectDirectory: File,
     val executionContextRepositoryId: UUID,
-    val experimentalRules: Boolean,
-    val allowWildcardImports: Boolean,
-    val indentSize: Int,
-    val continuationIndentSize: Int
+    val ktLintParams: KtLintParams
 ) : Serializable

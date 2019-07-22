@@ -26,13 +26,6 @@ class RuleSetsTest {
     }
 
     @Test
-    fun `resolveRuleSets loads from classpath providers optionally disallowing wildcard imports`() {
-        val result = resolveRuleSets(defaultRuleSetProviders, allowWildcardImports = false)
-
-        assertEquals(listOf("standard", "no-wildcard-imports"), result.map { it.id })
-    }
-
-    @Test
     fun `resolveRuleSets puts standard rules first`() {
         val standard = TestRuleSetProvider(RuleSet("standard", TestRule("one")))
         val extra1 = TestRuleSetProvider(RuleSet("extra-one", TestRule("two")))
@@ -47,7 +40,22 @@ class RuleSetsTest {
 
     @Test
     fun `test compatibility`() {
-        KtLint.lint("""fun someFunc() = """"", resolveRuleSets(defaultRuleSetProviders)) {}
+        KtLint.lint(
+            KtLint.Params(
+                "/tmp/src/test/KotlinClass.kt",
+                """
+                    package test
+
+                    class KotlinClass {
+                        private fun hi() {
+                            println("hi")
+                        }
+                    }
+
+                """.trimIndent(),
+                resolveRuleSets(defaultRuleSetProviders), cb = { _, _ -> }
+            )
+        )
     }
 }
 

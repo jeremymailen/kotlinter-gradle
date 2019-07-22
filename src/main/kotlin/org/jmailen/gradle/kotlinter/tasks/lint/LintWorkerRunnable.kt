@@ -24,10 +24,7 @@ class LintWorkerRunnable @Inject constructor(
     private val files: List<File> = parameters.files
     private val projectDirectory: File = parameters.projectDirectory
     private val name: String = parameters.name
-    private val experimentalRules: Boolean = parameters.experimentalRules
-    private val allowWildcardImports: Boolean = parameters.allowWildcardImports
-    private val indentSize: Int = parameters.indentSize
-    private val continuationIndentSize: Int = parameters.continuationIndentSize
+    private val ktLintParams = parameters.ktLintParams
 
     override fun run() {
         files
@@ -45,7 +42,7 @@ class LintWorkerRunnable @Inject constructor(
                     }
                 }
 
-                val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, experimentalRules, allowWildcardImports)
+                val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, ktLintParams.experimentalRules)
                 lintFunc?.invoke(file, ruleSets) { error ->
                     reporters.onEach { it.onLintError(relativePath, error, false) }
 
@@ -58,22 +55,23 @@ class LintWorkerRunnable @Inject constructor(
     }
 
     private fun lintKt(file: File, ruleSets: List<RuleSet>, onError: (error: LintError) -> Unit) =
-        KtLint.lint(
-            file.readText(),
-            ruleSets,
-            userData(
-                indentSize = indentSize,
-                continuationIndentSize = continuationIndentSize,
-                filePath = file.path
-            ), onError)
+        lint(file, ruleSets, onError, false)
 
     private fun lintKts(file: File, ruleSets: List<RuleSet>, onError: (error: LintError) -> Unit) =
-        KtLint.lintScript(
-            file.readText(),
-            ruleSets,
-            userData(
-                indentSize = indentSize,
-                continuationIndentSize = continuationIndentSize,
-                filePath = file.path
-            ), onError)
+        lint(file, ruleSets, onError, true)
+
+    private fun lint(file: File, ruleSets: List<RuleSet>, onError: ErrorHandler, script: Boolean) =
+        KtLint.lint(
+            KtLint.Params(
+                fileName = file.path,
+                text = file.readText(),
+                ruleSets = ruleSets,
+                script = script,
+                userData = userData(ktLintParams),
+                editorConfigPath = ktLintParams.editorConfigPath,
+                cb = { error, _ -> onError(error) }
+            )
+        )
 }
+
+typealias ErrorHandler = (error: LintError) -> Unit

@@ -40,6 +40,7 @@ class FunctionalTest {
                     println ("hi")
                 }
             }
+
         """.trimIndent()
         )
 
@@ -60,6 +61,7 @@ class FunctionalTest {
                     println("hi")
                 }
             }
+
         """.trimIndent()
         )
 

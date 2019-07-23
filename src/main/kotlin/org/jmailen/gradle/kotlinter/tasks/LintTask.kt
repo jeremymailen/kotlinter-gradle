@@ -1,5 +1,7 @@
 package org.jmailen.gradle.kotlinter.tasks
 
+import java.io.File
+import javax.inject.Inject
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
@@ -12,13 +14,15 @@ import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
 import org.jmailen.gradle.kotlinter.KotlinterExtension
-import org.jmailen.gradle.kotlinter.support.*
+import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
+import org.jmailen.gradle.kotlinter.support.HasErrorReporter
+import org.jmailen.gradle.kotlinter.support.KtLintParams
+import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
+import org.jmailen.gradle.kotlinter.support.reporterFor
 import org.jmailen.gradle.kotlinter.tasks.lint.LintExecutionContext
 import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerConfigurationAction
 import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerParameters
 import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerRunnable
-import java.io.File
-import javax.inject.Inject
 
 @CacheableTask
 open class LintTask @Inject constructor(
@@ -41,6 +45,26 @@ open class LintTask @Inject constructor(
 
     @Input
     var ktLintParams = KtLintParams()
+
+    fun setIndentSize(indentSize: Int) {
+        ktLintParams.indentSize = indentSize
+    }
+
+    fun setContinuationIndentSize(continuationIndentSize: Int) {
+        ktLintParams.continuationIndentSize = continuationIndentSize
+    }
+
+    fun setExperimentalRules(experimentalRules: Boolean) {
+        ktLintParams.experimentalRules = experimentalRules
+    }
+
+    fun setDisabledRules(disabledRules: Array<String>) {
+        ktLintParams.disabledRules = disabledRules
+    }
+
+    fun setEditorConfigPath(editorConfigPath: String) {
+        ktLintParams.editorConfigPath = editorConfigPath
+    }
 
     @Internal
     var sourceSetId = ""

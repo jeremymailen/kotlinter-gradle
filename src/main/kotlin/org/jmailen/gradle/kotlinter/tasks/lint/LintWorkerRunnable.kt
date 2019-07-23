@@ -4,12 +4,12 @@ import com.pinterest.ktlint.core.KtLint
 import com.pinterest.ktlint.core.LintError
 import com.pinterest.ktlint.core.Reporter
 import com.pinterest.ktlint.core.RuleSet
+import java.io.File
+import javax.inject.Inject
 import org.gradle.api.logging.Logger
 import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
 import org.jmailen.gradle.kotlinter.support.resolveRuleSets
 import org.jmailen.gradle.kotlinter.support.userData
-import java.io.File
-import javax.inject.Inject
 
 /**
  * Runnable used in the Gradle Worker API to run lint on a batch of files.
@@ -46,7 +46,7 @@ class LintWorkerRunnable @Inject constructor(
                 lintFunc?.invoke(file, ruleSets) { error ->
                     reporters.onEach { it.onLintError(relativePath, error, false) }
 
-                    val errorStr = "$relativePath:${error.line}:${error.col}: ${error.detail}"
+                    val errorStr = "$relativePath:${error.line}:${error.col}: [${error.ruleId}] ${error.detail}"
                     logger.quiet("Lint error > $errorStr")
                 }
 

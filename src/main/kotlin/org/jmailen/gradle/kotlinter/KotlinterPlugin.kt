@@ -2,6 +2,7 @@ package org.jmailen.gradle.kotlinter
 
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
+import java.io.File
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.FileTree
@@ -15,7 +16,6 @@ import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.reporterFileExtension
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
-import java.io.File
 
 class KotlinterPlugin : Plugin<Project> {
 

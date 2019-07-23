@@ -6,7 +6,6 @@ import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.pinterest.ktlint.core.LintError
 import com.pinterest.ktlint.core.Reporter
-
 import org.junit.Before
 import org.junit.Test
 

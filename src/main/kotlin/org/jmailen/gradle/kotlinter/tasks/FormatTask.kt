@@ -1,5 +1,7 @@
 package org.jmailen.gradle.kotlinter.tasks
 
+import java.io.File
+import javax.inject.Inject
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.SourceTask
@@ -13,8 +15,6 @@ import org.jmailen.gradle.kotlinter.tasks.format.FormatExecutionContext
 import org.jmailen.gradle.kotlinter.tasks.format.FormatWorkerConfigurationAction
 import org.jmailen.gradle.kotlinter.tasks.format.FormatWorkerParameters
 import org.jmailen.gradle.kotlinter.tasks.format.FormatWorkerRunnable
-import java.io.File
-import javax.inject.Inject
 
 open class FormatTask @Inject constructor(
     private val workerExecutor: WorkerExecutor
@@ -28,6 +28,26 @@ open class FormatTask @Inject constructor(
 
     @Input
     var ktLintParams = KtLintParams()
+
+    fun setIndentSize(indentSize: Int) {
+        ktLintParams.indentSize = indentSize
+    }
+
+    fun setContinuationIndentSize(continuationIndentSize: Int) {
+        ktLintParams.continuationIndentSize = continuationIndentSize
+    }
+
+    fun setExperimentalRules(experimentalRules: Boolean) {
+        ktLintParams.experimentalRules = experimentalRules
+    }
+
+    fun setDisabledRules(disabledRules: Array<String>) {
+        ktLintParams.disabledRules = disabledRules
+    }
+
+    fun setEditorConfigPath(editorConfigPath: String) {
+        ktLintParams.editorConfigPath = editorConfigPath
+    }
 
     init {
         outputs.upToDateWhen { false }

@@ -1,5 +1,6 @@
 package org.jmailen.gradle.kotlinter.functional
 
+import java.io.File
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.FAILED
@@ -10,7 +11,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import java.io.File
 
 class FunctionalTest {
 
@@ -70,6 +70,23 @@ class FunctionalTest {
         }
     }
 
+    @Test
+    fun `ktLint custom task succeeds when no lint errors detected`() {
+        settingsFile()
+        buildFile()
+        kotlinSourceFile("CustomClass.kt", """
+            class CustomClass {
+                 private fun go() {
+                      println("go")
+                 }
+            }
+        """.trimIndent())
+
+        build("ktLint").apply {
+            assertEquals(SUCCESS, task(":ktLint")?.outcome)
+        }
+    }
+
     private fun build(vararg args: String): BuildResult = gradleRunnerFor(*args).build()
 
     private fun buildAndFail(vararg args: String): BuildResult = gradleRunnerFor(*args).buildAndFail()
@@ -88,12 +105,24 @@ class FunctionalTest {
     private fun buildFile() = buildFile.apply {
         writeText("""
             plugins {
-                id 'org.jetbrains.kotlin.jvm' version '1.3.20'
+                id 'org.jetbrains.kotlin.jvm' version '1.3.41'
                 id 'org.jmailen.kotlinter'
             }
 
             repositories {
                 jcenter()
+            }
+
+            import org.jmailen.gradle.kotlinter.tasks.LintTask
+
+            task ktLint(type: LintTask) {
+                source files('src')
+                reports = ['plain': file('build/lint-report.txt')]
+                indentSize = 5
+                continuationIndentSize = 7
+                experimentalRules = true
+                disabledRules = ["final-newline"]
+                editorConfigPath = project.rootProject.file(".editorconfig")
             }
         """.trimIndent())
     }

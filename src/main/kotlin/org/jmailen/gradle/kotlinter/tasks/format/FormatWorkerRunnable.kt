@@ -1,15 +1,16 @@
 package org.jmailen.gradle.kotlinter.tasks.format
 
 import com.pinterest.ktlint.core.KtLint
+import com.pinterest.ktlint.core.LintError
 import com.pinterest.ktlint.core.RuleSet
+import java.io.File
+import javax.inject.Inject
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.Logger
 import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
 import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.resolveRuleSets
 import org.jmailen.gradle.kotlinter.support.userData
-import java.io.File
-import javax.inject.Inject
 
 /**
  * Runnable used in the Gradle Worker API to run format on a batch of files.
@@ -41,8 +42,8 @@ class FormatWorkerRunnable @Inject constructor(
                     }
                 }?.let { formatFunc ->
                     val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, ktLintParams.experimentalRules)
-                    val formattedText = formatFunc.invoke(file, ruleSets) { line, col, detail, corrected ->
-                        val errorStr = "$relativePath:$line:$col: $detail"
+                    val formattedText = formatFunc.invoke(file, ruleSets) { error, corrected ->
+                        val errorStr = "$relativePath:${error.line}:${error.col}: [${error.ruleId}] ${error.detail}"
                         val msg = when (corrected) {
                             true -> "Format fixed > $errorStr"
                             false -> "Format could not fix > $errorStr"
@@ -74,11 +75,11 @@ class FormatWorkerRunnable @Inject constructor(
                 userData = userData(ktLintParams),
                 editorConfigPath = ktLintParams.editorConfigPath,
                 cb = { error, corrected ->
-                    onError(error.line, error.col, error.detail, corrected)
+                    onError(error, corrected)
                 }
             )
         )
     }
 }
 
-typealias ErrorHandler = (line: Int, col: Int, detail: String, corrected: Boolean) -> Unit
+typealias ErrorHandler = (error: LintError, corrected: Boolean) -> Unit

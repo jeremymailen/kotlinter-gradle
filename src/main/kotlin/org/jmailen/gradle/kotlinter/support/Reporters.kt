@@ -4,9 +4,9 @@ import com.pinterest.ktlint.core.Reporter
 import com.pinterest.ktlint.reporter.checkstyle.CheckStyleReporter
 import com.pinterest.ktlint.reporter.json.JsonReporter
 import com.pinterest.ktlint.reporter.plain.PlainReporter
-import me.cassiano.ktlint.reporter.html.HtmlReporter
 import java.io.File
 import java.io.PrintStream
+import me.cassiano.ktlint.reporter.html.HtmlReporter
 
 enum class ReporterType(val fileExtension: String) {
     checkstyle("xml"),

@@ -1,7 +1,7 @@
 package org.jmailen.gradle.kotlinter.support
 
-import org.jmailen.gradle.kotlinter.KotlinterExtension
 import java.io.Serializable
+import org.jmailen.gradle.kotlinter.KotlinterExtension
 
 data class KtLintParams(
     var indentSize: Int = KotlinterExtension.DEFAULT_INDENT_SIZE,

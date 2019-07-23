@@ -15,7 +15,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "2.0.0"
+    id("org.jmailen.kotlinter") version "2.1.0"
 }
 ```
 
@@ -26,7 +26,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "2.0.0"
+    id "org.jmailen.kotlinter" version "2.1.0"
 }
 ```
 
@@ -46,7 +46,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jmailen.gradle:kotlinter-gradle:2.0.0")
+        classpath("org.jmailen.gradle:kotlinter-gradle:2.1.0")
     }
 }
 ```
@@ -71,7 +71,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.jmailen.gradle:kotlinter-gradle:2.0.0"
+        classpath "org.jmailen.gradle:kotlinter-gradle:2.1.0"
     }
 }
 ```
@@ -254,11 +254,15 @@ task ktLint(type: LintTask, group: 'verification') {
             'plain': file('build/lint-report.txt'),
             'json': file('build/lint-report.json')
     ]
+    continuationIndentSize = 8
+    disabledRules = ["import-ordering"]
 }
 
 task ktFormat(type: FormatTask, group: 'formatting') {
     source files('src')
     report = file('build/format-report.txt')
+    continuationIndentSize = 8
+    disabledRules = ["import-ordering"]
 }
 ```
 

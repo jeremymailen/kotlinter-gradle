@@ -15,7 +15,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "2.1.0"
+    id("org.jmailen.kotlinter") version "2.1.1"
 }
 ```
 
@@ -26,7 +26,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "2.1.0"
+    id "org.jmailen.kotlinter" version "2.1.1"
 }
 ```
 
@@ -46,7 +46,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jmailen.gradle:kotlinter-gradle:2.1.0")
+        classpath("org.jmailen.gradle:kotlinter-gradle:2.1.1")
     }
 }
 ```
@@ -71,7 +71,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.jmailen.gradle:kotlinter-gradle:2.1.0"
+        classpath "org.jmailen.gradle:kotlinter-gradle:2.1.1"
     }
 }
 ```
@@ -177,7 +177,7 @@ The `fileBatchSize` property configures the number of files that are processed i
 
 Kotlinter will configure itself using an `.editorconfig` file if one is present in your root project directory.
 
-For configuration values supported in both the `kotlinter` extension and `.editorconfig`, the `.editorconfig` values will take precedence.
+If a non-empty `disabledRules` value is specified in the `kotlinter` extension, it will take precedence over any `disabled_rules` in `.editorconfig`.
 
 See [Ktlint editorconfig](https://github.com/pinterest/ktlint#editorconfig) for supported values.
 

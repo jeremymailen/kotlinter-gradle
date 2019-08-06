@@ -1,7 +1,14 @@
 package org.jmailen.gradle.kotlinter.support
 
-fun userData(ktLintParams: KtLintParams) = mapOf(
-    "indent_size" to ktLintParams.indentSize.toString(),
-    "continuation_indent_size" to ktLintParams.continuationIndentSize.toString(),
-    "disabled_rules" to ktLintParams.disabledRules.joinToString(",")
-)
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+
+fun userData(ktLintParams: KtLintParams): Map<String, String> {
+    val userData = mutableMapOf(
+        "indent_size" to ktLintParams.indentSize.toString(),
+        "continuation_indent_size" to ktLintParams.continuationIndentSize.toString()
+    )
+    ktLintParams.disabledRules.ifNotEmpty {
+        userData["disabled_rules"] = joinToString(",")
+    }
+    return userData
+}

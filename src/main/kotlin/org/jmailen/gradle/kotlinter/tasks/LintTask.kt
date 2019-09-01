@@ -20,9 +20,7 @@ import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
 import org.jmailen.gradle.kotlinter.support.reporterFor
 import org.jmailen.gradle.kotlinter.tasks.lint.LintExecutionContext
-import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerConfigurationAction
-import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerParameters
-import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerRunnable
+import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerAction
 
 @CacheableTask
 open class LintTask @Inject constructor(
@@ -76,27 +74,24 @@ open class LintTask @Inject constructor(
             reporterFor(reporter, report)
         } + hasErrorReporter
         val executionContextRepository = ExecutionContextRepository.lintInstance
-        val executionContextRepositoryId = executionContextRepository.register(LintExecutionContext(defaultRuleSetProviders, reporters, logger))
+        val executionContextId = executionContextRepository.register(LintExecutionContext(defaultRuleSetProviders, reporters, logger))
 
         reporters.onEach { it.beforeAll() }
 
         source
             .toList()
             .chunked(fileBatchSize)
-            .map { files ->
-                LintWorkerParameters(
-                    files = files,
-                    projectDirectory = project.projectDir,
-                    executionContextRepositoryId = executionContextRepositoryId,
-                    name = name,
-                    ktLintParams = ktLintParams
-                )
-            }
-            .forEach { parameters ->
-                workerExecutor.submit(LintWorkerRunnable::class.java, LintWorkerConfigurationAction(parameters))
+            .forEach { files ->
+                workerExecutor.classLoaderIsolation().submit(LintWorkerAction::class.java) { params ->
+                    params.executionContextId.set(executionContextId)
+                    params.files.set(files)
+                    params.projectDirectory.set(project.projectDir)
+                    params.name.set(name)
+                    params.ktLintParams.set(ktLintParams)
+                }
             }
         workerExecutor.await()
-        executionContextRepository.unregister(executionContextRepositoryId)
+        executionContextRepository.unregister(executionContextId)
 
         reporters.onEach { it.afterAll() }
         if (hasErrorReporter.hasError && !ignoreFailures) {

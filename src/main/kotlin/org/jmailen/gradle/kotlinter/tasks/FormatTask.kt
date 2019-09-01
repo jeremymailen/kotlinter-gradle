@@ -12,9 +12,7 @@ import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
 import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
 import org.jmailen.gradle.kotlinter.tasks.format.FormatExecutionContext
-import org.jmailen.gradle.kotlinter.tasks.format.FormatWorkerConfigurationAction
-import org.jmailen.gradle.kotlinter.tasks.format.FormatWorkerParameters
-import org.jmailen.gradle.kotlinter.tasks.format.FormatWorkerRunnable
+import org.jmailen.gradle.kotlinter.tasks.format.FormatWorkerAction
 
 open class FormatTask @Inject constructor(
     private val workerExecutor: WorkerExecutor
@@ -57,25 +55,22 @@ open class FormatTask @Inject constructor(
     fun run() {
         val executionContextRepository = ExecutionContextRepository.formatInstance
         val executionContext = FormatExecutionContext(defaultRuleSetProviders, logger)
-        val executionContextRepositoryId = executionContextRepository.register(executionContext)
+        val executionContextId = executionContextRepository.register(executionContext)
 
         source
             .toList()
             .chunked(fileBatchSize)
-            .map { files ->
-                FormatWorkerParameters(
-                    files = files,
-                    projectDirectory = project.projectDir,
-                    executionContextRepositoryId = executionContextRepositoryId,
-                    ktLintParams = ktLintParams
-                )
-            }
-            .forEach { parameters ->
-                workerExecutor.submit(FormatWorkerRunnable::class.java, FormatWorkerConfigurationAction(parameters))
+            .forEach { files ->
+                workerExecutor.classLoaderIsolation().submit(FormatWorkerAction::class.java) { params ->
+                    params.files.set(files)
+                    params.projectDirectory.set(project.projectDir)
+                    params.executionContextId.set(executionContextId)
+                    params.ktLintParams.set(ktLintParams)
+                }
             }
 
         workerExecutor.await()
-        executionContextRepository.unregister(executionContextRepositoryId)
+        executionContextRepository.unregister(executionContextId)
 
         if (executionContext.fixes.isNotEmpty()) {
             report.writeText(executionContext.fixes.joinToString("\n"))

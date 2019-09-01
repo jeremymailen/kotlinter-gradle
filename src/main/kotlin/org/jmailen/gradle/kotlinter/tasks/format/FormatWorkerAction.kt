@@ -4,9 +4,9 @@ import com.pinterest.ktlint.core.KtLint
 import com.pinterest.ktlint.core.LintError
 import com.pinterest.ktlint.core.RuleSet
 import java.io.File
-import javax.inject.Inject
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.Logger
+import org.gradle.workers.WorkAction
 import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
 import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.resolveRuleSets
@@ -15,17 +15,14 @@ import org.jmailen.gradle.kotlinter.support.userData
 /**
  * Runnable used in the Gradle Worker API to run format on a batch of files.
  */
-class FormatWorkerRunnable @Inject constructor(
-    parameters: FormatWorkerParameters
-) : Runnable {
-
-    private val executionContext = ExecutionContextRepository.formatInstance.get(parameters.executionContextRepositoryId)
+abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
+    private val executionContext = ExecutionContextRepository.formatInstance.get(parameters.executionContextId.get())
     private val logger: Logger = executionContext.logger
-    private val files: List<File> = parameters.files
-    private val projectDirectory: File = parameters.projectDirectory
-    private val ktLintParams: KtLintParams = parameters.ktLintParams
+    private val files: List<File> = parameters.files.get()
+    private val projectDirectory: File = parameters.projectDirectory.get()
+    private val ktLintParams: KtLintParams = parameters.ktLintParams.get()
 
-    override fun run() {
+    override fun execute() {
         files
             .forEach { file ->
                 val sourceText = file.readText()

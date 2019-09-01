@@ -5,8 +5,8 @@ import com.pinterest.ktlint.core.LintError
 import com.pinterest.ktlint.core.Reporter
 import com.pinterest.ktlint.core.RuleSet
 import java.io.File
-import javax.inject.Inject
 import org.gradle.api.logging.Logger
+import org.gradle.workers.WorkAction
 import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
 import org.jmailen.gradle.kotlinter.support.resolveRuleSets
 import org.jmailen.gradle.kotlinter.support.userData
@@ -14,19 +14,17 @@ import org.jmailen.gradle.kotlinter.support.userData
 /**
  * Runnable used in the Gradle Worker API to run lint on a batch of files.
  */
-class LintWorkerRunnable @Inject constructor(
-    parameters: LintWorkerParameters
-) : Runnable {
+abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
 
-    private val executionContext = ExecutionContextRepository.lintInstance.get(parameters.executionContextRepositoryId)
+    private val executionContext = ExecutionContextRepository.lintInstance.get(parameters.executionContextId.get())
     private val reporters: List<Reporter> = executionContext.reporters
     private val logger: Logger = executionContext.logger
-    private val files: List<File> = parameters.files
-    private val projectDirectory: File = parameters.projectDirectory
-    private val name: String = parameters.name
-    private val ktLintParams = parameters.ktLintParams
+    private val files: List<File> = parameters.files.get()
+    private val projectDirectory: File = parameters.projectDirectory.get()
+    private val name: String = parameters.name.get()
+    private val ktLintParams = parameters.ktLintParams.get()
 
-    override fun run() {
+    override fun execute() {
         files
             .forEach { file ->
                 val relativePath = file.toRelativeString(projectDirectory)

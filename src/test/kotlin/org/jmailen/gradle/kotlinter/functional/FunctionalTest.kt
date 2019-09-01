@@ -105,7 +105,7 @@ class FunctionalTest {
     private fun buildFile() = buildFile.apply {
         writeText("""
             plugins {
-                id 'org.jetbrains.kotlin.jvm' version '1.3.41'
+                id 'org.jetbrains.kotlin.jvm' version '1.3.50'
                 id 'org.jmailen.kotlinter'
             }
 

@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.pinterest:ktlint:0.34.2'
+    implementation 'com.pinterest:ktlint:0.35.0'
     implementation 'me.cassiano:ktlint-html-reporter:0.2.1'
     
     compileOnly 'org.jetbrains.kotlin:kotlin-gradle-plugin'
@@ -30,7 +30,7 @@ tasks.withType(PluginUnderTestMetadata).configureEach {
     pluginClasspath.from(configurations.compileOnly)
 }
 
-version = '2.1.1'
+version = '2.1.2'
 group = 'org.jmailen.gradle'
 def pluginId = 'org.jmailen.kotlinter'
 

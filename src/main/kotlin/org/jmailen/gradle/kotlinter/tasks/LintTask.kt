@@ -30,7 +30,6 @@ open class LintTask @Inject constructor(
 ) : SourceTask() {
 
     @OutputFiles
-    @PathSensitive(PathSensitivity.RELATIVE)
     lateinit var reports: Map<String, File>
 
     @InputFiles

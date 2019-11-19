@@ -1,6 +1,1 @@
-//include 'test-project'
-
 rootProject.name = 'kotlinter-gradle'
-
-enableFeaturePreview('STABLE_PUBLISHING')
-

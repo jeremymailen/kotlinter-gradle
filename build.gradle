@@ -1,9 +1,9 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.3.50'
-    id 'com.gradle.plugin-publish' version '0.10.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.60'
+    id 'com.gradle.plugin-publish' version '0.10.1'
     id 'java-gradle-plugin'
     id 'maven-publish'
-    id 'org.jmailen.kotlinter' version '2.0.0'
+    id 'org.jmailen.kotlinter' version '2.1.2'
     id 'idea'
 }
 
@@ -30,7 +30,7 @@ tasks.withType(PluginUnderTestMetadata).configureEach {
     pluginClasspath.from(configurations.compileOnly)
 }
 
-version = '2.1.2'
+version = '2.1.3'
 group = 'org.jmailen.gradle'
 def pluginId = 'org.jmailen.kotlinter'
 
@@ -66,5 +66,5 @@ publishing {
 }
 
 wrapper {
-    gradleVersion = '5.5.1'
+    gradleVersion = '6.0.1'
 }

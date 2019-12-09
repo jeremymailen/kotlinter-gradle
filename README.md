@@ -15,7 +15,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "2.1.3"
+    id("org.jmailen.kotlinter") version "2.2.0"
 }
 ```
 
@@ -26,7 +26,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "2.1.3"
+    id "org.jmailen.kotlinter" version "2.2.0"
 }
 ```
 
@@ -46,7 +46,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jmailen.gradle:kotlinter-gradle:2.1.3")
+        classpath("org.jmailen.gradle:kotlinter-gradle:2.2.0")
     }
 }
 ```
@@ -71,7 +71,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.jmailen.gradle:kotlinter-gradle:2.1.3"
+        classpath "org.jmailen.gradle:kotlinter-gradle:2.2.0"
     }
 }
 ```
@@ -158,8 +158,6 @@ kotlinter {
 </details>
 
 Options for `reporters`: checkstyle, html, json, plain
-
-The html reporter is provided by [ktlint-html-reporter](https://github.com/mcassiano/ktlint-html-reporter).
 
 Reporters behave as described at: https://github.com/pinterest/ktlint
 

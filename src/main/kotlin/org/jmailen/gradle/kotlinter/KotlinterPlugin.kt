@@ -36,21 +36,13 @@ class KotlinterPlugin : Plugin<Project> {
                 val formatKotlin = registerParentFormatTask()
 
                 sourceResolver.applyToAll(project) { id, resolveSources ->
-                    val ktLintParams = KtLintParams(
-                        kotlinterExtension.indentSize,
-                        kotlinterExtension.continuationIndentSize,
-                        kotlinterExtension.experimentalRules,
-                        kotlinterExtension.disabledRules,
-                        editorConfigPath()
-                    )
-
                     val lintKotlinPerVariant = tasks.register("lintKotlin${id.capitalize()}", LintTask::class.java) { lintTask ->
                         lintTask.source(resolveSources)
                         lintTask.ignoreFailures = kotlinterExtension.ignoreFailures
                         lintTask.reports = kotlinterExtension.reporters.associate { reporter ->
                             reporter to reportFile("$id-lint.${reporterFileExtension(reporter)}")
                         }
-                        lintTask.ktLintParams = ktLintParams
+                        lintTask.ktLintParams = kotlinterExtension.ktlintParams(editorConfigPath())
                         lintTask.fileBatchSize = kotlinterExtension.fileBatchSize
                     }
                     lintKotlin.dependsOn(lintKotlinPerVariant)
@@ -58,7 +50,7 @@ class KotlinterPlugin : Plugin<Project> {
                     val formatKotlinPerVariant = tasks.register("formatKotlin${id.capitalize()}", FormatTask::class.java) { formatTask ->
                         formatTask.source(resolveSources)
                         formatTask.report = reportFile("$id-format.txt")
-                        formatTask.ktLintParams = ktLintParams
+                        formatTask.ktLintParams = kotlinterExtension.ktlintParams(editorConfigPath())
                         formatTask.fileBatchSize = kotlinterExtension.fileBatchSize
                     }
                     formatKotlin.dependsOn(formatKotlinPerVariant)
@@ -126,6 +118,14 @@ internal object AndroidSourceSetResolver : SourceSetResolver {
         merged + tree
     }
 }
+
+private fun KotlinterExtension.ktlintParams(editorConfigPath: String?) = KtLintParams(
+    indentSize,
+    continuationIndentSize,
+    experimentalRules,
+    disabledRules,
+    editorConfigPath
+)
 
 internal val String.id
     get() = split(" ").first()

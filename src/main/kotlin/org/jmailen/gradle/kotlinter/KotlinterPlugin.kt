@@ -42,7 +42,7 @@ class KotlinterPlugin : Plugin<Project> {
                         lintTask.reports = kotlinterExtension.reporters.associate { reporter ->
                             reporter to reportFile("$id-lint.${reporterFileExtension(reporter)}")
                         }
-                        lintTask.ktLintParams = kotlinterExtension.ktlintParams(editorConfigPath())
+                        lintTask.ktLintParams = kotlinterExtension.toKtLintParams(editorConfigPath())
                         lintTask.fileBatchSize = kotlinterExtension.fileBatchSize
                     }
                     lintKotlin.dependsOn(lintKotlinPerVariant)
@@ -50,7 +50,7 @@ class KotlinterPlugin : Plugin<Project> {
                     val formatKotlinPerVariant = tasks.register("formatKotlin${id.capitalize()}", FormatTask::class.java) { formatTask ->
                         formatTask.source(resolveSources)
                         formatTask.report = reportFile("$id-format.txt")
-                        formatTask.ktLintParams = kotlinterExtension.ktlintParams(editorConfigPath())
+                        formatTask.ktLintParams = kotlinterExtension.toKtLintParams(editorConfigPath())
                         formatTask.fileBatchSize = kotlinterExtension.fileBatchSize
                     }
                     formatKotlin.dependsOn(formatKotlinPerVariant)
@@ -119,7 +119,7 @@ internal object AndroidSourceSetResolver : SourceSetResolver {
     }
 }
 
-private fun KotlinterExtension.ktlintParams(editorConfigPath: String?) = KtLintParams(
+private fun KotlinterExtension.toKtLintParams(editorConfigPath: String?) = KtLintParams(
     indentSize,
     continuationIndentSize,
     experimentalRules,

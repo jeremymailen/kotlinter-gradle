@@ -3,11 +3,14 @@ package org.jmailen.gradle.kotlinter.functional
 import java.io.File
 import org.gradle.testkit.runner.TaskOutcome
 import org.intellij.lang.annotations.Language
+import org.jmailen.gradle.kotlinter.functional.utils.androidManifest
+import org.jmailen.gradle.kotlinter.functional.utils.kotlinClass
+import org.jmailen.gradle.kotlinter.functional.utils.resolve
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-internal class ModifiedSourceSetsTest : WithGradleTest() {
+internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
 
     private lateinit var androidModuleRoot: File
     private lateinit var kotlinModuleRoot: File
@@ -118,21 +121,9 @@ internal class ModifiedSourceSetsTest : WithGradleTest() {
         }
     }
 
-    @Language("kotlin")
-    private fun kotlinClass(className: String) = """
-                object $className
-                
-            """.trimIndent()
-
     @Language("groovy")
     private val settingsFile = """
         rootProject.name = 'kotlinter'
         include 'androidproject', 'kotlinproject'
-    """.trimIndent()
-
-    @Language("xml")
-    private val androidManifest = """
-         <manifest package="com.example" />
-    
     """.trimIndent()
 }

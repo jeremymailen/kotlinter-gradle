@@ -2,7 +2,6 @@ package org.jmailen.gradle.kotlinter
 
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
-import com.android.build.gradle.internal.tasks.factory.dependsOn
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.FileTree
@@ -30,7 +29,7 @@ class KotlinterPlugin : Plugin<Project> {
 
         // for known kotlin plugins, register tasks by convention.
         extendablePlugins.forEach { (pluginId, sourceResolver) ->
-            plugins.withId(pluginId) {
+            pluginManager.withPlugin(pluginId) {
 
                 val lintKotlin = registerParentLintTask()
                 val formatKotlin = registerParentFormatTask()
@@ -45,7 +44,9 @@ class KotlinterPlugin : Plugin<Project> {
                         lintTask.ktLintParams = kotlinterExtension.toKtLintParams(editorConfigPath())
                         lintTask.fileBatchSize = kotlinterExtension.fileBatchSize
                     }
-                    lintKotlin.dependsOn(lintKotlinPerVariant)
+                    lintKotlin.configure { lintTask ->
+                        lintTask.dependsOn(lintKotlinPerVariant)
+                    }
 
                     val formatKotlinPerVariant = tasks.register("formatKotlin${id.capitalize()}", FormatTask::class.java) { formatTask ->
                         formatTask.source(resolveSources)
@@ -53,7 +54,9 @@ class KotlinterPlugin : Plugin<Project> {
                         formatTask.ktLintParams = kotlinterExtension.toKtLintParams(editorConfigPath())
                         formatTask.fileBatchSize = kotlinterExtension.fileBatchSize
                     }
-                    formatKotlin.dependsOn(formatKotlinPerVariant)
+                    formatKotlin.configure { formatTask ->
+                        formatTask.dependsOn(formatKotlinPerVariant)
+                    }
                 }
             }
         }
@@ -63,8 +66,8 @@ class KotlinterPlugin : Plugin<Project> {
         tasks.register("lintKotlin") {
             it.group = "formatting"
             it.description = "Runs lint on the Kotlin source files."
-        }.also {
-            tasks.named("check").dependsOn(it)
+        }.also { lintKotlin ->
+            tasks.named("check").configure { check -> check.dependsOn(lintKotlin) }
         }
 
     private fun Project.registerParentFormatTask() =

@@ -4,11 +4,14 @@ import groovy.util.GroovyTestCase.assertEquals
 import java.io.File
 import org.gradle.testkit.runner.TaskOutcome
 import org.intellij.lang.annotations.Language
+import org.jmailen.gradle.kotlinter.functional.utils.kotlinClass
+import org.jmailen.gradle.kotlinter.functional.utils.resolve
+import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-internal class ExtensionTest : WithGradleTest() {
+internal class ExtensionTest : WithGradleTest.Kotlin() {
 
     lateinit var projectRoot: File
 
@@ -116,16 +119,4 @@ internal class ExtensionTest : WithGradleTest() {
             assertEquals(TaskOutcome.SUCCESS, task(":lintKotlinMain")?.outcome)
         }
     }
-
-    @Language("kotlin")
-    private fun kotlinClass(className: String) = """
-                object $className
-                
-            """.trimIndent()
-
-    @Language("groovy")
-    private val settingsFile = """
-        rootProject.name = 'kotlinter'
-        
-    """.trimIndent()
 }

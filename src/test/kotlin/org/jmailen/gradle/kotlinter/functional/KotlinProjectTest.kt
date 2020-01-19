@@ -9,7 +9,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-internal class FunctionalTest : WithGradleTest() {
+internal class KotlinProjectTest : WithGradleTest.Kotlin() {
 
     private lateinit var settingsFile: File
     private lateinit var buildFile: File
@@ -78,6 +78,20 @@ internal class FunctionalTest : WithGradleTest() {
 
         build("ktLint").apply {
             assertEquals(SUCCESS, task(":ktLint")?.outcome)
+        }
+    }
+
+    @Test
+    fun `check task runs lintFormat`() {
+        settingsFile()
+        buildFile()
+        kotlinSourceFile("CustomObject.kt", """
+            object CustomObject
+            
+        """.trimIndent())
+
+        build("check").apply {
+            assertEquals(SUCCESS, task(":lintKotlin")?.outcome)
         }
     }
 

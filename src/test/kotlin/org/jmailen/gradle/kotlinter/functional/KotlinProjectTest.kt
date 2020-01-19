@@ -14,6 +14,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
     private lateinit var settingsFile: File
     private lateinit var buildFile: File
     private lateinit var sourceDir: File
+    private val pathPattern = "(/.*\\.kt):\\d+:\\d+".toRegex()
 
     @Before
     fun setup() {
@@ -41,6 +42,10 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
         buildAndFail("lintKotlinMain").apply {
             assertTrue(output.contains("Lint error >.*$className.kt.*Missing spacing before \"\\{\"".toRegex()))
             assertTrue(output.contains("Lint error >.*$className.kt.*Unexpected spacing before \"\\(\"".toRegex()))
+            output.lines().filter { it.startsWith("Lint error") }.forEach { line ->
+                val filePath = pathPattern.find(line)?.groups?.get(1)?.value.orEmpty()
+                assertTrue(File(filePath).exists())
+            }
             assertEquals(FAILED, task(":lintKotlinMain")?.outcome)
         }
     }
@@ -61,6 +66,31 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
 
         build("lintKotlinMain").apply {
             assertEquals(SUCCESS, task(":lintKotlinMain")?.outcome)
+        }
+    }
+
+    @Test
+    fun `formatKotlin reports formatted and unformatted files`() {
+        settingsFile()
+        buildFile()
+        @Language("kotlin")
+        val kotlinClass = """
+            import System.*
+            
+            class KotlinClass{
+                private fun hi() {
+                    out.println("Hello")
+                }
+            }
+        """.trimIndent()
+        kotlinSourceFile("KotlinClass.kt", kotlinClass)
+
+        build("formatKotlin").apply {
+            assertEquals(SUCCESS, task(":formatKotlinMain")?.outcome)
+            output.lines().filter { it.startsWith("Format could not fix") }.forEach { line ->
+                val filePath = pathPattern.find(line)?.groups?.get(1)?.value.orEmpty()
+                assertTrue(File(filePath).exists())
+            }
         }
     }
 

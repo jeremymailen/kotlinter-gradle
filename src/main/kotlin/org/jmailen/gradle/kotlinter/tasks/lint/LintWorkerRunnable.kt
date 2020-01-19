@@ -47,7 +47,7 @@ class LintWorkerRunnable @Inject constructor(
                     reporters.onEach { it.onLintError(relativePath, error, false) }
 
                     val errorStr = "$relativePath:${error.line}:${error.col}: [${error.ruleId}] ${error.detail}"
-                    logger.quiet("Lint error > $errorStr")
+                    logger.quiet("Lint error > $projectDirectory${File.separator}$errorStr")
                 }
 
                 reporters.onEach { it.after(relativePath) }

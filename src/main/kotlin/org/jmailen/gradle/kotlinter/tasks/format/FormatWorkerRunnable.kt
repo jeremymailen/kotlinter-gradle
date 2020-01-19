@@ -45,8 +45,8 @@ class FormatWorkerRunnable @Inject constructor(
                     val formattedText = formatFunc.invoke(file, ruleSets) { error, corrected ->
                         val errorStr = "$relativePath:${error.line}:${error.col}: [${error.ruleId}] ${error.detail}"
                         val msg = when (corrected) {
-                            true -> "Format fixed > $errorStr"
-                            false -> "Format could not fix > $errorStr"
+                            true -> "Format fixed > $projectDirectory${File.separator}$errorStr"
+                            false -> "Format could not fix > $projectDirectory${File.separator}$errorStr"
                         }
                         logger.log(LogLevel.QUIET, msg)
                         executionContext.fixes.add(msg)

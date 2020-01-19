@@ -43,7 +43,7 @@ class FormatWorkerRunnable @Inject constructor(
                 }?.let { formatFunc ->
                     val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, ktLintParams.experimentalRules)
                     val formattedText = formatFunc.invoke(file, ruleSets) { error, corrected ->
-                        val errorStr = "$${file.path}:${error.line}:${error.col}: [${error.ruleId}] ${error.detail}"
+                        val errorStr = "${file.path}:${error.line}:${error.col}: [${error.ruleId}] ${error.detail}"
                         val msg = when (corrected) {
                             true -> "Format fixed > $errorStr"
                             false -> "Format could not fix > $errorStr"

@@ -28,7 +28,7 @@ class KotlinterPlugin : Plugin<Project> {
     override fun apply(project: Project) = with(project) {
         val kotlinterExtension = extensions.create("kotlinter", KotlinterExtension::class.java)
 
-        // for known kotlin plugins, create tasks by convention.
+        // for known kotlin plugins, register tasks by convention.
         extendablePlugins.forEach { (pluginId, sourceResolver) ->
             plugins.withId(pluginId) {
 

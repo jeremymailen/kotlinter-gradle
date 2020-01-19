@@ -29,8 +29,6 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
     testImplementation 'org.jetbrains:annotations:18.0.0'
-    testRuntime 'com.android.tools.build:gradle:3.5.3'
-    testRuntime 'org.jetbrains.kotlin:kotlin-gradle-plugin'
 }
 
 // Required to put the Kotlin plugin on the classpath for the functional test suite

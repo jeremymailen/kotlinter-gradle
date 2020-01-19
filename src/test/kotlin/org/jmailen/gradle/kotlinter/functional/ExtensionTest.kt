@@ -4,6 +4,7 @@ import groovy.util.GroovyTestCase.assertEquals
 import java.io.File
 import org.gradle.testkit.runner.TaskOutcome
 import org.intellij.lang.annotations.Language
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -93,7 +94,7 @@ internal class ExtensionTest : WithGradleTest() {
             assertEquals(TaskOutcome.SUCCESS, task(":lintKotlinMain")?.outcome)
         }
         val report = projectRoot.resolve("build/reports/ktlint/main-lint.html")
-        assert(report.exists())
+        assertTrue(report.readText().isNotEmpty())
     }
 
     @Test

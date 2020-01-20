@@ -1,10 +1,12 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.3.61"
+    kotlin("jvm") version "1.3.61"
     id("com.gradle.plugin-publish") version "0.10.1"
-    id("java-gradle-plugin")
-    id("maven-publish")
+    `java-gradle-plugin`
+    `maven-publish`
     id("org.jmailen.kotlinter") version "2.1.3"
-    id("idea")
+    `idea`
 }
 
 repositories {
@@ -12,7 +14,7 @@ repositories {
     google()
 }
 
-def ktlintVers = "0.36.0"
+val ktlintVers = "0.36.0"
 
 dependencies {
     implementation("com.pinterest.ktlint:ktlint-core:$ktlintVers")
@@ -31,18 +33,18 @@ dependencies {
     testImplementation("org.jetbrains:annotations:18.0.0")
 }
 
-// Required to put all `compileOnly` dependencies on the classpath for the functional test suite
-tasks.withType(PluginUnderTestMetadata).configureEach {
+// Required to put the Kotlin plugin on the classpath for the functional test suite
+tasks.withType<PluginUnderTestMetadata>().configureEach {
     pluginClasspath.from(configurations.compileOnly)
 }
 
 version = "2.3.0"
 group = "org.jmailen.gradle"
-def pluginId = "org.jmailen.kotlinter"
+val pluginId = "org.jmailen.kotlinter"
 
 gradlePlugin {
     plugins {
-        kotlinterPlugin {
+        create("kotlinterPlugin") {
             id = pluginId
             implementationClass = "org.jmailen.gradle.kotlinter.KotlinterPlugin"
         }
@@ -52,10 +54,10 @@ gradlePlugin {
 pluginBundle {
     website = "https://github.com/jeremymailen/kotlinter-gradle"
     vcsUrl = "https://github.com/jeremymailen/kotlinter-gradle"
-    tags = ["kotlin", "ktlint", "lint", "format", "style", "android"]
+    tags = listOf("kotlin", "ktlint", "lint", "format", "style", "android")
 
     plugins {
-        kotlinterPlugin {
+        named("kotlinterPlugin") {
             id = pluginId
             displayName = "Kotlin Lint plugin"
             description = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
@@ -63,18 +65,25 @@ pluginBundle {
     }
 }
 
-java {
-    withSourcesJar()
+val sourcesJar by tasks.registering(Jar::class) {
+    dependsOn(JavaPlugin.CLASSES_TASK_NAME)
+    group = JavaBasePlugin.DOCUMENTATION_GROUP
+    description = "Assembles sources JAR"
+    from(sourceSets.main.get().allSource)
 }
 
 publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
+    publications.withType<MavenPublication> {
+        artifact(sourcesJar.get())
     }
 }
 
-wrapper {
-    gradleVersion = "6.0.1"
+tasks {
+    withType<KotlinCompile>().configureEach {
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    wrapper {
+        gradleVersion = "6.0.1"
+    }
 }

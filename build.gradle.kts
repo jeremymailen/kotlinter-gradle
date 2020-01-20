@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.3.61"
-    id("com.gradle.plugin-publish") version "0.10.1"
+    kotlin("jvm") version Versions.kotlin
+    id("com.gradle.plugin-publish") version Versions.pluginPublish
     `java-gradle-plugin`
     `maven-publish`
-    id("org.jmailen.kotlinter") version "2.1.3"
+    id("org.jmailen.kotlinter") version Versions.kotlinter
     `idea`
 }
 
@@ -14,23 +14,21 @@ repositories {
     google()
 }
 
-val ktlintVers = "0.36.0"
-
 dependencies {
-    implementation("com.pinterest.ktlint:ktlint-core:$ktlintVers")
-    implementation("com.pinterest.ktlint:ktlint-reporter-checkstyle:$ktlintVers")
-    implementation("com.pinterest.ktlint:ktlint-reporter-json:$ktlintVers")
-    implementation("com.pinterest.ktlint:ktlint-reporter-html:$ktlintVers")
-    implementation("com.pinterest.ktlint:ktlint-reporter-plain:$ktlintVers")
-    implementation("com.pinterest.ktlint:ktlint-ruleset-experimental:$ktlintVers")
-    implementation("com.pinterest.ktlint:ktlint-ruleset-standard:$ktlintVers")
+    implementation("com.pinterest.ktlint:ktlint-core:${Versions.ktlint}")
+    implementation("com.pinterest.ktlint:ktlint-reporter-checkstyle:${Versions.ktlint}")
+    implementation("com.pinterest.ktlint:ktlint-reporter-json:${Versions.ktlint}")
+    implementation("com.pinterest.ktlint:ktlint-reporter-html:${Versions.ktlint}")
+    implementation("com.pinterest.ktlint:ktlint-reporter-plain:${Versions.ktlint}")
+    implementation("com.pinterest.ktlint:ktlint-ruleset-experimental:${Versions.ktlint}")
+    implementation("com.pinterest.ktlint:ktlint-ruleset-standard:${Versions.ktlint}")
 
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin")
-    compileOnly("com.android.tools.build:gradle:3.5.3")
+    compileOnly("com.android.tools.build:gradle:${Versions.androidTools}")
 
-    testImplementation("junit:junit:4.13")
-    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
-    testImplementation("org.jetbrains:annotations:18.0.0")
+    testImplementation("junit:junit:${Versions.junit}")
+    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockitoKotlin}")
+    testImplementation("org.jetbrains:annotations:${Versions.jetbrainsAnnotations}")
 }
 
 // Required to put the Kotlin plugin on the classpath for the functional test suite

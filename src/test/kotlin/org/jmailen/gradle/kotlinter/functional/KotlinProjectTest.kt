@@ -40,9 +40,9 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
         )
 
         buildAndFail("lintKotlinMain").apply {
-            assertTrue(output.contains("Lint error >.*$className.kt.*Missing spacing before \"\\{\"".toRegex()))
-            assertTrue(output.contains("Lint error >.*$className.kt.*Unexpected spacing before \"\\(\"".toRegex()))
-            output.lines().filter { it.startsWith("Lint error") }.forEach { line ->
+            assertTrue(output.contains(".*$className.kt.* Lint error > \\[.*] Missing spacing before \"\\{\"".toRegex()))
+            assertTrue(output.contains(".*$className.kt.* Lint error > \\[.*] Unexpected spacing before \"\\(\"".toRegex()))
+            output.lines().filter { it.contains("Lint error") }.forEach { line ->
                 val filePath = pathPattern.find(line)?.groups?.get(1)?.value.orEmpty()
                 assertTrue(File(filePath).exists())
             }
@@ -87,7 +87,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
 
         build("formatKotlin").apply {
             assertEquals(SUCCESS, task(":formatKotlinMain")?.outcome)
-            output.lines().filter { it.startsWith("Format could not fix") }.forEach { line ->
+            output.lines().filter { it.contains("Format could not fix") }.forEach { line ->
                 val filePath = pathPattern.find(line)?.groups?.get(1)?.value.orEmpty()
                 assertTrue(File(filePath).exists())
             }

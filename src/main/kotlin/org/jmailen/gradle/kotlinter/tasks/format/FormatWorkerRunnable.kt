@@ -43,16 +43,15 @@ class FormatWorkerRunnable @Inject constructor(
                 }?.let { formatFunc ->
                     val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, ktLintParams.experimentalRules)
                     val formattedText = formatFunc.invoke(file, ruleSets) { error, corrected ->
-                        val errorStr = "${file.path}:${error.line}:${error.col}: [${error.ruleId}] ${error.detail}"
                         val msg = when (corrected) {
-                            true -> "Format fixed > $errorStr"
-                            false -> "Format could not fix > $errorStr"
+                            true -> "${file.path}:${error.line}:${error.col}: Format fixed > [${error.ruleId}] ${error.detail}"
+                            false -> "${file.path}:${error.line}:${error.col}: Format could not fix > [${error.ruleId}] ${error.detail}"
                         }
                         logger.log(LogLevel.QUIET, msg)
                         executionContext.fixes.add(msg)
                     }
                     if (!formattedText.contentEquals(sourceText)) {
-                        logger.log(LogLevel.QUIET, "Format fixed > ${file.path}:")
+                        logger.log(LogLevel.QUIET, "${file.path}: Format fixed")
                         file.writeText(formattedText)
                     }
                 }

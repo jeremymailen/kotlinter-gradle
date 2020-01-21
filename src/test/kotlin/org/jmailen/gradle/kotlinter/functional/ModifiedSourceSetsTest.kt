@@ -51,6 +51,17 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
                                 main.java.srcDirs += "src/main/kotlin"
                                 test.java.srcDirs += "src/test/kotlin"
                                 debug.java.srcDirs += "src/debug/kotlin"
+                                flavorOne.java.srcDirs = ['src/customFolder/kotlin']
+                            }
+                            
+                            flavorDimensions 'customFlavor'
+                            productFlavors {
+                                flavorOne {
+                                    dimension 'customFlavor'
+                                }
+                                flavorTwo {
+                                    dimension 'customFlavor'
+                                }
                             }
                         }
                         
@@ -69,6 +80,9 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
                 resolve("src/test/kotlin/TestSourceSet.kt") {
                     writeText(kotlinClass("TestSourceSet"))
                 }
+                resolve("src/customFolder/kotlin/CustomSourceSet.kt") {
+                    writeText(kotlinClass("CustomSourceSet"))
+                }
             }
             kotlinModuleRoot = resolve("kotlinproject") {
                 resolve("build.gradle") {
@@ -81,6 +95,9 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
                         
                         sourceSets {
                             main.kotlin.srcDirs += "random/path"
+                            individuallyCustomized {
+                                java.srcDirs = ["src/debug/kotlin"]
+                            }
                         }
                     """.trimIndent()
                     writeText(kotlinBuildScript)
@@ -90,6 +107,9 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
                 }
                 resolve("src/test/kotlin/TestSourceSet.kt") {
                     writeText(kotlinClass("TestSourceSet"))
+                }
+                resolve("src/individuallyCustomized/kotlin/CustomSourceSet.kt") {
+                    writeText(kotlinClass("CustomSourceSet"))
                 }
             }
         }
@@ -101,9 +121,11 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
             assertEquals(TaskOutcome.SUCCESS, task(":androidproject:lintKotlinMain")?.outcome)
             assertEquals(TaskOutcome.SUCCESS, task(":androidproject:lintKotlinDebug")?.outcome)
             assertEquals(TaskOutcome.SUCCESS, task(":androidproject:lintKotlinTest")?.outcome)
+            assertEquals(TaskOutcome.SUCCESS, task(":androidproject:lintKotlinFlavorOne")?.outcome)
             assertEquals(TaskOutcome.SUCCESS, task(":androidproject:lintKotlin")?.outcome)
             assertEquals(TaskOutcome.SUCCESS, task(":kotlinproject:lintKotlinMain")?.outcome)
             assertEquals(TaskOutcome.SUCCESS, task(":kotlinproject:lintKotlinTest")?.outcome)
+            assertEquals(TaskOutcome.SUCCESS, task(":kotlinproject:lintKotlinIndividuallyCustomized")?.outcome)
         }
     }
 
@@ -115,9 +137,11 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
             assertEquals(TaskOutcome.UP_TO_DATE, task(":androidproject:lintKotlinMain")?.outcome)
             assertEquals(TaskOutcome.UP_TO_DATE, task(":androidproject:lintKotlinDebug")?.outcome)
             assertEquals(TaskOutcome.UP_TO_DATE, task(":androidproject:lintKotlinTest")?.outcome)
+            assertEquals(TaskOutcome.UP_TO_DATE, task(":androidproject:lintKotlinFlavorOne")?.outcome)
             assertEquals(TaskOutcome.UP_TO_DATE, task(":androidproject:lintKotlin")?.outcome)
             assertEquals(TaskOutcome.UP_TO_DATE, task(":kotlinproject:lintKotlinMain")?.outcome)
             assertEquals(TaskOutcome.UP_TO_DATE, task(":kotlinproject:lintKotlinTest")?.outcome)
+            assertEquals(TaskOutcome.UP_TO_DATE, task(":kotlinproject:lintKotlinIndividuallyCustomized")?.outcome)
         }
     }
 

@@ -35,7 +35,7 @@ class KotlinterPlugin : Plugin<Project> {
                 val formatKotlin = registerParentFormatTask()
 
                 sourceResolver.applyToAll(project) { id, resolveSources ->
-                    val lintKotlinPerVariant = tasks.register("lintKotlin${id.capitalize()}", LintTask::class.java) { lintTask ->
+                    val lintTaskPerSourceSet = tasks.register("lintKotlin${id.capitalize()}", LintTask::class.java) { lintTask ->
                         lintTask.source(resolveSources)
                         lintTask.ignoreFailures = kotlinterExtension.ignoreFailures
                         lintTask.reports = kotlinterExtension.reporters.associate { reporter ->
@@ -45,7 +45,7 @@ class KotlinterPlugin : Plugin<Project> {
                         lintTask.fileBatchSize = kotlinterExtension.fileBatchSize
                     }
                     lintKotlin.configure { lintTask ->
-                        lintTask.dependsOn(lintKotlinPerVariant)
+                        lintTask.dependsOn(lintTaskPerSourceSet)
                     }
 
                     val formatKotlinPerVariant = tasks.register("formatKotlin${id.capitalize()}", FormatTask::class.java) { formatTask ->

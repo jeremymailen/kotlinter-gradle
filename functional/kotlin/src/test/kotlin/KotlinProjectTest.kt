@@ -1,5 +1,4 @@
-package org.jmailen.gradle.kotlinter.functional
-
+import functional.WithGradleTest
 import java.io.File
 import org.gradle.testkit.runner.TaskOutcome.FAILED
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
@@ -9,7 +8,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-internal class KotlinProjectTest : WithGradleTest.Kotlin() {
+internal class KotlinProjectTest : WithGradleTest() {
 
     private lateinit var settingsFile: File
     private lateinit var buildFile: File

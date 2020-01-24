@@ -40,11 +40,6 @@ dependencies {
     testImplementation("org.jetbrains:annotations:${Versions.jetbrainsAnnotations}")
 }
 
-// Required to put the Kotlin plugin on the classpath for the functional test suite
-tasks.withType<PluginUnderTestMetadata>().configureEach {
-    pluginClasspath.from(configurations.compileOnly)
-}
-
 val sourcesJar by tasks.registering(Jar::class) {
     dependsOn(JavaPlugin.CLASSES_TASK_NAME)
     group = JavaBasePlugin.DOCUMENTATION_GROUP

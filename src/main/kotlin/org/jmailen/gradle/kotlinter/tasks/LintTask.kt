@@ -6,7 +6,6 @@ import org.gradle.api.GradleException
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFiles
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -65,9 +64,6 @@ open class LintTask @Inject constructor(
         ktLintParams.editorConfigPath = editorConfigPath
     }
 
-    @Internal
-    var sourceSetId = ""
-
     @TaskAction
     fun run() {
         val hasErrorReporter = HasErrorReporter()
@@ -75,7 +71,8 @@ open class LintTask @Inject constructor(
             reporterFor(reporter, report)
         } + hasErrorReporter
         val executionContextRepository = ExecutionContextRepository.lintInstance
-        val executionContextRepositoryId = executionContextRepository.register(LintExecutionContext(defaultRuleSetProviders, reporters, logger))
+        val executionContextRepositoryId =
+            executionContextRepository.register(LintExecutionContext(defaultRuleSetProviders, reporters, logger))
 
         reporters.onEach { it.beforeAll() }
 

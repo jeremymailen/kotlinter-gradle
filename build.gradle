@@ -8,7 +8,6 @@ plugins {
 }
 
 repositories {
-    mavenLocal()
     jcenter()
     google()
 }
@@ -25,14 +24,14 @@ dependencies {
     implementation "com.pinterest.ktlint:ktlint-ruleset-standard:$ktlintVers"
 
     compileOnly 'org.jetbrains.kotlin:kotlin-gradle-plugin'
-    compileOnly 'com.android.tools.build:gradle:3.4.2'
+    compileOnly 'com.android.tools.build:gradle:3.5.3'
 
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0'
-    testRuntime 'com.android.tools.build:gradle:3.4.2'
+    testImplementation 'junit:junit:4.13'
+    testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
+    testImplementation 'org.jetbrains:annotations:18.0.0'
 }
 
-// Required to put the Kotlin plugin on the classpath for the functional test suite
+// Required to put all `compileOnly` dependencies on the classpath for the functional test suite
 tasks.withType(PluginUnderTestMetadata).configureEach {
     pluginClasspath.from(configurations.compileOnly)
 }
@@ -62,6 +61,10 @@ pluginBundle {
             description = 'Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects'
         }
     }
+}
+
+java {
+    withSourcesJar()
 }
 
 publishing {

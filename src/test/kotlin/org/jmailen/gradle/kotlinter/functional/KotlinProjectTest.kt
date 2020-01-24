@@ -1,21 +1,15 @@
 package org.jmailen.gradle.kotlinter.functional
 
 import java.io.File
-import org.gradle.testkit.runner.BuildResult
-import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.FAILED
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import org.intellij.lang.annotations.Language
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TemporaryFolder
 
-class FunctionalTest {
-
-    @get:Rule
-    val testProjectDir = TemporaryFolder()
+internal class KotlinProjectTest : WithGradleTest.Kotlin() {
 
     private lateinit var settingsFile: File
     private lateinit var buildFile: File
@@ -87,15 +81,18 @@ class FunctionalTest {
         }
     }
 
-    private fun build(vararg args: String): BuildResult = gradleRunnerFor(*args).build()
+    @Test
+    fun `check task runs lintFormat`() {
+        settingsFile()
+        buildFile()
+        kotlinSourceFile("CustomObject.kt", """
+            object CustomObject
+            
+        """.trimIndent())
 
-    private fun buildAndFail(vararg args: String): BuildResult = gradleRunnerFor(*args).buildAndFail()
-
-    private fun gradleRunnerFor(vararg args: String): GradleRunner {
-        return GradleRunner.create()
-            .withProjectDir(testProjectDir.root)
-            .withArguments(args.toList() + "--stacktrace")
-            .withPluginClasspath()
+        build("check").apply {
+            assertEquals(SUCCESS, task(":lintKotlin")?.outcome)
+        }
     }
 
     private fun settingsFile() = settingsFile.apply {
@@ -103,7 +100,8 @@ class FunctionalTest {
     }
 
     private fun buildFile() = buildFile.apply {
-        writeText("""
+        @Language("groovy")
+        val buildscript = """
             plugins {
                 id 'org.jetbrains.kotlin.jvm' version '1.3.41'
                 id 'org.jmailen.kotlinter'
@@ -124,7 +122,8 @@ class FunctionalTest {
                 disabledRules = ["final-newline"]
                 editorConfigPath = project.rootProject.file(".editorconfig")
             }
-        """.trimIndent())
+        """.trimIndent()
+        writeText(buildscript)
     }
 
     private fun kotlinSourceFile(name: String, content: String) = File(sourceDir, name).apply {

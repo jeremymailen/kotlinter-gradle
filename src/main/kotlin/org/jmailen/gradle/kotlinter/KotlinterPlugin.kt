@@ -2,13 +2,13 @@ package org.jmailen.gradle.kotlinter
 
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
-import java.io.File
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.HasConvention
 import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -20,109 +20,81 @@ import org.jmailen.gradle.kotlinter.tasks.LintTask
 class KotlinterPlugin : Plugin<Project> {
 
     val extendablePlugins = mapOf(
-            "org.jetbrains.kotlin.jvm" to KotlinJvmSourceSetResolver,
-            "kotlin-android" to AndroidSourceSetResolver)
+        "org.jetbrains.kotlin.jvm" to KotlinJvmSourceSetResolver,
+        "kotlin-android" to AndroidSourceSetResolver
+    )
 
-    override fun apply(project: Project) {
-        val kotlinterExtension = project.extensions.create("kotlinter", KotlinterExtension::class.java)
+    override fun apply(project: Project) = with(project) {
+        val kotlinterExtension = extensions.create("kotlinter", KotlinterExtension::class.java)
 
-        // for known kotlin plugins, create tasks by convention.
-        val taskCreator = TaskCreator(project)
-        extendablePlugins.forEach { pluginId, sourceResolver ->
-            project.plugins.withId(pluginId) {
+        // for known kotlin plugins, register tasks by convention.
+        extendablePlugins.forEach { (pluginId, sourceResolver) ->
+            pluginManager.withPlugin(pluginId) {
 
-                sourceResolver.applyToAll(project) { id, files ->
-                    taskCreator.createSourceSetTasks(id, files)
+                val lintKotlin = registerParentLintTask()
+                val formatKotlin = registerParentFormatTask()
+
+                sourceResolver.applyToAll(project) { id, resolveSources ->
+                    val lintTaskPerSourceSet = tasks.register("lintKotlin${id.capitalize()}", LintTask::class.java) { lintTask ->
+                        lintTask.source(resolveSources)
+                        lintTask.ignoreFailures = kotlinterExtension.ignoreFailures
+                        lintTask.reports = kotlinterExtension.reporters.associate { reporter ->
+                            reporter to reportFile("$id-lint.${reporterFileExtension(reporter)}")
+                        }
+                        lintTask.ktLintParams = kotlinterExtension.toKtLintParams(editorConfigPath())
+                        lintTask.fileBatchSize = kotlinterExtension.fileBatchSize
+                    }
+                    lintKotlin.configure { lintTask ->
+                        lintTask.dependsOn(lintTaskPerSourceSet)
+                    }
+
+                    val formatKotlinPerVariant = tasks.register("formatKotlin${id.capitalize()}", FormatTask::class.java) { formatTask ->
+                        formatTask.source(resolveSources)
+                        formatTask.report = reportFile("$id-format.txt")
+                        formatTask.ktLintParams = kotlinterExtension.toKtLintParams(editorConfigPath())
+                        formatTask.fileBatchSize = kotlinterExtension.fileBatchSize
+                    }
+                    formatKotlin.configure { formatTask ->
+                        formatTask.dependsOn(formatKotlinPerVariant)
+                    }
                 }
-
-                taskCreator.createParentTasks()
-            }
-        }
-
-        project.afterEvaluate {
-            val ktLintParams = KtLintParams(
-                kotlinterExtension.indentSize,
-                kotlinterExtension.continuationIndentSize,
-                kotlinterExtension.experimentalRules,
-                kotlinterExtension.disabledRules,
-                project.editorConfigPath()
-            )
-
-            taskCreator.lintTasks.forEach { lintTask ->
-                lintTask.ignoreFailures = kotlinterExtension.ignoreFailures
-                lintTask.reports = kotlinterExtension.reporters.associate { reporter ->
-                    reporter to project.reportFile("${lintTask.sourceSetId}-lint.${reporterFileExtension(reporter)}")
-                }
-                lintTask.ktLintParams = ktLintParams
-                lintTask.fileBatchSize = kotlinterExtension.fileBatchSize
-            }
-            taskCreator.formatTasks.forEach { formatTask ->
-                formatTask.ktLintParams = ktLintParams
-                formatTask.fileBatchSize = kotlinterExtension.fileBatchSize
             }
         }
     }
-}
 
-class TaskCreator(private val project: Project) {
-
-    val formatTasks = mutableListOf<FormatTask>()
-    val lintTasks = mutableListOf<LintTask>()
-
-    fun createSourceSetTasks(id: String, files: Set<File>) {
-
-        formatTasks += project.tasks.create("formatKotlin${id.capitalize()}", FormatTask::class.java) {
-            it.source(files)
-            it.report = project.reportFile("$id-format.txt")
-        }
-
-        lintTasks += project.tasks.create("lintKotlin${id.capitalize()}", LintTask::class.java) {
-            it.source(files)
-            it.sourceSetId = id
-        }
-    }
-
-    fun createParentTasks() {
-        project.tasks.create("formatKotlin") {
-            it.group = "formatting"
-            it.description = "Formats the Kotlin source files."
-            it.dependsOn(formatTasks)
-        }
-
-        val lintKotlin = project.tasks.create("lintKotlin") {
+    private fun Project.registerParentLintTask() =
+        tasks.register("lintKotlin") {
             it.group = "formatting"
             it.description = "Runs lint on the Kotlin source files."
-            it.dependsOn(lintTasks)
+        }.also { lintKotlin ->
+            tasks.named("check").configure { check -> check.dependsOn(lintKotlin) }
         }
 
-        project.tasks.getByName("check") {
-            it.dependsOn(lintKotlin)
+    private fun Project.registerParentFormatTask() =
+        tasks.register("formatKotlin") {
+            it.group = "formatting"
+            it.description = "Formats the Kotlin source files."
         }
-    }
 }
 
-typealias SourceSetAction = (String, Set<File>) -> Unit
+internal typealias SourceSetAction = (String, Provider<FileTree>) -> Unit
 
 interface SourceSetResolver {
     fun applyToAll(project: Project, action: SourceSetAction)
 }
 
-object KotlinJvmSourceSetResolver : SourceSetResolver {
+internal object KotlinJvmSourceSetResolver : SourceSetResolver {
 
     override fun applyToAll(project: Project, action: SourceSetAction) {
         getSourceSets(project).all { sourceSet ->
-            getKotlinFiles(sourceSet)?.let { files ->
-                action(getSourceSetName(sourceSet)!!.id, files)
+            sourceSet.kotlin?.let { directorySet ->
+                action(directorySet.name.id, project.provider { directorySet })
             }
         }
     }
 
     private fun getSourceSets(project: Project): SourceSetContainer =
         project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
-
-    private fun getSourceSetName(sourceSet: SourceSet) = sourceSet.kotlin?.name
-
-    private fun getKotlinFiles(sourceSet: SourceSet) = sourceSet.kotlin?.files
 
     private val SourceSet.kotlin: SourceDirectorySet?
         get() = ((getConvention("kotlin") ?: getConvention("kotlin2js")) as? KotlinSourceSet)?.kotlin
@@ -131,35 +103,38 @@ object KotlinJvmSourceSetResolver : SourceSetResolver {
         (this as HasConvention).convention.plugins[name]
 }
 
-object AndroidSourceSetResolver : SourceSetResolver {
+internal object AndroidSourceSetResolver : SourceSetResolver {
 
     override fun applyToAll(project: Project, action: SourceSetAction) {
         val android = project.extensions.findByName("android")
         (android as? BaseExtension)?.let {
             it.sourceSets.all { sourceSet ->
                 val id = sourceSet.name.id
-                val files = getKotlinFiles(project, sourceSet)
-                if (files.isNotEmpty()) {
-                    action(id, files)
-                }
+                action(id, project.provider { getKotlinFiles(project, sourceSet) })
             }
         }
     }
 
     private fun getKotlinFiles(project: Project, sourceSet: AndroidSourceSet) = sourceSet.java.srcDirs.map { dir ->
-        project.fileTree(dir) {
-            it.include("**/*.kt")
-        }
+        project.fileTree(dir) { it.include("**/*.kt") }
     }.reduce { merged: FileTree, tree ->
-        merged.plus(tree)
-    }.files
+        merged + tree
+    }
 }
 
-val String.id
+private fun KotlinterExtension.toKtLintParams(editorConfigPath: String?) = KtLintParams(
+    indentSize,
+    continuationIndentSize,
+    experimentalRules,
+    disabledRules,
+    editorConfigPath
+)
+
+internal val String.id
     get() = split(" ").first()
 
-fun Project.reportFile(name: String) = file("${project.buildDir}/reports/ktlint/$name")
+internal fun Project.reportFile(name: String) = file("$buildDir/reports/ktlint/$name")
 
-fun Project.editorConfigPath() = with(rootProject.file(".editorconfig")) {
+internal fun Project.editorConfigPath() = with(rootProject.file(".editorconfig")) {
     if (this.exists()) this.path else null
 }

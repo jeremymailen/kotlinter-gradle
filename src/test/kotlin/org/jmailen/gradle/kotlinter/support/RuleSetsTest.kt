@@ -64,5 +64,9 @@ class TestRuleSetProvider(val ruleSet: RuleSet) : RuleSetProvider {
 }
 
 class TestRule(id: String) : Rule(id) {
-    override fun visit(node: ASTNode, autoCorrect: Boolean, emit: (offset: Int, errorMessage: String, canBeAutoCorrected: Boolean) -> Unit) {}
+    override fun visit(
+        node: ASTNode,
+        autoCorrect: Boolean,
+        emit: (offset: Int, errorMessage: String, canBeAutoCorrected: Boolean) -> Unit
+    ) {}
 }

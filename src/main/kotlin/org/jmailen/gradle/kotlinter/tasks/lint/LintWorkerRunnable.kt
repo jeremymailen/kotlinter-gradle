@@ -46,8 +46,8 @@ class LintWorkerRunnable @Inject constructor(
                 lintFunc?.invoke(file, ruleSets) { error ->
                     reporters.onEach { it.onLintError(relativePath, error, false) }
 
-                    val errorStr = "$relativePath:${error.line}:${error.col}: [${error.ruleId}] ${error.detail}"
-                    logger.quiet("Lint error > $errorStr")
+                    val errorStr = "${file.path}:${error.line}:${error.col}: Lint error > [${error.ruleId}] ${error.detail}"
+                    logger.quiet(errorStr)
                 }
 
                 reporters.onEach { it.after(relativePath) }

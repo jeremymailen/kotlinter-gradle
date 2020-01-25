@@ -36,7 +36,7 @@ tasks.withType(PluginUnderTestMetadata).configureEach {
     pluginClasspath.from(configurations.compileOnly)
 }
 
-version = '2.2.0'
+version = '2.3.0'
 group = 'org.jmailen.gradle'
 def pluginId = 'org.jmailen.kotlinter'
 

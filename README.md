@@ -2,7 +2,9 @@
 
 [![Build Status](https://api.travis-ci.org/jeremymailen/kotlinter-gradle.svg?branch=master)](https://travis-ci.org/jeremymailen/kotlinter-gradle)
 
-Gradle plugin for linting and formatting Kotlin source files using the awesome [ktlint](https://ktlint.github.io) engine.
+Painless gradle plugin for linting and formatting Kotlin source files using the awesome [ktlint](https://ktlint.github.io) engine.
+
+It aims to be easy to set up with zero _required_ configuration and behaves as you'd expect out of the box.
 
 ### Installation
 
@@ -15,7 +17,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "2.2.0"
+    id("org.jmailen.kotlinter") version "2.3.0"
 }
 ```
 
@@ -26,7 +28,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "2.2.0"
+    id "org.jmailen.kotlinter" version "2.3.0"
 }
 ```
 
@@ -46,7 +48,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jmailen.gradle:kotlinter-gradle:2.2.0")
+        classpath("org.jmailen.gradle:kotlinter-gradle:2.3.0")
     }
 }
 ```
@@ -71,7 +73,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.jmailen.gradle:kotlinter-gradle:2.2.0"
+        classpath "org.jmailen.gradle:kotlinter-gradle:2.3.0"
     }
 }
 ```
@@ -85,28 +87,17 @@ apply plugin: "org.jmailen.kotlinter"
 </details>
 
 ### Compatibility
-Kotlinter 1.24.0 and later compatible with Kotlin Gradle plugins 1.3.30+ and Java 11/10/9/8.
 
-Kotlinter 1.21.0 and later compatible with Kotlin Gradle plugins 1.3.20+ and Java 11/10/9/8.
-
-Kotlinter 1.12.0 and later compatible with Kotlin Gradle plugins 1.2.41+ and Java 9/8.
-
-Kotlinter 1.8.0 and later compatible with Kotlin Gradle plugins 1.2.21+ and Java 9/8.
-
-Kotlinter 1.7.0 and later compatible with Kotlin Gradle plugins 1.2.20+
-
-Kotlinter 1.4.0 and later compatible with Kotlin Gradle plugins 1.1.50+
-
-Kotlinter 1.2.0 and later compatible with Kotlin Gradle plugins 1.1.3+
-
-Kotlinter 1.1.0 and earlier compatible with Kotlin Gradle plugins 1.1 - 1.1.2-5
+Kotlinter is compatible with Kotlin Gradle plugins 1.3.30+ and Java 13/12/11/10/9/8.
 
 ### Features
-- Extends Kotlin JVM and Android projects with lint and format tasks for each `SourceSet`
+
+- Supports `.kt` and `.kts` files
+- Supports Kotlin JVM and Android projects (autoconfiguration with these plugins)
 - Standalone `LintTask` and `FormatTask` types for defining custom tasks
-- Incremental build support
-- `.kt` and `.kts` source support
-- Console output and configurable reporters
+- Incremental build support and fast parallelization with Gradle workers
+- Configures from `.editorconfig` when available
+- Configurable reporters
 
 ### Tasks
 
@@ -121,7 +112,7 @@ Also `check` becomes dependent on `lintKotlin`.
 Granular tasks exist for each source set in the project: `formatKotlin`*`SourceSet`* and `lintKotlin`*`SourceSet`*.
 
 ### Configuration
-Options are configured in the `kotlinter` extension. Defaults shown (you may omit the configuration block entirely if you want these values).
+Options are configured in the `kotlinter` extension. Defaults shown (you may omit the configuration block entirely if you want these defaults).
 
 <details open>
 <summary>Kotlin</summary>
@@ -157,7 +148,7 @@ kotlinter {
 
 </details>
 
-Options for `reporters`: checkstyle, html, json, plain
+Options for `reporters`: `checkstyle`, `html`, `json`, `plain`
 
 Reporters behave as described at: https://github.com/pinterest/ktlint
 
@@ -212,7 +203,7 @@ lintKotlinMain {
 
 ### Custom Tasks
 
-If you haven't applied these plugins you can create custom tasks:
+If you aren't using autoconfiguration from a supported plugin or otherwise need to handle additional source code, you can create custom tasks:
 
 <details open>
 <summary>Kotlin</summary>

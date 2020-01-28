@@ -2,7 +2,8 @@ plugins {
     `kotlin-dsl`
 }
 
-// kotlinDslPluginOptions.experimentalWarning.set(false)
+kotlinDslPluginOptions.experimentalWarning.set(false)
+
 repositories {
     jcenter()
 }

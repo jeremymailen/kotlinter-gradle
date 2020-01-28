@@ -14,6 +14,15 @@ repositories {
     google()
 }
 
+val pluginId = "org.jmailen.kotlinter"
+val githubUrl ="https://github.com/jeremymailen/kotlinter-gradle"
+val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
+val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
+
+version = "2.3.0"
+group = "org.jmailen.gradle"
+description = projectDescription
+
 dependencies {
     implementation("com.pinterest.ktlint:ktlint-core:${Versions.ktlint}")
     implementation("com.pinterest.ktlint:ktlint-reporter-checkstyle:${Versions.ktlint}")
@@ -36,9 +45,21 @@ tasks.withType<PluginUnderTestMetadata>().configureEach {
     pluginClasspath.from(configurations.compileOnly)
 }
 
-version = "2.3.0"
-group = "org.jmailen.gradle"
-val pluginId = "org.jmailen.kotlinter"
+val sourcesJar by tasks.registering(Jar::class) {
+    dependsOn(JavaPlugin.CLASSES_TASK_NAME)
+    group = JavaBasePlugin.DOCUMENTATION_GROUP
+    description = "Assembles sources JAR"
+    classifier = "sources"
+    from(sourceSets.main.get().allSource)
+}
+
+val javadocJar by tasks.registering(Jar::class) {
+    dependsOn(JavaPlugin.JAVADOC_TASK_NAME)
+    group = JavaBasePlugin.DOCUMENTATION_GROUP
+    description = "Assembles javaDoc JAR"
+    classifier = "javadoc"
+    from(tasks["javadoc"])
+}
 
 gradlePlugin {
     plugins {
@@ -50,29 +71,52 @@ gradlePlugin {
 }
 
 pluginBundle {
-    website = "https://github.com/jeremymailen/kotlinter-gradle"
-    vcsUrl = "https://github.com/jeremymailen/kotlinter-gradle"
+    website = webUrl
+    vcsUrl = githubUrl
+    description = project.description
     tags = listOf("kotlin", "ktlint", "lint", "format", "style", "android")
 
     plugins {
         named("kotlinterPlugin") {
-            id = pluginId
             displayName = "Kotlin Lint plugin"
-            description = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
         }
     }
 }
 
-val sourcesJar by tasks.registering(Jar::class) {
-    dependsOn(JavaPlugin.CLASSES_TASK_NAME)
-    group = JavaBasePlugin.DOCUMENTATION_GROUP
-    description = "Assembles sources JAR"
-    from(sourceSets.main.get().allSource)
+artifacts {
+    add(configurations.archives.name, sourcesJar)
+    add(configurations.archives.name, javadocJar)
 }
 
 publishing {
     publications.withType<MavenPublication> {
         artifact(sourcesJar.get())
+
+        pom {
+            name.set(project.name)
+            description.set(project.description)
+            url.set(webUrl)
+
+            scm {
+                url.set(githubUrl)
+            }
+
+            licenses {
+                license {
+                    name.set("The Apache Software License, Version 2.0")
+                    url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    distribution.set("repo")
+                }
+            }
+
+            developers {
+                developer {
+                    id.set("jeremymailen")
+                    name.set("Jeremy Mailen")
+                }
+            }
+        }
+
     }
 }
 

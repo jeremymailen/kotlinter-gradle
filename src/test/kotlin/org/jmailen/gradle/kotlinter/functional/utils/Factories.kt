@@ -19,3 +19,8 @@ internal val androidManifest = """
      <manifest package="com.example" />
 
 """.trimIndent()
+
+internal val editorConfig = """
+    [*.kt]
+    
+"""

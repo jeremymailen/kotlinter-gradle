@@ -12,7 +12,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.reporterFileExtension
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
@@ -37,12 +36,20 @@ class KotlinterPlugin : Plugin<Project> {
                 sourceResolver.applyToAll(project) { id, resolveSources ->
                     val lintTaskPerSourceSet = tasks.register("lintKotlin${id.capitalize()}", LintTask::class.java) { lintTask ->
                         lintTask.source(resolveSources)
-                        lintTask.ignoreFailures = kotlinterExtension.ignoreFailures
-                        lintTask.reports = kotlinterExtension.reporters.associate { reporter ->
-                            reporter to reportFile("$id-lint.${reporterFileExtension(reporter)}")
-                        }
-                        lintTask.ktLintParams = kotlinterExtension.toKtLintParams(editorConfigPath())
-                        lintTask.fileBatchSize = kotlinterExtension.fileBatchSize
+                        lintTask.ignoreFailures.set(provider { kotlinterExtension.ignoreFailures })
+                        lintTask.reports.set(
+                            provider {
+                                kotlinterExtension.reporters.associate { reporter ->
+                                    reporter to reportFile("$id-lint.${reporterFileExtension(reporter)}")
+                                }
+                            }
+                        )
+                        lintTask.indentSize.set(provider { kotlinterExtension.indentSize })
+                        lintTask.continuationIndentSize.set(provider { kotlinterExtension.continuationIndentSize })
+                        lintTask.experimentalRules.set(provider { kotlinterExtension.experimentalRules })
+                        lintTask.disabledRules.set(provider { kotlinterExtension.disabledRules.toList() })
+                        lintTask.editorConfigPath.set(editorConfigFile())
+                        lintTask.fileBatchSize.set(provider { kotlinterExtension.fileBatchSize })
                     }
                     lintKotlin.configure { lintTask ->
                         lintTask.dependsOn(lintTaskPerSourceSet)
@@ -50,9 +57,13 @@ class KotlinterPlugin : Plugin<Project> {
 
                     val formatKotlinPerVariant = tasks.register("formatKotlin${id.capitalize()}", FormatTask::class.java) { formatTask ->
                         formatTask.source(resolveSources)
-                        formatTask.report = reportFile("$id-format.txt")
-                        formatTask.ktLintParams = kotlinterExtension.toKtLintParams(editorConfigPath())
-                        formatTask.fileBatchSize = kotlinterExtension.fileBatchSize
+                        formatTask.report.set(reportFile("$id-format.txt"))
+                        formatTask.indentSize.set(provider { kotlinterExtension.indentSize })
+                        formatTask.continuationIndentSize.set(provider { kotlinterExtension.continuationIndentSize })
+                        formatTask.experimentalRules.set(provider { kotlinterExtension.experimentalRules })
+                        formatTask.disabledRules.set(provider { kotlinterExtension.disabledRules.toList() })
+                        formatTask.editorConfigPath.set(editorConfigFile())
+                        formatTask.fileBatchSize.set(provider { kotlinterExtension.fileBatchSize })
                     }
                     formatKotlin.configure { formatTask ->
                         formatTask.dependsOn(formatKotlinPerVariant)
@@ -122,19 +133,9 @@ internal object AndroidSourceSetResolver : SourceSetResolver {
     }
 }
 
-private fun KotlinterExtension.toKtLintParams(editorConfigPath: String?) = KtLintParams(
-    indentSize,
-    continuationIndentSize,
-    experimentalRules,
-    disabledRules,
-    editorConfigPath
-)
-
 internal val String.id
     get() = split(" ").first()
 
 internal fun Project.reportFile(name: String) = file("$buildDir/reports/ktlint/$name")
 
-internal fun Project.editorConfigPath() = with(rootProject.file(".editorconfig")) {
-    if (this.exists()) this.path else null
-}
+internal fun Project.editorConfigFile() = rootProject.file(".editorconfig").takeIf { it.exists() }

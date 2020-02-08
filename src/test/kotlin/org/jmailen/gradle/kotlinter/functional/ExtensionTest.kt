@@ -27,7 +27,7 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
                     id 'org.jmailen.kotlinter'
                 }
                 
-            """.trimIndent()
+                """.trimIndent()
                 writeText(buildScript)
             }
         }
@@ -110,6 +110,36 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
                 }
             """.trimIndent()
             appendText(script)
+        }
+        projectRoot.resolve("src/main/kotlin/FileName.kt") {
+            writeText(kotlinClass("DifferentClassName"))
+        }
+
+        build("lintKotlin").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":lintKotlinMain")?.outcome)
+        }
+    }
+
+    @Test
+    fun `extension properties are evaluated only during task execution`() {
+        projectRoot.resolve("build.gradle") {
+            @Language("groovy")
+            val buildScript = """
+                plugins {
+                    id 'kotlin'
+                    id 'org.jmailen.kotlinter'
+                }
+                
+                tasks.whenTaskAdded {
+                    // configure all tasks eagerly
+                }
+                
+                kotlinter {
+                    disabledRules = ["filename"]
+                }
+                
+                """.trimIndent()
+            writeText(buildScript)
         }
         projectRoot.resolve("src/main/kotlin/FileName.kt") {
             writeText(kotlinClass("DifferentClassName"))

@@ -4,7 +4,10 @@ import java.io.File
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SourceTask
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_CONTINUATION_INDENT_SIZE
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_DISABLED_RULES
@@ -28,8 +31,10 @@ abstract class ConfigurableKtLintTask : SourceTask() {
     val disabledRules = listProperty(default = DEFAULT_DISABLED_RULES.toList())
     @Optional
     @InputFile
+    @PathSensitive(PathSensitivity.RELATIVE)
     val editorConfigPath = project.objects.fileProperty()
 
+    @Internal
     protected fun getKtLintParams() = KtLintParams(
         indentSize = indentSize.get(),
         continuationIndentSize = continuationIndentSize.get(),
@@ -38,7 +43,8 @@ abstract class ConfigurableKtLintTask : SourceTask() {
         editorConfigPath = editorConfigPath.asFile.orNull?.path
     )
 
-    fun getChunkedSource(): List<List<File>> =
+    @Internal
+    protected fun getChunkedSource(): List<List<File>> =
         source.chunked(fileBatchSize.get())
 }
 

@@ -55,7 +55,7 @@ class KotlinterPlugin : Plugin<Project> {
                         lintTask.dependsOn(lintTaskPerSourceSet)
                     }
 
-                    val formatKotlinPerVariant = tasks.register("formatKotlin${id.capitalize()}", FormatTask::class.java) { formatTask ->
+                    val formatKotlinPerSourceSet = tasks.register("formatKotlin${id.capitalize()}", FormatTask::class.java) { formatTask ->
                         formatTask.source(resolveSources)
                         formatTask.report.set(reportFile("$id-format.txt"))
                         formatTask.indentSize.set(provider { kotlinterExtension.indentSize })
@@ -66,7 +66,7 @@ class KotlinterPlugin : Plugin<Project> {
                         formatTask.fileBatchSize.set(provider { kotlinterExtension.fileBatchSize })
                     }
                     formatKotlin.configure { formatTask ->
-                        formatTask.dependsOn(formatKotlinPerVariant)
+                        formatTask.dependsOn(formatKotlinPerSourceSet)
                     }
                 }
             }

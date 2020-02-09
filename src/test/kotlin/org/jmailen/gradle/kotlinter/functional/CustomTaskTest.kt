@@ -155,4 +155,34 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
             assertEquals(TaskOutcome.SUCCESS, task(":customizedFormatTask")?.outcome)
         }
     }
+
+    @Test
+    fun `succeeds if reports not passed`() {
+        projectRoot.resolve("build.gradle") {
+            @Language("groovy")
+            val buildScript = """
+                import org.jmailen.gradle.kotlinter.tasks.LintTask
+    
+                task reportsNotConfigured(type: LintTask) {
+                    source files('src')
+                }
+                
+                task reportsEmpty(type: LintTask) {
+                    source files('src')
+                    reports = [:]
+                }
+                
+            """
+            appendText(buildScript)
+        }
+
+        build("reportsEmpty").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":reportsEmpty")?.outcome)
+            assertEquals(emptyList<String>(), projectRoot.resolve("build/reports/ktlint").list().orEmpty())
+        }
+        build("reportsNotConfigured").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":reportsNotConfigured")?.outcome)
+            assertEquals(emptyList<String>(), projectRoot.resolve("build/reports/ktlint").list().orEmpty())
+        }
+    }
 }

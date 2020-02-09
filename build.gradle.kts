@@ -129,6 +129,4 @@ tasks {
         gradleVersion = "6.1.1"
         distributionType = Wrapper.DistributionType.ALL
     }
-    register("noOp")
-    defaultTasks = mutableListOf("noOp")
 }

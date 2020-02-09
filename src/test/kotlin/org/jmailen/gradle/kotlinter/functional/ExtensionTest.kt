@@ -149,4 +149,36 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
             assertEquals(TaskOutcome.SUCCESS, task(":lintKotlinMain")?.outcome)
         }
     }
+
+    @Test
+    fun `user customized values take precedence over extension values`() {
+        projectRoot.resolve("src/main/kotlin/FileName.kt") {
+            @Language("kotlin")
+            val kotlinClass = """
+                class Precedence {
+                    fun hi() = Unit
+                }
+            """.trimIndent()
+            writeText(kotlinClass)
+        }
+        projectRoot.resolve("build.gradle") {
+            @Language("groovy")
+            val script = """
+                kotlinter {
+                    disabledRules = ['filename']
+                }
+                
+                lintKotlinMain {
+                    disabledRules = ['final-newline']
+                }
+                
+            """.trimIndent()
+            appendText(script)
+        }
+
+        buildAndFail("lintKotlin").apply {
+            assertEquals(TaskOutcome.FAILED, task(":lintKotlinMain")?.outcome)
+            assertTrue(output.contains("[filename] class Precedence should be declared in a file named Precedence.kt"))
+        }
+    }
 }

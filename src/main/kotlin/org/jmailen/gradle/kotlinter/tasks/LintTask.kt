@@ -6,7 +6,6 @@ import org.gradle.api.GradleException
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFiles
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -27,7 +26,6 @@ open class LintTask @Inject constructor(
     private val workerExecutor: WorkerExecutor
 ) : ConfigurableKtLintTask() {
 
-    @Optional
     @OutputFiles
     val reports = mapProperty(default = emptyMap<String, File>())
 

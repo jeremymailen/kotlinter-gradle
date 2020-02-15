@@ -158,7 +158,7 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `ktLint custom task skips reports generation if reports not passed`() {
+    fun `ktLint custom task skips reports generation if reports not configured`() {
         projectRoot.resolve("src/main/kotlin/MissingNewLine.kt") {
             @Language("kotlin")
             val validClass = """
@@ -193,6 +193,72 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
             assertEquals(TaskOutcome.FAILED, task(":reportsNotConfigured")?.outcome)
             assertTrue(output.contains("[final-newline] File must end with a newline (\\n)"))
             assertEquals(emptyList<String>(), projectRoot.resolve("build/reports/ktlint").list().orEmpty())
+        }
+    }
+
+    @Test
+    fun `ktLint custom task became up-to-date on second run if reports not configured`() {
+        projectRoot.resolve("build.gradle") {
+            @Language("groovy")
+            val buildScript = """
+                import org.jmailen.gradle.kotlinter.tasks.LintTask
+    
+                task reportsNotConfigured(type: LintTask) {
+                    source files('src')
+                }
+                
+                task reportsEmpty(type: LintTask) {
+                    source files('src')
+                    reports = [:]
+                }
+                
+            """
+            appendText(buildScript)
+        }
+
+        build("reportsEmpty").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":reportsEmpty")?.outcome)
+        }
+        build("reportsEmpty").apply {
+            assertEquals(TaskOutcome.UP_TO_DATE, task(":reportsEmpty")?.outcome)
+        }
+        build("reportsNotConfigured").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":reportsNotConfigured")?.outcome)
+        }
+        build("reportsNotConfigured").apply {
+            assertEquals(TaskOutcome.UP_TO_DATE, task(":reportsNotConfigured")?.outcome)
+        }
+    }
+
+    @Test
+    fun `ktLint custom task treats reports as input parameter`() {
+        projectRoot.resolve("build.gradle") {
+            @Language("groovy")
+            val buildScript = """
+                import org.jmailen.gradle.kotlinter.tasks.LintTask
+    
+                task ktLintWithReports(type: LintTask) {
+                    source files('src')
+                    reports = reports = ['plain': file('build/lint-report.txt')]
+                }
+                
+            """
+            appendText(buildScript)
+        }
+
+        build("ktLintWithReports").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":ktLintWithReports")?.outcome)
+            assertTrue(projectRoot.resolve("build/lint-report.txt").exists())
+        }
+        build("ktLintWithReports").apply {
+            assertEquals(TaskOutcome.UP_TO_DATE, task(":ktLintWithReports")?.outcome)
+        }
+
+        projectRoot.resolve("build/lint-report.txt").appendText("CHANGED REPORT FILE")
+
+        build("ktLintWithReports").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":ktLintWithReports")?.outcome)
+            assertTrue(projectRoot.resolve("build/lint-report.txt").exists())
         }
     }
 }

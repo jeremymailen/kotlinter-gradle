@@ -45,7 +45,6 @@ class KotlinterPlugin : Plugin<Project> {
                             }
                         )
                         lintTask.indentSize.set(provider { kotlinterExtension.indentSize })
-                        lintTask.continuationIndentSize.set(provider { kotlinterExtension.continuationIndentSize })
                         lintTask.experimentalRules.set(provider { kotlinterExtension.experimentalRules })
                         lintTask.disabledRules.set(provider { kotlinterExtension.disabledRules.toList() })
                         lintTask.editorConfigPath.set(editorConfigFile())
@@ -59,7 +58,6 @@ class KotlinterPlugin : Plugin<Project> {
                         formatTask.source(resolveSources)
                         formatTask.report.set(reportFile("$id-format.txt"))
                         formatTask.indentSize.set(provider { kotlinterExtension.indentSize })
-                        formatTask.continuationIndentSize.set(provider { kotlinterExtension.continuationIndentSize })
                         formatTask.experimentalRules.set(provider { kotlinterExtension.experimentalRules })
                         formatTask.disabledRules.set(provider { kotlinterExtension.disabledRules.toList() })
                         formatTask.editorConfigPath.set(editorConfigFile())

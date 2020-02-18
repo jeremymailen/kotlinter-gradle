@@ -62,7 +62,6 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                     source files('src')
                     reports = ['plain': file('build/lint-report.txt')]
                     indentSize = 5
-                    continuationIndentSize = 7
                     experimentalRules = true
                     disabledRules = ["final-newline"]
                     editorConfigPath = project.rootProject.file(".editorconfig")
@@ -111,7 +110,6 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                     source files('src')
                     reports = ['plain': file('build/lint-report.txt')]
                     indentSize = 123
-                    continuationIndentSize = 17
                     experimentalRules = true
                     disabledRules = ["final-newline"]
                     editorConfigPath = project.rootProject.file(".editorconfig")
@@ -141,7 +139,6 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                 task customizedFormatTask(type: FormatTask) {
                     source files('src')
                     indentSize = 123
-                    continuationIndentSize = 17
                     experimentalRules = true
                     disabledRules = ["final-newline"]
                     editorConfigPath = project.rootProject.file(".editorconfig")

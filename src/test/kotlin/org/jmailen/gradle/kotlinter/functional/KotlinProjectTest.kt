@@ -95,23 +95,6 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `ktLint custom task succeeds when no lint errors detected`() {
-        settingsFile()
-        buildFile()
-        kotlinSourceFile("CustomClass.kt", """
-            class CustomClass {
-                 private fun go() {
-                      println("go")
-                 }
-            }
-        """.trimIndent())
-
-        build("ktLint").apply {
-            assertEquals(SUCCESS, task(":ktLint")?.outcome)
-        }
-    }
-
-    @Test
     fun `check task runs lintFormat`() {
         settingsFile()
         buildFile()
@@ -139,18 +122,6 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
 
             repositories {
                 jcenter()
-            }
-
-            import org.jmailen.gradle.kotlinter.tasks.LintTask
-
-            task ktLint(type: LintTask) {
-                source files('src')
-                reports = ['plain': file('build/lint-report.txt')]
-                indentSize = 5
-                continuationIndentSize = 7
-                experimentalRules = true
-                disabledRules = ["final-newline"]
-                editorConfigPath = project.rootProject.file(".editorconfig")
             }
         """.trimIndent()
         writeText(buildscript)

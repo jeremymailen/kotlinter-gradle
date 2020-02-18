@@ -27,7 +27,7 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
                     id 'org.jmailen.kotlinter'
                 }
                 
-            """.trimIndent()
+                """.trimIndent()
                 writeText(buildScript)
             }
         }
@@ -117,6 +117,68 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
 
         build("lintKotlin").apply {
             assertEquals(TaskOutcome.SUCCESS, task(":lintKotlinMain")?.outcome)
+        }
+    }
+
+    @Test
+    fun `extension properties are evaluated only during task execution`() {
+        projectRoot.resolve("build.gradle") {
+            @Language("groovy")
+            val buildScript = """
+                plugins {
+                    id 'kotlin'
+                    id 'org.jmailen.kotlinter'
+                }
+                
+                tasks.whenTaskAdded {
+                    // configure all tasks eagerly
+                }
+                
+                kotlinter {
+                    disabledRules = ["filename"]
+                }
+                
+                """.trimIndent()
+            writeText(buildScript)
+        }
+        projectRoot.resolve("src/main/kotlin/FileName.kt") {
+            writeText(kotlinClass("DifferentClassName"))
+        }
+
+        build("lintKotlin").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":lintKotlinMain")?.outcome)
+        }
+    }
+
+    @Test
+    fun `user customized values take precedence over extension values`() {
+        projectRoot.resolve("src/main/kotlin/FileName.kt") {
+            @Language("kotlin")
+            val kotlinClass = """
+                class Precedence {
+                    fun hi() = Unit
+                }
+            """.trimIndent()
+            writeText(kotlinClass)
+        }
+        projectRoot.resolve("build.gradle") {
+            @Language("groovy")
+            val script = """
+                kotlinter {
+                    disabledRules = ['filename']
+                }
+                
+                lintKotlinMain {
+                    disabledRules = ['final-newline']
+                }
+                
+            """.trimIndent()
+            appendText(script)
+        }
+
+        buildAndFail("lintKotlin").apply {
+            assertEquals(TaskOutcome.FAILED, task(":lintKotlinMain")?.outcome)
+            assertTrue(output.contains("[filename] class Precedence should be declared in a file named Precedence.kt"))
         }
     }
 }

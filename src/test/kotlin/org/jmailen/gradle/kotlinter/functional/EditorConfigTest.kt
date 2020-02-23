@@ -7,6 +7,7 @@ import org.intellij.lang.annotations.Language
 import org.jmailen.gradle.kotlinter.functional.utils.kotlinClass
 import org.jmailen.gradle.kotlinter.functional.utils.resolve
 import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -88,6 +89,45 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
 
         build("lintKotlin").apply {
             assertEquals(TaskOutcome.SUCCESS, task(":lintKotlinMain")?.outcome)
+        }
+    }
+
+    @Test
+    fun `plugin extension proprties take precedence over editorconfig values`() {
+        projectRoot.resolve(".editorconfig") {
+            appendText(
+                """
+                    [*.{kt,kts}]
+                    disabled_rules=filename
+                """.trimIndent()
+            )
+        }
+        projectRoot.resolve("build.gradle") {
+            appendText(
+                """
+                kotlinter {
+                    disabledRules = ['paren-spacing']
+                }
+                
+                """.trimIndent()
+            )
+        }
+        projectRoot.resolve("src/main/kotlin/FileName.kt") {
+            @Language("kotlin")
+            val content = """
+                class WrongFileName {
+
+                    fun unnecessarySpace () = 2
+                }
+
+                """.trimIndent()
+
+            writeText(content)
+        }
+
+        buildAndFail("lintKotlin").apply {
+            assertEquals(TaskOutcome.FAILED, task(":lintKotlinMain")?.outcome)
+            assertTrue(output.contains("[filename] class WrongFileName should be declared in a file named WrongFileName.kt"))
         }
     }
 }

@@ -93,21 +93,23 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `plugin extension proprties take precedence over editorconfig values`() {
+    fun `plugin extension properties take precedence over editorconfig values`() {
         projectRoot.resolve(".editorconfig") {
             appendText(
                 """
                     [*.{kt,kts}]
                     disabled_rules=filename
+                    indent_size = 2
                 """.trimIndent()
             )
         }
         projectRoot.resolve("build.gradle") {
             appendText(
                 """
-                kotlinter {
-                    disabledRules = ['paren-spacing']
-                }
+                    kotlinter {
+                        disabledRules = ['paren-spacing']  
+                        indentSize = 6
+                    }
                 
                 """.trimIndent()
             )
@@ -117,7 +119,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
             val content = """
                 class WrongFileName {
 
-                    fun unnecessarySpace () = 2
+                  fun unnecessarySpace () = 2
                 }
 
                 """.trimIndent()
@@ -128,6 +130,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
         buildAndFail("lintKotlin").apply {
             assertEquals(TaskOutcome.FAILED, task(":lintKotlinMain")?.outcome)
             assertTrue(output.contains("[filename] class WrongFileName should be declared in a file named WrongFileName.kt"))
+            assertTrue(output.contains("[indent] Unexpected indentation (2) (it should be 6)"))
         }
     }
 }

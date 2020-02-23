@@ -22,6 +22,14 @@ abstract class ConfigurableKtLintTask : SourceTask() {
     @Input
     @Optional
     val indentSize = property<Int?>(default = null)
+
+    @Internal
+    @Deprecated("Scheduled to be removed in 3.0.0")
+    var continuationIndentSize: Int? = null
+        set(value) {
+            field = value
+            logger.warn("`continuationIndentSize` does not have any effect and will be removed in 3.0.0")
+        }
     @Input
     val experimentalRules = property(default = DEFAULT_EXPERIMENTAL_RULES)
     @Input

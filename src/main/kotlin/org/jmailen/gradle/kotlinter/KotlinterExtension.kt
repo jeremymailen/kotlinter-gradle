@@ -16,6 +16,9 @@ open class KotlinterExtension {
 
     var indentSize: Int? = null
 
+    @Deprecated("Scheduled to be removed in 3.0.0")
+    var continuationIndentSize: Int? = null
+
     var reporters = arrayOf(DEFAULT_REPORTER)
 
     var experimentalRules = DEFAULT_EXPERIMENTAL_RULES

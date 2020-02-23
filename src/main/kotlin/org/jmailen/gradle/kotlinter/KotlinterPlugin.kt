@@ -25,6 +25,11 @@ class KotlinterPlugin : Plugin<Project> {
 
     override fun apply(project: Project) = with(project) {
         val kotlinterExtension = extensions.create("kotlinter", KotlinterExtension::class.java)
+        afterEvaluate {
+            if (kotlinterExtension.continuationIndentSize != null) {
+                logger.warn("`continuationIndentSize` does not have any effect and will be removed in 3.0.0")
+            }
+        }
 
         // for known kotlin plugins, register tasks by convention.
         extendablePlugins.forEach { (pluginId, sourceResolver) ->

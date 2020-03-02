@@ -9,11 +9,9 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SourceTask
-import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_CONTINUATION_INDENT_SIZE
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_DISABLED_RULES
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_EXPERIMENTAL_RULES
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_FILE_BATCH_SIZE
-import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_INDENT_SIZE
 import org.jmailen.gradle.kotlinter.support.KtLintParams
 
 abstract class ConfigurableKtLintTask : SourceTask() {
@@ -22,9 +20,16 @@ abstract class ConfigurableKtLintTask : SourceTask() {
     val fileBatchSize = property(default = DEFAULT_FILE_BATCH_SIZE)
 
     @Input
-    val indentSize = property(default = DEFAULT_INDENT_SIZE)
-    @Input
-    val continuationIndentSize = property(default = DEFAULT_CONTINUATION_INDENT_SIZE)
+    @Optional
+    val indentSize = property<Int?>(default = null)
+
+    @Internal
+    @Deprecated("Scheduled to be removed in 3.0.0")
+    var continuationIndentSize: Int? = null
+        set(value) {
+            field = value
+            logger.warn("`continuationIndentSize` does not have any effect and will be removed in 3.0.0")
+        }
     @Input
     val experimentalRules = property(default = DEFAULT_EXPERIMENTAL_RULES)
     @Input
@@ -36,8 +41,7 @@ abstract class ConfigurableKtLintTask : SourceTask() {
 
     @Internal
     protected fun getKtLintParams() = KtLintParams(
-        indentSize = indentSize.get(),
-        continuationIndentSize = continuationIndentSize.get(),
+        indentSize = indentSize.orNull,
         experimentalRules = experimentalRules.get(),
         disabledRules = disabledRules.get(),
         editorConfigPath = editorConfigPath.asFile.orNull?.path

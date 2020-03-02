@@ -121,7 +121,6 @@ Options are configured in the `kotlinter` extension. Defaults shown (you may omi
 kotlinter {
     ignoreFailures = false
     indentSize = 4
-    continuationIndentSize = 4
     reporters = arrayOf("checkstyle", "plain")
     experimentalRules = false
     disabledRules = emptyArray<String>()
@@ -138,7 +137,6 @@ kotlinter {
 kotlinter {
     ignoreFailures = false
     indentSize = 4
-    continuationIndentSize = 4
     reporters = ['checkstyle', 'plain']
     experimentalRules = false
     disabledRules = []
@@ -243,14 +241,12 @@ task ktLint(type: LintTask, group: 'verification') {
             'plain': file('build/lint-report.txt'),
             'json': file('build/lint-report.json')
     ]
-    continuationIndentSize = 8
     disabledRules = ["import-ordering"]
 }
 
 task ktFormat(type: FormatTask, group: 'formatting') {
     source files('src')
     report = file('build/format-report.txt')
-    continuationIndentSize = 8
     disabledRules = ["import-ordering"]
 }
 ```

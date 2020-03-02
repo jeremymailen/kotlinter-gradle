@@ -25,6 +25,11 @@ class KotlinterPlugin : Plugin<Project> {
 
     override fun apply(project: Project) = with(project) {
         val kotlinterExtension = extensions.create("kotlinter", KotlinterExtension::class.java)
+        afterEvaluate {
+            if (kotlinterExtension.continuationIndentSize != null) {
+                logger.warn("`continuationIndentSize` does not have any effect and will be removed in 3.0.0")
+            }
+        }
 
         // for known kotlin plugins, register tasks by convention.
         extendablePlugins.forEach { (pluginId, sourceResolver) ->
@@ -45,7 +50,6 @@ class KotlinterPlugin : Plugin<Project> {
                             }
                         )
                         lintTask.indentSize.set(provider { kotlinterExtension.indentSize })
-                        lintTask.continuationIndentSize.set(provider { kotlinterExtension.continuationIndentSize })
                         lintTask.experimentalRules.set(provider { kotlinterExtension.experimentalRules })
                         lintTask.disabledRules.set(provider { kotlinterExtension.disabledRules.toList() })
                         lintTask.editorConfigPath.set(editorConfigFile())
@@ -59,7 +63,6 @@ class KotlinterPlugin : Plugin<Project> {
                         formatTask.source(resolveSources)
                         formatTask.report.set(reportFile("$id-format.txt"))
                         formatTask.indentSize.set(provider { kotlinterExtension.indentSize })
-                        formatTask.continuationIndentSize.set(provider { kotlinterExtension.continuationIndentSize })
                         formatTask.experimentalRules.set(provider { kotlinterExtension.experimentalRules })
                         formatTask.disabledRules.set(provider { kotlinterExtension.disabledRules.toList() })
                         formatTask.editorConfigPath.set(editorConfigFile())

@@ -181,4 +181,22 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
             assertTrue(output.contains("[filename] class Precedence should be declared in a file named Precedence.kt"))
         }
     }
+
+    @Test
+    fun `shows deprecation warning for continuationIndentSize property`() {
+        projectRoot.resolve("build.gradle") {
+            @Language("groovy")
+            val script = """
+                kotlinter {
+                    continuationIndentSize = 100
+                }
+                
+            """.trimIndent()
+            appendText(script)
+        }
+
+        build("lintKotlin").apply {
+            assertTrue(output.contains("`continuationIndentSize` does not have any effect"))
+        }
+    }
 }

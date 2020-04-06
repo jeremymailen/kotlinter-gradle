@@ -9,8 +9,7 @@ import java.io.File
 open class InstallPrePushHookTask : DefaultTask() {
     @TaskAction
     fun run() {
-        val dotGitDir = findGitDir(project.rootDir) ?: throw GradleException("Could not find .git directory")
-        logger.info("dotGitDir: $dotGitDir")
+        val dotGitDir = foo(project.rootDir)
 
         val hookDir = File(dotGitDir.absolutePath, "hooks")
         if (!hookDir.exists()) {
@@ -24,19 +23,6 @@ open class InstallPrePushHookTask : DefaultTask() {
         // TODO if file exists, don't overwrite it
         prePushHookOutputFile.writeText(prePushHook)
         prePushHookOutputFile.setExecutable(true)
-    }
-
-    @VisibleForTesting
-    protected fun findGitDir(dir: File): File? {
-        val gitDir = File(dir, ".git")
-        if (gitDir.exists()) {
-            return gitDir
-        }
-        if (!dir.parentFile.exists()) {
-            logger.warn("Reached filesystem root without finding .git directory")
-            return null
-        }
-        return findGitDir(dir.parentFile)
     }
 
     companion object {
@@ -57,5 +43,22 @@ open class InstallPrePushHookTask : DefaultTask() {
 
             exit 0
         """.trimIndent()
+
+        @VisibleForTesting
+        fun foo(dir: File): File =
+            findGitDir(dir) ?: throw GradleException("Could not find .git directory; searched $dir and parents")
+
+        private tailrec fun findGitDir(dir: File): File? {
+            val gitDir = File(dir, ".git")
+            if (gitDir.exists()) {
+                return gitDir
+            }
+
+            if (dir.parentFile == null || !dir.parentFile.exists()) {
+                return null
+            }
+
+            return findGitDir(dir.parentFile)
+        }
     }
 }

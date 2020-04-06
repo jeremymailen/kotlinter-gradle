@@ -1,20 +1,19 @@
 package org.jmailen.gradle.kotlinter.tasks
 
-import com.google.common.annotations.VisibleForTesting
 import org.gradle.api.DefaultTask
-import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
+import org.jmailen.gradle.kotlinter.support.findGitDir
 import java.io.File
 
 open class InstallPrePushHookTask : DefaultTask() {
     @TaskAction
     fun run() {
-        val dotGitDir = foo(project.rootDir)
+        val dotGitDir = findGitDir(project.rootDir)
 
         val hookDir = File(dotGitDir.absolutePath, "hooks")
         if (!hookDir.exists()) {
             logger.debug("Creating hook dir $hookDir")
-            hookDir.mkdirs()
+            hookDir.mkdir()
         }
         logger.info("hookDir: $hookDir")
 
@@ -43,22 +42,5 @@ open class InstallPrePushHookTask : DefaultTask() {
 
             exit 0
         """.trimIndent()
-
-        @VisibleForTesting
-        fun foo(dir: File): File =
-            findGitDir(dir) ?: throw GradleException("Could not find .git directory; searched $dir and parents")
-
-        private tailrec fun findGitDir(dir: File): File? {
-            val gitDir = File(dir, ".git")
-            if (gitDir.exists()) {
-                return gitDir
-            }
-
-            if (dir.parentFile == null || !dir.parentFile.exists()) {
-                return null
-            }
-
-            return findGitDir(dir.parentFile)
-        }
     }
 }

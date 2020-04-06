@@ -11,9 +11,12 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_GROUP
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jmailen.gradle.kotlinter.support.reporterFileExtension
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
+import org.jmailen.gradle.kotlinter.tasks.InstallPrePushHookTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
 
 class KotlinterPlugin : Plugin<Project> {
@@ -37,6 +40,7 @@ class KotlinterPlugin : Plugin<Project> {
 
                 val lintKotlin = registerParentLintTask()
                 val formatKotlin = registerParentFormatTask()
+                registerPrePushHookTask()
 
                 sourceResolver.applyToAll(project) { id, resolveSources ->
                     val lintTaskPerSourceSet = tasks.register("lintKotlin${id.capitalize()}", LintTask::class.java) { lintTask ->
@@ -88,6 +92,13 @@ class KotlinterPlugin : Plugin<Project> {
         tasks.register("formatKotlin") {
             it.group = "formatting"
             it.description = "Formats the Kotlin source files."
+        }
+
+    @Suppress("UnstableApiUsage")
+    private fun Project.registerPrePushHookTask() =
+        tasks.register("installKtLintPrePushHook", InstallPrePushHookTask::class.java) {
+            it.group = VERIFICATION_GROUP
+            it.description = "Installs ktlint Git pre-push hook"
         }
 }
 

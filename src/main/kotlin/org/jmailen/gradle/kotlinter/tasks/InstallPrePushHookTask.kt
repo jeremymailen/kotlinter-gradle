@@ -1,23 +1,15 @@
 package org.jmailen.gradle.kotlinter.tasks
 
 import com.google.common.annotations.VisibleForTesting
-import java.io.File
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.OutputFile
+import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
+import java.io.File
 
 open class InstallPrePushHookTask : DefaultTask() {
-    private val dotGitDir = findGitDir(project.rootDir)
-
-    @OutputFile
-    val prePushHookOutputFile = File(dotGitDir, "/hooks/pre-push")
-
     @TaskAction
     fun run() {
-        if (dotGitDir == null) {
-            logger.warn("Could not find .git directory")
-            return
-        }
+        val dotGitDir = findGitDir(project.rootDir) ?: throw GradleException("Could not find .git directory")
         logger.info("dotGitDir: $dotGitDir")
 
         val hookDir = File(dotGitDir.absolutePath, "hooks")
@@ -27,8 +19,10 @@ open class InstallPrePushHookTask : DefaultTask() {
         }
         logger.info("hookDir: $hookDir")
 
+        val prePushHookOutputFile = File(hookDir, "/pre-push")
+
         // TODO if file exists, don't overwrite it
-        prePushHookOutputFile.writeText(Companion.prePushHook)
+        prePushHookOutputFile.writeText(prePushHook)
         prePushHookOutputFile.setExecutable(true)
     }
 
@@ -39,7 +33,7 @@ open class InstallPrePushHookTask : DefaultTask() {
             return gitDir
         }
         if (!dir.parentFile.exists()) {
-            // at top of hierarchy
+            logger.warn("Reached filesystem root without finding .git directory")
             return null
         }
         return findGitDir(dir.parentFile)

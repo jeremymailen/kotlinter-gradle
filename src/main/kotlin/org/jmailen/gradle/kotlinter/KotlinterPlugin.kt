@@ -94,7 +94,6 @@ class KotlinterPlugin : Plugin<Project> {
             it.description = "Formats the Kotlin source files."
         }
 
-    @Suppress("UnstableApiUsage")
     private fun Project.registerPrePushHookTask() =
         tasks.register("installKtLintPrePushHook", InstallPrePushHookTask::class.java) {
             it.group = VERIFICATION_GROUP

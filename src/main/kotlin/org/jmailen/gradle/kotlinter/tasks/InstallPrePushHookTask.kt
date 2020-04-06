@@ -9,6 +9,7 @@ open class InstallPrePushHookTask : DefaultTask() {
     @TaskAction
     fun run() {
         val dotGitDir = findGitDir(project.rootDir)
+        logger.info(".git directory: $dotGitDir")
 
         val hookDir = File(dotGitDir.absolutePath, "hooks")
         if (!hookDir.exists()) {
@@ -17,16 +18,41 @@ open class InstallPrePushHookTask : DefaultTask() {
         }
         logger.info("hookDir: $hookDir")
 
-        val prePushHookOutputFile = File(hookDir, "/pre-push")
+        val prePushHookFile = File(hookDir, "/pre-push").apply {
+            if (!exists()) {
+                logger.info("Creating $this anew")
+                createNewFile()
+                setExecutable(true)
+            }
+        }
 
-        // TODO if file exists, don't overwrite it
-        prePushHookOutputFile.writeText(prePushHook)
-        prePushHookOutputFile.setExecutable(true)
+        if (prePushHookFile.length() == 0L) {
+            logger.info("Writing hook to empty file")
+            prePushHookFile.writeText(generateHook(true))
+            return
+        }
+
+        val prePushHookFileContent = prePushHookFile.readText()
+        val startIndex = prePushHookFileContent.indexOf(startHook)
+        if (startIndex == -1) {
+            logger.info("Replacing existing hook")
+            val endIndex = prePushHookFileContent.indexOf(endHook)
+            prePushHookFileContent.replaceRange(startIndex, endIndex, generateHook())
+        } else {
+            logger.info("Appending hook to end of existing non-empty file")
+            prePushHookFile.appendText(generateHook())
+        }
     }
 
     companion object {
-        private val prePushHook = """
+        private const val startHook = "##### KOTLINTER HOOK START #####"
+        private const val endHook = "##### KOTLINTER HOOK END #####"
+        private const val shebang = """
             #!/bin/sh
+            set -e
+        """
+        // TODO workdir should be project root
+        private const val prePushHook = """
             GRADLE=./gradlew
             LINT_COMMAND="${'$'}GRADLE lintKotlin"
             FORMAT_COMMAND="${'$'}GRADLE formatKotlin"
@@ -39,8 +65,14 @@ open class InstallPrePushHookTask : DefaultTask() {
                 ${'$'}FORMAT_COMMAND
                 exit 1
             fi
+        """
 
-            exit 0
-        """.trimIndent()
+        private fun generateHook(addShebang: Boolean = false): String {
+            return """  ${if (addShebang) shebang else ""}
+                    $startHook
+                    $prePushHook
+                    $endHook
+                """.trimIndent()
+        }
     }
 }

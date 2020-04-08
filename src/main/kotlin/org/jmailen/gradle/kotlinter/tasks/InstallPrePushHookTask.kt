@@ -28,7 +28,7 @@ open class InstallPrePushHookTask : DefaultTask() {
 
         if (prePushHookFile.length() == 0L) {
             logger.info("Writing hook to empty file")
-            prePushHookFile.writeText(generateHook(true))
+            prePushHookFile.writeText(generateHook(addShebang = true))
             return
         }
 
@@ -37,7 +37,7 @@ open class InstallPrePushHookTask : DefaultTask() {
         if (startIndex == -1) {
             logger.info("Replacing existing hook")
             val endIndex = prePushHookFileContent.indexOf(endHook)
-            prePushHookFileContent.replaceRange(startIndex, endIndex, generateHook())
+            prePushHookFileContent.replaceRange(startIndex, endIndex, generateHook(includeEndHook = false))
         } else {
             logger.info("Appending hook to end of existing non-empty file")
             prePushHookFile.appendText(generateHook())
@@ -46,11 +46,14 @@ open class InstallPrePushHookTask : DefaultTask() {
 
     companion object {
         private const val startHook = "##### KOTLINTER HOOK START #####"
+
         private const val endHook = "##### KOTLINTER HOOK END #####"
+
         private const val shebang = """
             #!/bin/sh
             set -e
         """
+
         // TODO workdir should be project root
         private const val prePushHook = """
             GRADLE=./gradlew
@@ -67,11 +70,12 @@ open class InstallPrePushHookTask : DefaultTask() {
             fi
         """
 
-        private fun generateHook(addShebang: Boolean = false): String {
-            return """  ${if (addShebang) shebang else ""}
+        private fun generateHook(addShebang: Boolean = false, includeEndHook: Boolean = true): String {
+            return """
+                    ${if (addShebang) shebang else ""}
                     $startHook
                     $prePushHook
-                    $endHook
+                    ${if (includeEndHook) endHook else ""}
                 """.trimIndent()
         }
     }

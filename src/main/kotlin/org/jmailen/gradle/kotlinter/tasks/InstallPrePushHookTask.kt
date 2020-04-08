@@ -37,19 +37,19 @@ open class InstallPrePushHookTask : DefaultTask() {
         val prePushHookFileContent = prePushHookFile.readText()
         val startIndex = prePushHookFileContent.indexOf(startHook)
         if (startIndex == -1) {
+            logger.info("Appending hook to end of existing non-empty file")
+            prePushHookFile.appendText(generateHook(gradlew))
+        } else {
             logger.info("Replacing existing hook")
             val endIndex = prePushHookFileContent.indexOf(endHook)
             prePushHookFileContent.replaceRange(startIndex, endIndex, generateHook(gradlew, includeEndHook = false))
-        } else {
-            logger.info("Appending hook to end of existing non-empty file")
-            prePushHookFile.appendText(generateHook(gradlew))
         }
     }
 
     companion object {
         private const val startHook = "##### KOTLINTER HOOK START #####"
 
-        private const val endHook = "##### KOTLINTER HOOK END #####"
+        private const val endHook = "##### KOTLINTER HOOK END #####\n"
 
         private const val shebang = """
             #!/bin/sh

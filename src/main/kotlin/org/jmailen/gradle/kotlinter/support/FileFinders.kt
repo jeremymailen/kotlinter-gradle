@@ -1,5 +1,6 @@
 package org.jmailen.gradle.kotlinter.support
 
+import com.google.common.annotations.VisibleForTesting
 import org.gradle.api.GradleException
 import java.io.File
 
@@ -24,7 +25,8 @@ fun findGradlew(dir: File): File {
  *
  * @return The file or null if a file of hte given name was not found in any parent directories
  */
-private tailrec fun findInParents(name: String, startFrom: File): File? {
+@VisibleForTesting
+internal tailrec fun findInParents(name: String, startFrom: File): File? {
     val gitDir = File(startFrom, name)
     if (gitDir.exists()) {
         return gitDir

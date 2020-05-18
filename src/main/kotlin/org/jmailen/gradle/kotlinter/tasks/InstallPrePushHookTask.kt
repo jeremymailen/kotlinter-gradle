@@ -32,18 +32,17 @@ open class InstallPrePushHookTask : DefaultTask() {
         if (prePushHookFile.length() == 0L) {
             logger.info("Writing hook to empty file")
             prePushHookFile.writeText(generateHook(gradlew, addShebang = true))
-            return
-        }
-
-        val prePushHookFileContent = prePushHookFile.readText()
-        val startIndex = prePushHookFileContent.indexOf(startHook)
-        if (startIndex == -1) {
-            logger.info("Appending hook to end of existing non-empty file")
-            prePushHookFile.appendText(generateHook(gradlew))
         } else {
-            logger.info("Replacing existing hook")
-            val endIndex = prePushHookFileContent.indexOf(endHook)
-            prePushHookFileContent.replaceRange(startIndex, endIndex, generateHook(gradlew, includeEndHook = false))
+            val prePushHookFileContent = prePushHookFile.readText()
+            val startIndex = prePushHookFileContent.indexOf(startHook)
+            if (startIndex == -1) {
+                logger.info("Appending hook to end of existing non-empty file")
+                prePushHookFile.appendText(generateHook(gradlew))
+            } else {
+                logger.info("Replacing existing hook")
+                val endIndex = prePushHookFileContent.indexOf(endHook)
+                prePushHookFileContent.replaceRange(startIndex, endIndex, generateHook(gradlew, includeEndHook = false))
+            }
         }
     }
 

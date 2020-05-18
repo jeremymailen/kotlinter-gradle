@@ -13,10 +13,11 @@ open class InstallPrePushHookTask : DefaultTask() {
         logger.info(".git directory: $dotGitDir")
         val gradlew = findGradlew(project.rootDir).path
 
-        val hookDir = File(dotGitDir.absolutePath, "hooks")
-        if (!hookDir.exists()) {
-            logger.debug("Creating hook dir $hookDir")
-            hookDir.mkdir()
+        val hookDir = File(dotGitDir.absolutePath, "hooks").apply {
+            if (!exists()) {
+                logger.debug("Creating hook dir $this")
+                mkdir()
+            }
         }
         logger.info("hookDir: $hookDir")
 

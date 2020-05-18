@@ -3,18 +3,29 @@ package org.jmailen.gradle.kotlinter.support
 import org.gradle.api.GradleException
 import java.io.File
 
+/**
+ * Find the nearest .git directory
+ */
 fun findGitDir(dir: File): File {
     return findInParents(".git", dir)
         ?: throw GradleException("Could not find .git directory; searched $dir and parents")
 }
 
+/**
+ * Find the Gradle wrapper
+ */
 fun findGradlew(dir: File): File {
     return findInParents("gradlew", dir)
         ?: throw GradleException("Could not find gradlew; searched $dir and parents")
 }
 
-private tailrec fun findInParents(toFind: String, startFrom: File): File? {
-    val gitDir = File(startFrom, toFind)
+/**
+ * Search this directory and parent directories for a file by name
+ *
+ * @return The file or null if a file of hte given name was not found in any parent directories
+ */
+private tailrec fun findInParents(name: String, startFrom: File): File? {
+    val gitDir = File(startFrom, name)
     if (gitDir.exists()) {
         return gitDir
     }
@@ -23,5 +34,5 @@ private tailrec fun findInParents(toFind: String, startFrom: File): File? {
         return null
     }
 
-    return findInParents(toFind, startFrom.parentFile)
+    return findInParents(name, startFrom.parentFile)
 }

@@ -6,6 +6,9 @@ import org.jmailen.gradle.kotlinter.support.findGitDir
 import org.jmailen.gradle.kotlinter.support.findGradlew
 import java.io.File
 
+/**
+ * Install or update the kotlinter-gradle pre-push hook.
+ */
 open class InstallPrePushHookTask : DefaultTask() {
     @TaskAction
     fun run() {
@@ -56,7 +59,7 @@ open class InstallPrePushHookTask : DefaultTask() {
             set -e
         """
 
-        private const val prePushHook = """
+        private const val hookContent = """
             ${'$'}GRADLEW lintKotlin
 
             status=${'$'}?
@@ -67,6 +70,9 @@ open class InstallPrePushHookTask : DefaultTask() {
             fi
         """
 
+        /**
+         * Generate the hook script
+         */
         private fun generateHook(
             gradlew: String,
             addShebang: Boolean = false,
@@ -77,7 +83,7 @@ open class InstallPrePushHookTask : DefaultTask() {
                     $startHook
                     GRADLEW=$gradlew
 
-                    $prePushHook
+                    $hookContent
                     ${if (includeEndHook) endHook else ""}
                 """.trimIndent()
         }

@@ -61,7 +61,7 @@ open class InstallPrePushHookTask : DefaultTask() {
 
             status=${'$'}?
             if [ "${'$'}status" != 0 ] ; then
-                echo 1>&2 "\nLinting found problems; running format command..."
+                echo 1>&2 "\nlintKotlin found problems; running formatKotlin command..."
                 ${'$'}GRADLEW formatKotlin
                 exit 1
             fi

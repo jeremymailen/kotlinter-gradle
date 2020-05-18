@@ -10,7 +10,7 @@ fun findGitDir(dir: File): File {
 
 fun findGradlew(dir: File): File {
     return findInParents("gradlew", dir)
-        ?: throw GradleException("Could not find .git directory; searched $dir and parents")
+        ?: throw GradleException("Could not find gradlew; searched $dir and parents")
 }
 
 private tailrec fun findInParents(toFind: String, startFrom: File): File? {

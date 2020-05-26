@@ -27,9 +27,9 @@ fun findGradlew(dir: File): File {
  */
 @VisibleForTesting
 internal tailrec fun findInParents(name: String, startFrom: File): File? {
-    val gitDir = File(startFrom, name)
-    if (gitDir.exists()) {
-        return gitDir
+    val file = File(startFrom, name)
+    if (file.exists()) {
+        return file
     }
 
     if (startFrom.parentFile == null || !startFrom.parentFile.exists()) {

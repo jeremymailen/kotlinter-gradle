@@ -1,152 +1,108 @@
 package org.jmailen.gradle.kotlinter.functional
 
-import java.io.File
 import org.gradle.testkit.runner.TaskOutcome.FAILED
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
-import org.intellij.lang.annotations.Language
-import org.jmailen.gradle.kotlinter.functional.utils.kotlinClass
 import org.jmailen.gradle.kotlinter.functional.utils.resolve
+import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
+import org.jmailen.gradle.kotlinter.tasks.InstallPrePushHookTask
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.io.File
 
 internal class PrePushHookTest : WithGradleTest.Kotlin() {
-    private lateinit var projectRoot: File
-    private lateinit var settingsFile: File
-    private lateinit var buildFile: File
-    private lateinit var sourceDir: File
-    private val pathPattern = "(/.*\\.kt):\\d+:\\d+".toRegex()
+    lateinit var projectRoot: File
 
     @Before
     fun setup() {
-        settingsFile = testProjectDir.newFile("settings.gradle")
-        buildFile = testProjectDir.newFile("build.gradle")
-        sourceDir = testProjectDir.newFolder("src", "main", "kotlin")
-
         projectRoot = testProjectDir.root.apply {
-            resolve("settings.gradle") { writeText(org.jmailen.gradle.kotlinter.functional.utils.settingsFile) }
+            resolve("settings.gradle") { writeText(settingsFile) }
             resolve("build.gradle") {
-                @Language("groovy")
-                val buildScript = """
-                    plugins {
-                        id 'kotlin'
-                        id 'org.jmailen.kotlinter'
-                    }
-                """.trimIndent()
-                writeText(buildScript)
+                writeText(
+                    """
+                        plugins {
+                            id("kotlin")
+                            id("org.jmailen.kotlinter")
+                        }
+                    """.trimIndent()
+                )
             }
-        }
-        projectRoot.resolve("src/main/kotlin/CustomClass.kt") {
-            writeText(kotlinClass("CustomClass"))
+
+            build("wrapper")
         }
     }
 
     @Test
-    fun `lintKotlinMain fails when lint errors detected`() {
-        settingsFile()
-        buildFile()
+    fun `installKotlinterPrePushHook fails when dotgit dir not found`() {
+        buildAndFail("installKotlinterPrePushHook").apply {
+            assertTrue(output.contains(Regex("\\.git directory not found at .*/\\.git")))
+            assertEquals(FAILED, task(":installKotlinterPrePushHook")?.outcome)
+        }
+    }
 
-        val className = "KotlinClass"
-        kotlinSourceFile("$className.kt", """
-            class $className {
-                private fun hi(){
-                    println ("hi")
+    @Test
+    fun `installKotlinterPrePushHook installs hook in project without hook directory`() {
+        File(testProjectDir.root, ".git").apply { mkdir() }
+
+        build("installKotlinterPrePushHook").apply {
+            assertEquals(SUCCESS, task(":installKotlinterPrePushHook")?.outcome)
+            testProjectDir.root.apply {
+                resolve(".git/hooks/pre-push") {
+                    assertTrue(readText().contains("${'$'}GRADLEW lintKotlin"))
+                    assertTrue(canExecute())
                 }
             }
-
-        """.trimIndent()
-        )
-
-        buildAndFail("lintKotlinMain").apply {
-            assertTrue(output.contains(".*$className.kt.* Lint error > \\[.*] Missing spacing before \"\\{\"".toRegex()))
-            assertTrue(output.contains(".*$className.kt.* Lint error > \\[.*] Unexpected spacing before \"\\(\"".toRegex()))
-            output.lines().filter { it.contains("Lint error") }.forEach { line ->
-                val filePath = pathPattern.find(line)?.groups?.get(1)?.value.orEmpty()
-                assertTrue(File(filePath).exists())
-            }
-            assertEquals(FAILED, task(":lintKotlinMain")?.outcome)
         }
     }
 
     @Test
-    fun `lintKotlinMain succeeds when no lint errors detected`() {
-        settingsFile()
-        buildFile()
-        kotlinSourceFile("KotlinClass.kt", """
-            class KotlinClass {
-                private fun hi() {
-                    println("hi")
+    fun `installKotlinterPrePushHook installs hook in project with existing pre-push hook`() {
+        val existingHook = """
+                #!/bin/bash
+                This is some existing hook
+            """.trimIndent()
+        File(testProjectDir.root, ".git").apply { mkdir() }
+        File(testProjectDir.root, ".git/hooks").apply { mkdir() }
+        File(testProjectDir.root, ".git/hooks/pre-push").apply {
+            writeText(existingHook)
+        }
+
+        build("installKotlinterPrePushHook").apply {
+            assertEquals(SUCCESS, task(":installKotlinterPrePushHook")?.outcome)
+            testProjectDir.root.apply {
+                resolve(".git/hooks/pre-push") {
+                    val prePushHookContents = readText()
+                    assertTrue(prePushHookContents.startsWith(existingHook))
+                    assertTrue(prePushHookContents.contains("${'$'}GRADLEW lintKotlin"))
                 }
             }
-
-        """.trimIndent()
-        )
-
-        build("lintKotlinMain").apply {
-            assertEquals(SUCCESS, task(":lintKotlinMain")?.outcome)
         }
     }
 
     @Test
-    fun `formatKotlin reports formatted and unformatted files`() {
-        settingsFile()
-        buildFile()
-        @Language("kotlin")
-        val kotlinClass = """
-            import System.*
-            
-            class KotlinClass{
-                private fun hi() {
-                    out.println("Hello")
+    fun `installKotlinterPrePushHook updates previously installed kotlinter hook`() {
+        val placeholder = "Not actually the hook, just a placeholder"
+        File(testProjectDir.root, ".git").apply { mkdir() }
+        File(testProjectDir.root, ".git/hooks").apply { mkdir() }
+        File(testProjectDir.root, ".git/hooks/pre-push").apply {
+            writeText("""
+                ${InstallPrePushHookTask.startHook}
+                $placeholder
+                ${InstallPrePushHookTask.endHook}
+            """.trimIndent())
+        }
+
+        build("installKotlinterPrePushHook").apply {
+            assertEquals(SUCCESS, task(":installKotlinterPrePushHook")?.outcome)
+            testProjectDir.root.apply {
+                resolve(".git/hooks/pre-push") {
+                    val prePushHookContents = readText()
+                    assertTrue(prePushHookContents.contains("${'$'}GRADLEW lintKotlin"))
+                    assertFalse(prePushHookContents.contains(placeholder))
                 }
             }
-        """.trimIndent()
-        kotlinSourceFile("KotlinClass.kt", kotlinClass)
-
-        build("formatKotlin").apply {
-            assertEquals(SUCCESS, task(":formatKotlinMain")?.outcome)
-            output.lines().filter { it.contains("Format could not fix") }.forEach { line ->
-                val filePath = pathPattern.find(line)?.groups?.get(1)?.value.orEmpty()
-                assertTrue(File(filePath).exists())
-            }
         }
-    }
-
-    @Test
-    fun `check task runs lintFormat`() {
-        settingsFile()
-        buildFile()
-        kotlinSourceFile("CustomObject.kt", """
-            object CustomObject
-            
-        """.trimIndent())
-
-        build("check").apply {
-            assertEquals(SUCCESS, task(":lintKotlin")?.outcome)
-        }
-    }
-
-    private fun settingsFile() = settingsFile.apply {
-        writeText("rootProject.name = 'kotlinter'")
-    }
-
-    private fun buildFile() = buildFile.apply {
-        @Language("groovy")
-        val buildscript = """
-            plugins {
-                id 'org.jetbrains.kotlin.jvm' version '1.3.41'
-                id 'org.jmailen.kotlinter'
-            }
-
-            repositories {
-                jcenter()
-            }
-        """.trimIndent()
-        writeText(buildscript)
-    }
-
-    private fun kotlinSourceFile(name: String, content: String) = File(sourceDir, name).apply {
-        writeText(content)
     }
 }

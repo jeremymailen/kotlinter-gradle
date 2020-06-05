@@ -45,11 +45,12 @@ open class InstallPrePushHookTask : DefaultTask() {
             } else {
                 logger.info("Updating existing kotlinter-installed hook")
                 val endIndex = prePushHookFileContent.indexOf(endHook)
-                prePushHookFileContent.replaceRange(
+                val newPrePushHookFileContent = prePushHookFileContent.replaceRange(
                     startIndex,
                     endIndex,
                     generateHook(gradleCommand, includeEndHook = false)
                 )
+                prePushHookFile.writeText(newPrePushHookFileContent)
             }
         }
 
@@ -72,16 +73,16 @@ open class InstallPrePushHookTask : DefaultTask() {
     }
 
     companion object {
-        private const val startHook = "##### KOTLINTER HOOK START #####"
+        internal const val startHook = "##### KOTLINTER HOOK START #####"
 
-        private const val endHook = "##### KOTLINTER HOOK END #####\n"
+        internal const val endHook = "##### KOTLINTER HOOK END #####\n"
 
-        private val shebang = """
+        internal val shebang = """
             #!/bin/sh
             set -e
         """.trimIndent()
 
-        private val hookContent = """
+        internal val hookContent = """
             ${'$'}GRADLEW lintKotlin
 
             status=${'$'}?
@@ -95,7 +96,7 @@ open class InstallPrePushHookTask : DefaultTask() {
         /**
          * Generate the hook script
          */
-        private fun generateHook(
+        internal fun generateHook(
             gradlew: String,
             addShebang: Boolean = false,
             includeEndHook: Boolean = true

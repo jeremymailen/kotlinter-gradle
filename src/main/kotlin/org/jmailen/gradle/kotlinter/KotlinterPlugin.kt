@@ -93,9 +93,9 @@ class KotlinterPlugin : Plugin<Project> {
         }
 
     private fun Project.registerPrePushHookTask() =
-        tasks.register("installKtLintPrePushHook", InstallPrePushHookTask::class.java) {
+        tasks.register("installKotlinterPrePushHook", InstallPrePushHookTask::class.java) {
             it.group = "build setup"
-            it.description = "Installs ktlint Git pre-push hook"
+            it.description = "Installs Kotlinter Git pre-push hook"
         }
 }
 

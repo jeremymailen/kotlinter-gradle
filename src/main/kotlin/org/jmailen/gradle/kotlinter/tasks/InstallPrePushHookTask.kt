@@ -55,7 +55,13 @@ open class InstallPrePushHookTask : DefaultTask() {
     }
 
     private val gradleCommand: String by lazy {
-        val gradlew = File(project.rootDir, "gradlew")
+        val gradlewFilename = if (System.getProperty("os.name").toLowerCase().contains("win")) {
+            "gradlew.bat"
+        } else {
+            "gradlew"
+        }
+
+        val gradlew = File(project.rootDir, gradlewFilename)
         if (!gradlew.exists() || !gradlew.isFile || !gradlew.canExecute()) {
             throw GradleException("gradlew at ${gradlew.path} not found or not executable")
         } else {

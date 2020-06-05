@@ -8,16 +8,26 @@ import java.io.File
  * Find the nearest .git directory
  */
 fun findGitDir(dir: File): File {
-    return findInParents(".git", dir)
+    val found = findInParents(".git", dir)
         ?: throw GradleException("Could not find .git directory; searched $dir and parents")
+    if (found.isDirectory) {
+        return found
+    } else {
+        throw GradleException("Found .git at ${found.path}, but it's a file, not a directory")
+    }
 }
 
 /**
  * Find the Gradle wrapper
  */
 fun findGradlew(dir: File): File {
-    return findInParents("gradlew", dir)
+    val found = findInParents("gradlew", dir)
         ?: throw GradleException("Could not find gradlew; searched $dir and parents")
+    if (found.isFile && found.canExecute()) {
+        return found
+    } else {
+        throw GradleException("Found gradlew at ${found.path}, but it's a directory, not a file")
+    }
 }
 
 /**

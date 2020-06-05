@@ -52,6 +52,8 @@ open class InstallPrePushHookTask : DefaultTask() {
                 )
             }
         }
+
+        logger.quiet("Wrote hook to $prePushHookFile")
     }
 
     private val gradleCommand: String by lazy {

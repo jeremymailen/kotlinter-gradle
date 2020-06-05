@@ -1,9 +1,8 @@
 package org.jmailen.gradle.kotlinter.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
-import org.jmailen.gradle.kotlinter.support.findGitDir
-import org.jmailen.gradle.kotlinter.support.findGradlew
 import java.io.File
 
 /**
@@ -12,9 +11,16 @@ import java.io.File
 open class InstallPrePushHookTask : DefaultTask() {
     @TaskAction
     fun run() {
-        val dotGitDir = findGitDir(project.rootDir)
+        val dotGitDir = File(project.rootDir, ".git")
+        if (!dotGitDir.exists() || !dotGitDir.isDirectory) {
+            throw GradleException(".git directory not found at ${dotGitDir.path}")
+        }
         logger.info(".git directory: $dotGitDir")
-        val gradlew = findGradlew(project.rootDir).path
+
+        val gradlew = File(project.rootDir, "gradlew")
+        if (!gradlew.exists() || !gradlew.isFile || !gradlew.canExecute()) {
+            throw GradleException("gradlew at ${gradlew.path} not found or not executable")
+        }
 
         val hookDir = File(dotGitDir.absolutePath, "hooks").apply {
             if (!exists()) {
@@ -34,17 +40,21 @@ open class InstallPrePushHookTask : DefaultTask() {
 
         if (prePushHookFile.length() == 0L) {
             logger.info("Writing hook to empty file")
-            prePushHookFile.writeText(generateHook(gradlew, addShebang = true))
+            prePushHookFile.writeText(generateHook(gradlew.path, addShebang = true))
         } else {
             val prePushHookFileContent = prePushHookFile.readText()
             val startIndex = prePushHookFileContent.indexOf(startHook)
             if (startIndex == -1) {
                 logger.info("Appending hook to end of existing non-empty file")
-                prePushHookFile.appendText(generateHook(gradlew))
+                prePushHookFile.appendText(generateHook(gradlew.path))
             } else {
                 logger.info("Replacing existing hook")
                 val endIndex = prePushHookFileContent.indexOf(endHook)
-                prePushHookFileContent.replaceRange(startIndex, endIndex, generateHook(gradlew, includeEndHook = false))
+                prePushHookFileContent.replaceRange(
+                    startIndex,
+                    endIndex,
+                    generateHook(gradlew.path, includeEndHook = false)
+                )
             }
         }
     }

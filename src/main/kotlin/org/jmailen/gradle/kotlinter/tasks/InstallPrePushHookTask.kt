@@ -43,7 +43,7 @@ open class InstallPrePushHookTask : DefaultTask() {
                 logger.info("Appending hook to end of existing non-empty file")
                 prePushHookFile.appendText(generateHook(gradleCommand))
             } else {
-                logger.info("Replacing existing hook")
+                logger.info("Updating existing kotlinter-installed hook")
                 val endIndex = prePushHookFileContent.indexOf(endHook)
                 prePushHookFileContent.replaceRange(
                     startIndex,

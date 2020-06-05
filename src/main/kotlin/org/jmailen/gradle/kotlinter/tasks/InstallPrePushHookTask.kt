@@ -17,11 +17,6 @@ open class InstallPrePushHookTask : DefaultTask() {
         }
         logger.info(".git directory: $dotGitDir")
 
-        val gradlew = File(project.rootDir, "gradlew")
-        if (!gradlew.exists() || !gradlew.isFile || !gradlew.canExecute()) {
-            throw GradleException("gradlew at ${gradlew.path} not found or not executable")
-        }
-
         val hookDir = File(dotGitDir.absolutePath, "hooks").apply {
             if (!exists()) {
                 logger.debug("Creating hook dir $this")
@@ -40,22 +35,31 @@ open class InstallPrePushHookTask : DefaultTask() {
 
         if (prePushHookFile.length() == 0L) {
             logger.info("Writing hook to empty file")
-            prePushHookFile.writeText(generateHook(gradlew.path, addShebang = true))
+            prePushHookFile.writeText(generateHook(gradleCommand, addShebang = true))
         } else {
             val prePushHookFileContent = prePushHookFile.readText()
             val startIndex = prePushHookFileContent.indexOf(startHook)
             if (startIndex == -1) {
                 logger.info("Appending hook to end of existing non-empty file")
-                prePushHookFile.appendText(generateHook(gradlew.path))
+                prePushHookFile.appendText(generateHook(gradleCommand))
             } else {
                 logger.info("Replacing existing hook")
                 val endIndex = prePushHookFileContent.indexOf(endHook)
                 prePushHookFileContent.replaceRange(
                     startIndex,
                     endIndex,
-                    generateHook(gradlew.path, includeEndHook = false)
+                    generateHook(gradleCommand, includeEndHook = false)
                 )
             }
+        }
+    }
+
+    private val gradleCommand: String by lazy {
+        val gradlew = File(project.rootDir, "gradlew")
+        if (!gradlew.exists() || !gradlew.isFile || !gradlew.canExecute()) {
+            throw GradleException("gradlew at ${gradlew.path} not found or not executable")
+        } else {
+            gradlew.path
         }
     }
 

@@ -64,12 +64,12 @@ open class InstallPrePushHookTask : DefaultTask() {
 
         private const val endHook = "##### KOTLINTER HOOK END #####\n"
 
-        private const val shebang = """
+        private val shebang = """
             #!/bin/sh
             set -e
-        """
+        """.trimIndent()
 
-        private const val hookContent = """
+        private val hookContent = """
             ${'$'}GRADLEW lintKotlin
 
             status=${'$'}?
@@ -78,7 +78,7 @@ open class InstallPrePushHookTask : DefaultTask() {
                 ${'$'}GRADLEW formatKotlin
                 exit 1
             fi
-        """
+        """.trimIndent()
 
         /**
          * Generate the hook script

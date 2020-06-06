@@ -73,7 +73,7 @@ open class InstallPrePushHookTask : DefaultTask() {
     }
 
     companion object {
-        internal const val startHook = "##### KOTLINTER HOOK START #####"
+        internal const val startHook = "\n##### KOTLINTER HOOK START #####"
 
         internal const val endHook = "##### KOTLINTER HOOK END #####\n"
 
@@ -102,13 +102,13 @@ open class InstallPrePushHookTask : DefaultTask() {
             includeEndHook: Boolean = true
         ): String {
             return """
-                    ${if (addShebang) shebang else ""}
-                    $startHook
-                    GRADLEW=$gradlew
-
-                    $hookContent
-                    ${if (includeEndHook) endHook else ""}
-                """.trimIndent()
+                |${if (addShebang) shebang else ""}
+                |$startHook
+                |GRADLEW=$gradlew
+                |
+                |$hookContent
+                |${if (includeEndHook) endHook else ""}
+            """.trimMargin()
         }
     }
 }

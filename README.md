@@ -111,6 +111,12 @@ Also `check` becomes dependent on `lintKotlin`.
 
 Granular tasks exist for each source set in the project: `formatKotlin`*`SourceSet`* and `lintKotlin`*`SourceSet`*.
 
+### Git Hooks
+
+Kotlinter can install hooks to run pre-push (`installKotlinterPrePushHook`) or pre-commit
+(`installKotlinterPreCommitHook`).  The hook runs `lintKotlin` and, if there are errors, `formatKotlin` and exits
+non-zero leaving changed files to be committed.
+
 ### Configuration
 Options are configured in the `kotlinter` extension. Defaults shown (you may omit the configuration block entirely if you want these defaults).
 

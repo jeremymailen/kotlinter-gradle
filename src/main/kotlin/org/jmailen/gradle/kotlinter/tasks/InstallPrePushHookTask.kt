@@ -66,7 +66,7 @@ open class InstallPrePushHookTask : DefaultTask() {
 
         val gradlew = File(project.rootDir, gradlewFilename)
         if (!gradlew.exists() || !gradlew.isFile || !gradlew.canExecute()) {
-            throw GradleException("gradlew at ${gradlew.path} not found or not executable")
+            throw GradleException("gradle wrapper at ${gradlew.path} not found or not executable")
         } else {
             gradlew.path
         }

@@ -23,7 +23,7 @@ open class InstallPrePushHookTask : DefaultTask() {
                 mkdir()
             }
         }
-        logger.info("hookDir: $hookDir")
+        logger.quiet("hookDir: $hookDir")
 
         val prePushHookFile = File(hookDir, "/pre-push").apply {
             if (!exists()) {

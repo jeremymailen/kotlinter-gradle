@@ -1,9 +1,9 @@
 package org.jmailen.gradle.kotlinter.tasks
 
-import java.io.File
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
+import java.io.File
 
 /**
  * Install or update the kotlinter-gradle pre-push hook.
@@ -100,15 +100,12 @@ open class InstallPrePushHookTask : DefaultTask() {
             gradlew: String,
             addShebang: Boolean = false,
             includeEndHook: Boolean = true
-        ): String {
-            return """
-                |${if (addShebang) shebang else ""}
+        ): String = (if (addShebang) shebang else "") +
+                """
                 |$startHook
                 |GRADLEW=$gradlew
-                |
-                |$hookContent
-                |${if (includeEndHook) endHook else ""}
-            """.trimMargin()
-        }
+                |$hookContent\n
+                """.trimMargin() +
+                (if (includeEndHook) endHook else "")
     }
 }

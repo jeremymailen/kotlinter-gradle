@@ -105,4 +105,32 @@ internal class PrePushHookTest : WithGradleTest.Kotlin() {
             }
         }
     }
+
+    @Test
+    fun `Repeatedly updating doesn't change hook`() {
+        File(testProjectDir.root, ".git").apply { mkdir() }
+        File(testProjectDir.root, ".git/hooks").apply { mkdir() }
+
+        lateinit var hookContent: String
+        build("installKotlinterPrePushHook").apply {
+            assertEquals(SUCCESS, task(":installKotlinterPrePushHook")?.outcome)
+            testProjectDir.root.apply {
+                resolve(".git/hooks/pre-push") {
+                    hookContent = readText()
+                    println(hookContent)
+                    assertTrue(hookContent.contains("${'$'}GRADLEW lintKotlin"))
+                    assertTrue(canExecute())
+                }
+            }
+        }
+
+        build("installKotlinterPrePushHook").apply {
+            assertEquals(SUCCESS, task(":installKotlinterPrePushHook")?.outcome)
+            testProjectDir.root.apply {
+                resolve(".git/hooks/pre-push") {
+                    assertEquals(hookContent, readText())
+                }
+            }
+        }
+    }
 }

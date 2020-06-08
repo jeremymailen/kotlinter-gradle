@@ -4,7 +4,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-
 internal class InstallPrePushHookTaskTest {
     private val gradlew = "gradlewLocation"
 

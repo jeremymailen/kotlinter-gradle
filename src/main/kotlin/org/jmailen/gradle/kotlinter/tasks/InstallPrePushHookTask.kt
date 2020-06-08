@@ -1,9 +1,9 @@
 package org.jmailen.gradle.kotlinter.tasks
 
+import java.io.File
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
-import java.io.File
 
 /**
  * Install or update the kotlinter-gradle pre-push hook.

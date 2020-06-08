@@ -5,14 +5,17 @@ import org.gradle.testkit.runner.TaskOutcome.FAILED
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.jmailen.gradle.kotlinter.functional.utils.resolve
 import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
-import org.jmailen.gradle.kotlinter.tasks.InstallPrePushHookTask
+import org.jmailen.gradle.kotlinter.tasks.InstallHookTask
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-internal class PrePushHookTest : WithGradleTest.Kotlin() {
+abstract class InstallHookTaskTest(
+    private val taskName: String,
+    private val hookFile: String
+) : WithGradleTest.Kotlin() {
     lateinit var projectRoot: File
 
     @Before
@@ -35,21 +38,21 @@ internal class PrePushHookTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `installKotlinterPrePushHook fails when dotgit dir not found`() {
-        buildAndFail("installKotlinterPrePushHook").apply {
+    fun `fails when dotgit dir not found`() {
+        buildAndFail(taskName).apply {
             assertTrue(output.contains(Regex("\\.git directory not found at .*/\\.git")))
-            assertEquals(FAILED, task(":installKotlinterPrePushHook")?.outcome)
+            assertEquals(FAILED, task(":$taskName")?.outcome)
         }
     }
 
     @Test
-    fun `installKotlinterPrePushHook installs hook in project without hook directory`() {
+    fun `installs hook in project without hook directory`() {
         File(testProjectDir.root, ".git").apply { mkdir() }
 
-        build("installKotlinterPrePushHook").apply {
-            assertEquals(SUCCESS, task(":installKotlinterPrePushHook")?.outcome)
+        build(taskName).apply {
+            assertEquals(SUCCESS, task(":$taskName")?.outcome)
             testProjectDir.root.apply {
-                resolve(".git/hooks/pre-push") {
+                resolve(".git/hooks/$hookFile") {
                     assertTrue(readText().contains("${'$'}GRADLEW lintKotlin"))
                     assertTrue(canExecute())
                 }
@@ -58,49 +61,51 @@ internal class PrePushHookTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `installKotlinterPrePushHook installs hook in project with existing pre-push hook`() {
+    fun `installs hook in project with existing hook`() {
         val existingHook = """
                 #!/bin/bash
                 This is some existing hook
             """.trimIndent()
         File(testProjectDir.root, ".git").apply { mkdir() }
         File(testProjectDir.root, ".git/hooks").apply { mkdir() }
-        File(testProjectDir.root, ".git/hooks/pre-push").apply {
+        File(testProjectDir.root, ".git/hooks/$hookFile").apply {
             writeText(existingHook)
         }
 
-        build("installKotlinterPrePushHook").apply {
-            assertEquals(SUCCESS, task(":installKotlinterPrePushHook")?.outcome)
+        build(taskName).apply {
+            assertEquals(SUCCESS, task(":$taskName")?.outcome)
             testProjectDir.root.apply {
-                resolve(".git/hooks/pre-push") {
-                    val prePushHookContents = readText()
-                    assertTrue(prePushHookContents.startsWith(existingHook))
-                    assertTrue(prePushHookContents.contains("${'$'}GRADLEW lintKotlin"))
+                resolve(".git/hooks/$hookFile") {
+                    val hookContents = readText()
+                    assertTrue(hookContents.startsWith(existingHook))
+                    assertTrue(hookContents.contains("${'$'}GRADLEW lintKotlin"))
                 }
             }
         }
     }
 
     @Test
-    fun `installKotlinterPrePushHook updates previously installed kotlinter hook`() {
+    fun `updates previously installed kotlinter hook`() {
         val placeholder = "Not actually the hook, just a placeholder"
         File(testProjectDir.root, ".git").apply { mkdir() }
         File(testProjectDir.root, ".git/hooks").apply { mkdir() }
-        File(testProjectDir.root, ".git/hooks/pre-push").apply {
-            writeText("""
-                ${InstallPrePushHookTask.startHook}
+        File(testProjectDir.root, ".git/hooks/$hookFile").apply {
+            writeText(
+                """
+                ${InstallHookTask.startHook}
                 $placeholder
-                ${InstallPrePushHookTask.endHook}
-            """.trimIndent())
+                ${InstallHookTask.endHook}
+            """.trimIndent()
+            )
         }
 
-        build("installKotlinterPrePushHook").apply {
-            assertEquals(SUCCESS, task(":installKotlinterPrePushHook")?.outcome)
+        build(taskName).apply {
+            assertEquals(SUCCESS, task(":$taskName")?.outcome)
             testProjectDir.root.apply {
-                resolve(".git/hooks/pre-push") {
-                    val prePushHookContents = readText()
-                    assertTrue(prePushHookContents.contains("${'$'}GRADLEW lintKotlin"))
-                    assertFalse(prePushHookContents.contains(placeholder))
+                resolve(".git/hooks/$hookFile") {
+                    val hookContents = readText()
+                    assertTrue(hookContents.contains("${'$'}GRADLEW lintKotlin"))
+                    assertFalse(hookContents.contains(placeholder))
                 }
             }
         }
@@ -112,10 +117,10 @@ internal class PrePushHookTest : WithGradleTest.Kotlin() {
         File(testProjectDir.root, ".git/hooks").apply { mkdir() }
 
         lateinit var hookContent: String
-        build("installKotlinterPrePushHook").apply {
-            assertEquals(SUCCESS, task(":installKotlinterPrePushHook")?.outcome)
+        build(taskName).apply {
+            assertEquals(SUCCESS, task(":$taskName")?.outcome)
             testProjectDir.root.apply {
-                resolve(".git/hooks/pre-push") {
+                resolve(".git/hooks/$hookFile") {
                     hookContent = readText()
                     println(hookContent)
                     assertTrue(hookContent.contains("${'$'}GRADLEW lintKotlin"))
@@ -124,13 +129,16 @@ internal class PrePushHookTest : WithGradleTest.Kotlin() {
             }
         }
 
-        build("installKotlinterPrePushHook").apply {
-            assertEquals(SUCCESS, task(":installKotlinterPrePushHook")?.outcome)
+        build(taskName).apply {
+            assertEquals(SUCCESS, task(":$taskName")?.outcome)
             testProjectDir.root.apply {
-                resolve(".git/hooks/pre-push") {
+                resolve(".git/hooks/$hookFile") {
                     assertEquals(hookContent, readText())
                 }
             }
         }
     }
 }
+
+class InstallPreCommitHookTaskTest : InstallHookTaskTest("installKotlinterPreCommitHook", "pre-commit")
+class InstallPrePushHookTaskTest : InstallHookTaskTest("installKotlinterPrePushHook", "pre-push")

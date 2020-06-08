@@ -5,10 +5,13 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 
+open class InstallPreCommitHookTask : InstallHookTask("pre-commit")
+open class InstallPrePushHookTask : InstallHookTask("pre-push")
+
 /**
- * Install or update the kotlinter-gradle pre-push hook.
+ * Install or update a kotlinter-gradle hook.
  */
-open class InstallPrePushHookTask : DefaultTask() {
+open class InstallHookTask(private val hookFile: String) : DefaultTask() {
     @TaskAction
     fun run() {
         val dotGitDir = File(project.rootDir, ".git")
@@ -25,7 +28,7 @@ open class InstallPrePushHookTask : DefaultTask() {
         }
         logger.quiet("hookDir: $hookDir")
 
-        val prePushHookFile = File(hookDir, "/pre-push").apply {
+        val hookFile = File(hookDir, "/$hookFile").apply {
             if (!exists()) {
                 logger.info("Creating $this anew")
                 createNewFile()
@@ -33,28 +36,28 @@ open class InstallPrePushHookTask : DefaultTask() {
             }
         }
 
-        if (prePushHookFile.length() == 0L) {
+        if (hookFile.length() == 0L) {
             logger.info("Writing hook to empty file")
-            prePushHookFile.writeText(generateHook(gradleCommand, addShebang = true))
+            hookFile.writeText(generateHook(gradleCommand, addShebang = true))
         } else {
-            val prePushHookFileContent = prePushHookFile.readText()
-            val startIndex = prePushHookFileContent.indexOf(startHook)
+            val hookFileContent = hookFile.readText()
+            val startIndex = hookFileContent.indexOf(startHook)
             if (startIndex == -1) {
                 logger.info("Appending hook to end of existing non-empty file")
-                prePushHookFile.appendText(generateHook(gradleCommand))
+                hookFile.appendText(generateHook(gradleCommand))
             } else {
                 logger.info("Updating existing kotlinter-installed hook")
-                val endIndex = prePushHookFileContent.indexOf(endHook)
-                val newPrePushHookFileContent = prePushHookFileContent.replaceRange(
+                val endIndex = hookFileContent.indexOf(endHook)
+                val newHookFileContent = hookFileContent.replaceRange(
                     startIndex,
                     endIndex,
                     generateHook(gradleCommand, includeEndHook = false)
                 )
-                prePushHookFile.writeText(newPrePushHookFileContent)
+                hookFile.writeText(newHookFileContent)
             }
         }
 
-        logger.quiet("Wrote hook to $prePushHookFile")
+        logger.quiet("Wrote hook to $hookFile")
     }
 
     private val gradleCommand: String by lazy {

@@ -38,7 +38,10 @@ class KotlinterPlugin : Plugin<Project> {
 
                 val lintKotlin = registerParentLintTask()
                 val formatKotlin = registerParentFormatTask()
-                registerPrePushHookTask()
+
+                if (project.rootProject == project) {
+                    registerPrePushHookTask()
+                }
 
                 sourceResolver.applyToAll(project) { id, resolveSources ->
                     val lintTaskPerSourceSet = tasks.register("lintKotlin${id.capitalize()}", LintTask::class.java) { lintTask ->

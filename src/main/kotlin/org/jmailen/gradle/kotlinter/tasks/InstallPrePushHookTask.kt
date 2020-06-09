@@ -6,7 +6,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 
 open class InstallPreCommitHookTask : InstallHookTask("pre-commit") {
-    override val hookContent = """
+    override fun hookContent() = """
             ${'$'}GRADLEW formatKotlin
 
             status=${'$'}?
@@ -18,7 +18,7 @@ open class InstallPreCommitHookTask : InstallHookTask("pre-commit") {
 }
 
 open class InstallPrePushHookTask : InstallHookTask("pre-push") {
-    override val hookContent = """
+    override fun hookContent() = """
             ${'$'}GRADLEW lintKotlin
 
             status=${'$'}?
@@ -34,7 +34,7 @@ open class InstallPrePushHookTask : InstallHookTask("pre-push") {
  * Install or update a kotlinter-gradle hook.
  */
 abstract class InstallHookTask(private val hookFile: String) : DefaultTask() {
-    abstract val hookContent: String
+    abstract fun hookContent(): String
 
     @TaskAction
     fun run() {
@@ -62,20 +62,20 @@ abstract class InstallHookTask(private val hookFile: String) : DefaultTask() {
 
         if (hookFile.length() == 0L) {
             logger.info("Writing hook to empty file")
-            hookFile.writeText(generateHook(gradleCommand, hookContent, addShebang = true))
+            hookFile.writeText(generateHook(gradleCommand, hookContent(), addShebang = true))
         } else {
             val hookFileContent = hookFile.readText()
             val startIndex = hookFileContent.indexOf(startHook)
             if (startIndex == -1) {
                 logger.info("Appending hook to end of existing non-empty file")
-                hookFile.appendText(generateHook(gradleCommand, hookContent))
+                hookFile.appendText(generateHook(gradleCommand, hookContent()))
             } else {
                 logger.info("Updating existing kotlinter-installed hook")
                 val endIndex = hookFileContent.indexOf(endHook)
                 val newHookFileContent = hookFileContent.replaceRange(
                     startIndex,
                     endIndex,
-                    generateHook(gradleCommand, hookContent, includeEndHook = false)
+                    generateHook(gradleCommand, hookContent(), includeEndHook = false)
                 )
                 hookFile.writeText(newHookFileContent)
             }

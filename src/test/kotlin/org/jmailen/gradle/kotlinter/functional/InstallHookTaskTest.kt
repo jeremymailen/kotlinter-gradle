@@ -16,7 +16,7 @@ abstract class InstallHookTaskTest(
     private val taskName: String,
     private val hookFile: String
 ) : WithGradleTest.Kotlin() {
-    lateinit var projectRoot: File
+    private lateinit var projectRoot: File
 
     @Before
     fun setup() {

@@ -26,7 +26,7 @@ open class InstallHookTask(private val hookFile: String) : DefaultTask() {
                 mkdir()
             }
         }
-        logger.quiet("hookDir: $hookDir")
+        logger.info("hookDir: $hookDir")
 
         val hookFile = File(hookDir, "/$hookFile").apply {
             if (!exists()) {

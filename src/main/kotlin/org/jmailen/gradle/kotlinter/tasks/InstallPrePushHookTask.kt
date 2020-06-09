@@ -5,13 +5,37 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 
-open class InstallPreCommitHookTask : InstallHookTask("pre-commit")
-open class InstallPrePushHookTask : InstallHookTask("pre-push")
+open class InstallPreCommitHookTask : InstallHookTask("pre-commit") {
+    override val hookContent = """
+            ${'$'}GRADLEW formatKotlin
+
+            status=${'$'}?
+            if [ "${'$'}status" != 0 ] ; then
+                echo 1>&2 "\nformatKotlin had non-zero exit status, aborting commit"
+                exit 1
+            fi
+        """.trimIndent()
+}
+
+open class InstallPrePushHookTask : InstallHookTask("pre-push") {
+    override val hookContent = """
+            ${'$'}GRADLEW lintKotlin
+
+            status=${'$'}?
+            if [ "${'$'}status" != 0 ] ; then
+                echo 1>&2 "\nlintKotlin found problems, running formatKotlin; commit the result and re-push"
+                ${'$'}GRADLEW formatKotlin
+                exit 1
+            fi
+        """.trimIndent()
+}
 
 /**
  * Install or update a kotlinter-gradle hook.
  */
-open class InstallHookTask(private val hookFile: String) : DefaultTask() {
+abstract class InstallHookTask(private val hookFile: String) : DefaultTask() {
+    abstract val hookContent: String
+
     @TaskAction
     fun run() {
         val dotGitDir = File(project.rootDir, ".git")
@@ -38,20 +62,20 @@ open class InstallHookTask(private val hookFile: String) : DefaultTask() {
 
         if (hookFile.length() == 0L) {
             logger.info("Writing hook to empty file")
-            hookFile.writeText(generateHook(gradleCommand, addShebang = true))
+            hookFile.writeText(generateHook(gradleCommand, hookContent, addShebang = true))
         } else {
             val hookFileContent = hookFile.readText()
             val startIndex = hookFileContent.indexOf(startHook)
             if (startIndex == -1) {
                 logger.info("Appending hook to end of existing non-empty file")
-                hookFile.appendText(generateHook(gradleCommand))
+                hookFile.appendText(generateHook(gradleCommand, hookContent))
             } else {
                 logger.info("Updating existing kotlinter-installed hook")
                 val endIndex = hookFileContent.indexOf(endHook)
                 val newHookFileContent = hookFileContent.replaceRange(
                     startIndex,
                     endIndex,
-                    generateHook(gradleCommand, includeEndHook = false)
+                    generateHook(gradleCommand, hookContent, includeEndHook = false)
                 )
                 hookFile.writeText(newHookFileContent)
             }
@@ -86,22 +110,12 @@ open class InstallHookTask(private val hookFile: String) : DefaultTask() {
             set -e
         """.trimIndent()
 
-        internal val hookContent = """
-            ${'$'}GRADLEW lintKotlin
-
-            status=${'$'}?
-            if [ "${'$'}status" != 0 ] ; then
-                echo 1>&2 "\nlintKotlin found problems; running formatKotlin command..."
-                ${'$'}GRADLEW formatKotlin
-                exit 1
-            fi
-        """.trimIndent()
-
         /**
          * Generate the hook script
          */
         internal fun generateHook(
             gradlew: String,
+            hookContent: String,
             addShebang: Boolean = false,
             includeEndHook: Boolean = true
         ): String = (if (addShebang) shebang else "") +

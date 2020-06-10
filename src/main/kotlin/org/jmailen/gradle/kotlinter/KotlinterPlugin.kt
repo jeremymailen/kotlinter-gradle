@@ -14,6 +14,8 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jmailen.gradle.kotlinter.support.reporterFileExtension
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
+import org.jmailen.gradle.kotlinter.tasks.InstallPreCommitHookTask
+import org.jmailen.gradle.kotlinter.tasks.InstallPrePushHookTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
 
 class KotlinterPlugin : Plugin<Project> {
@@ -37,6 +39,11 @@ class KotlinterPlugin : Plugin<Project> {
 
                 val lintKotlin = registerParentLintTask()
                 val formatKotlin = registerParentFormatTask()
+
+                if (project.rootProject == project) {
+                    registerPrePushHookTask()
+                    registerPreCommitHookTask()
+                }
 
                 sourceResolver.applyToAll(project) { id, resolveSources ->
                     val lintTaskPerSourceSet = tasks.register("lintKotlin${id.capitalize()}", LintTask::class.java) { lintTask ->
@@ -88,6 +95,18 @@ class KotlinterPlugin : Plugin<Project> {
         tasks.register("formatKotlin") {
             it.group = "formatting"
             it.description = "Formats the Kotlin source files."
+        }
+
+    private fun Project.registerPrePushHookTask() =
+        tasks.register("installKotlinterPrePushHook", InstallPrePushHookTask::class.java) {
+            it.group = "build setup"
+            it.description = "Installs Kotlinter Git pre-push hook"
+        }
+
+    private fun Project.registerPreCommitHookTask() =
+        tasks.register("installKotlinterPreCommitHook", InstallPreCommitHookTask::class.java) {
+            it.group = "build setup"
+            it.description = "Installs Kotlinter Git pre-commit hook"
         }
 }
 

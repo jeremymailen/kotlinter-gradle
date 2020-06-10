@@ -113,8 +113,7 @@ Granular tasks exist for each source set in the project: `formatKotlin`*`SourceS
 
 ### Git Hooks
 
-Kotlinter can install hooks to run pre-push (`installKotlinterPrePushHook`) or pre-commit
-(`installKotlinterPreCommitHook`).  The hook runs `lintKotlin` and, if there are errors, `formatKotlin` and exits
+Kotlinter can install a hook to run pre-push (`installKotlinterPrePushHook`). The hook runs `lintKotlin` and, if there are errors, `formatKotlin` and exits
 non-zero leaving changed files to be committed.
 
 ### Configuration

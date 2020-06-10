@@ -4,6 +4,7 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.HasConvention
@@ -42,7 +43,6 @@ class KotlinterPlugin : Plugin<Project> {
 
                 if (project.rootProject == project) {
                     registerPrePushHookTask()
-                    registerPreCommitHookTask()
                 }
 
                 sourceResolver.applyToAll(project) { id, resolveSources ->
@@ -150,7 +150,7 @@ internal object AndroidSourceSetResolver : SourceSetResolver {
 
     private fun getKotlinFiles(project: Project, sourceSet: AndroidSourceSet) = sourceSet.java.srcDirs.map { dir ->
         project.fileTree(dir) { it.include("**/*.kt") }
-    }.reduce { merged: FileTree, tree ->
+    }.reduce { merged: FileTree, tree: ConfigurableFileTree ->
         merged + tree
     }
 }

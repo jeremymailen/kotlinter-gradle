@@ -124,8 +124,8 @@ abstract class InstallHookTask(private val hookFile: String) : DefaultTask() {
                 """
                 |$startHook
                 |GRADLEW=$gradlew
-                |$hookContent\n
-                """.trimMargin() +
-                (if (includeEndHook) endHook else "")
+                |$hookContent
+                |${if (includeEndHook) endHook else ""}
+                """.trimMargin()
     }
 }

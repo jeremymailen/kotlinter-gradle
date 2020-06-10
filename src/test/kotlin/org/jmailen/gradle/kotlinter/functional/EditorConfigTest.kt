@@ -38,8 +38,10 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
         projectRoot.resolve("src/main/kotlin/FourSpacesByDefault.kt") {
             writeText(
                 """ |
-                    |    object FourSpacesByDefault
-                    |        
+                    |object FourSpacesByDefault {
+                    |    val text: String
+                    |}
+                    |
                 """.trimMargin()
             )
         }
@@ -62,8 +64,10 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
         projectRoot.resolve("src/main/kotlin/TwoSpaces.kt") {
             writeText(
                 """ |
-                    |  object TwoSpaces
-                    |        
+                    |object TwoSpaces {
+                    |  val text: String
+                    |}
+                    |
                 """.trimMargin()
             )
         }
@@ -130,7 +134,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
         buildAndFail("lintKotlin").apply {
             assertEquals(TaskOutcome.FAILED, task(":lintKotlinMain")?.outcome)
             assertTrue(output.contains("[filename] class WrongFileName should be declared in a file named WrongFileName.kt"))
-            assertTrue(output.contains("[indent] Unexpected indentation (2) (it should be 6)"))
+            assertTrue(output.contains("[indent] Unexpected indentation (2) (should be 6)"))
         }
     }
 }

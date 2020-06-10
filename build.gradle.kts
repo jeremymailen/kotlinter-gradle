@@ -19,7 +19,7 @@ val githubUrl ="https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "2.3.2"
+version = "2.4.0"
 group = "org.jmailen.gradle"
 description = projectDescription
 
@@ -126,7 +126,6 @@ tasks {
     }
 
     wrapper {
-        gradleVersion = "6.1.1"
-        distributionType = Wrapper.DistributionType.ALL
+        gradleVersion = "6.5"
     }
 }

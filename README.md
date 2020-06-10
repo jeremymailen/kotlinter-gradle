@@ -4,7 +4,9 @@
 
 Painless gradle plugin for linting and formatting Kotlin source files using the awesome [ktlint](https://ktlint.github.io) engine.
 
-It aims to be easy to set up with zero _required_ configuration and behaves as you'd expect out of the box.
+It aims to be easy to set up with _zero_ required configuration and behaves as you'd expect out of the box.
+
+It's also fast because it integrates the ktlint _engine_ directly with gradle's incremental build and uses the Worker API to parallelize work.
 
 ### Installation
 
@@ -17,7 +19,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "2.3.2"
+    id("org.jmailen.kotlinter") version "2.4.0"
 }
 ```
 
@@ -28,7 +30,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "2.3.2"
+    id "org.jmailen.kotlinter" version "2.4.0"
 }
 ```
 
@@ -48,7 +50,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jmailen.gradle:kotlinter-gradle:2.3.2")
+        classpath("org.jmailen.gradle:kotlinter-gradle:2.4.0")
     }
 }
 ```
@@ -73,7 +75,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.jmailen.gradle:kotlinter-gradle:2.3.2"
+        classpath "org.jmailen.gradle:kotlinter-gradle:2.4.0"
     }
 }
 ```
@@ -92,8 +94,8 @@ Kotlinter is compatible with Kotlin Gradle plugins 1.3.30+ and Java 13/12/11/10/
 
 ### Features
 
+- Supports kotlin gradle plugins: [JVM](https://plugins.gradle.org/plugin/org.jetbrains.kotlin.jvm) and [Android](https://plugins.gradle.org/plugin/org.jetbrains.kotlin.android)
 - Supports `.kt` and `.kts` files
-- Supports Kotlin JVM and Android projects (autoconfiguration with these plugins)
 - Standalone `LintTask` and `FormatTask` types for defining custom tasks
 - Incremental build support and fast parallelization with Gradle workers
 - Configures from `.editorconfig` when available
@@ -280,7 +282,7 @@ buildscript {
 ```groovy
 buildscript {
     configurations.classpath {
-        resolutionStrategy { force 'com.github.pinterest:ktlint:0.31.0' }
+        resolutionStrategy { force 'com.github.pinterest:ktlint:0.36.0' }
     }
 }
 ```

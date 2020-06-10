@@ -67,8 +67,10 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
         projectRoot.resolve("src/main/kotlin/TwoSpaces.kt") {
             writeText(
                 """ |
-                    |  object TwoSpaces
-                    |        
+                    |object TwoSpaces {
+                    |  val text: String
+                    |}
+                    |
                 """.trimMargin()
             )
         }

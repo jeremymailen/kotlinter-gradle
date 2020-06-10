@@ -6,5 +6,5 @@ object Versions {
     const val kotlinter = "2.3.2"
     const val ktlint = "0.37.1"
     const val mockitoKotlin = "2.2.0"
-    const val pluginPublish = "0.10.1"
+    const val pluginPublish = "0.12.0"
 }

@@ -3,24 +3,28 @@ package org.jmailen.gradle.kotlinter.functional.utils
 import org.intellij.lang.annotations.Language
 
 @Language("kotlin")
-internal fun kotlinClass(className: String) = """
+internal fun kotlinClass(className: String) =
+    """
     object $className
     
-""".trimIndent()
+    """.trimIndent()
 
 @Language("groovy")
-internal val settingsFile = """
+internal val settingsFile =
+    """
     rootProject.name = 'kotlinter'
     
-""".trimIndent()
+    """.trimIndent()
 
 @Language("xml")
-internal val androidManifest = """
+internal val androidManifest =
+    """
      <manifest package="com.example" />
 
-""".trimIndent()
+    """.trimIndent()
 
-internal val editorConfig = """
+internal val editorConfig =
+    """
     [*.kt]
     
 """

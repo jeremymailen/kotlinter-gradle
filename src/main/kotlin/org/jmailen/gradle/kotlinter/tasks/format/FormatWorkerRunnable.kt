@@ -55,7 +55,7 @@ class FormatWorkerRunnable @Inject constructor(
                         file.writeText(formattedText)
                     }
                 }
-        }
+            }
     }
 
     private fun formatKt(file: File, ruleSets: List<RuleSet>, onError: ErrorHandler) =

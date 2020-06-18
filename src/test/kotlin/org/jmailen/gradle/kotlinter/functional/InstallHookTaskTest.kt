@@ -62,7 +62,8 @@ abstract class InstallHookTaskTest(
 
     @Test
     fun `installs hook in project with existing hook`() {
-        val existingHook = """
+        val existingHook =
+            """
                 #!/bin/bash
                 This is some existing hook
             """.trimIndent()
@@ -95,7 +96,7 @@ abstract class InstallHookTaskTest(
                 ${InstallHookTask.startHook}
                 $placeholder
                 ${InstallHookTask.endHook}
-            """.trimIndent()
+                """.trimIndent()
             )
         }
 

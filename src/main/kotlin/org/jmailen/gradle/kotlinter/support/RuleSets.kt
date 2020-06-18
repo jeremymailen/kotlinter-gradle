@@ -13,12 +13,14 @@ fun resolveRuleSets(
     return providers
         .filter { includeExperimentalRules || it !is ExperimentalRuleSetProvider }
         .map { it.get() }
-        .sortedWith(compareBy {
-            when (it.id) {
-                "standard" -> 0
-                else -> 1
+        .sortedWith(
+            compareBy {
+                when (it.id) {
+                    "standard" -> 0
+                    else -> 1
+                }
             }
-        })
+        )
 }
 
 // statically resolve providers from plugin classpath

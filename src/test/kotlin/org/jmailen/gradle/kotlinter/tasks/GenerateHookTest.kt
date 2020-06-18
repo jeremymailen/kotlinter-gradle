@@ -7,10 +7,11 @@ import org.junit.Test
 internal class GenerateHookTest {
     private val gradlew = "gradlewLocation"
 
-    private val hookContent = """
+    private val hookContent =
+        """
         Foobar
         Baz
-    """.trimIndent()
+        """.trimIndent()
 
     @Test
     fun testGenerateHook_HasAllContent() {

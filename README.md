@@ -2,11 +2,11 @@
 
 [![Build Status](https://api.travis-ci.org/jeremymailen/kotlinter-gradle.svg?branch=master)](https://travis-ci.org/jeremymailen/kotlinter-gradle)
 
-Painless gradle plugin for linting and formatting Kotlin source files using the awesome [ktlint](https://ktlint.github.io) engine.
+Painless Gradle plugin for linting and formatting Kotlin source files using the awesome [ktlint](https://ktlint.github.io) engine.
 
 It aims to be easy to set up with _zero_ required configuration and behaves as you'd expect out of the box.
 
-It's also fast because it integrates the ktlint _engine_ directly with gradle's incremental build and uses the Worker API to parallelize work.
+It's also fast because it integrates the ktlint _engine_ directly with Gradle's incremental build and uses the Worker API to parallelize work.
 
 ### Installation
 
@@ -19,7 +19,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "2.4.0"
+    id("org.jmailen.kotlinter") version "2.4.1"
 }
 ```
 
@@ -30,7 +30,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "2.4.0"
+    id "org.jmailen.kotlinter" version "2.4.1"
 }
 ```
 
@@ -50,7 +50,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jmailen.gradle:kotlinter-gradle:2.4.0")
+        classpath("org.jmailen.gradle:kotlinter-gradle:2.4.1")
     }
 }
 ```
@@ -75,7 +75,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.jmailen.gradle:kotlinter-gradle:2.4.0"
+        classpath "org.jmailen.gradle:kotlinter-gradle:2.4.1"
     }
 }
 ```
@@ -94,10 +94,10 @@ Kotlinter is compatible with Kotlin Gradle plugins 1.3.30+ and Java 13/12/11/10/
 
 ### Features
 
-- Supports kotlin gradle plugins: [JVM](https://plugins.gradle.org/plugin/org.jetbrains.kotlin.jvm) and [Android](https://plugins.gradle.org/plugin/org.jetbrains.kotlin.android)
+- Supports Kotlin Gradle plugins: [JVM](https://plugins.gradle.org/plugin/org.jetbrains.kotlin.jvm) and [Android](https://plugins.gradle.org/plugin/org.jetbrains.kotlin.android)
 - Supports `.kt` and `.kts` files
 - Standalone `LintTask` and `FormatTask` types for defining custom tasks
-- Incremental build support and fast parallelization with Gradle workers
+- Incremental build support and fast parallelization with Gradle Worker API
 - Configures from `.editorconfig` when available
 - Configurable reporters
 
@@ -117,6 +117,8 @@ Granular tasks exist for each source set in the project: `formatKotlin`*`SourceS
 
 Kotlinter can install a hook to run pre-push (`installKotlinterPrePushHook`). The hook runs `lintKotlin` and, if there are errors, `formatKotlin` and exits
 non-zero leaving changed files to be committed.
+
+You *must* apply the kotlinter plugin to your root project to make this task available.
 
 ### Configuration
 Options are configured in the `kotlinter` extension. Defaults shown (you may omit the configuration block entirely if you want these defaults).
@@ -270,7 +272,7 @@ If you need to use a different version of `ktlint` you can override the dependen
 ```kotlin
 buildscript {
     configurations.classpath
-        .resolutionStrategy.force("com.github.pinterest:ktlint:0.31.0")
+        .resolutionStrategy.force("com.github.pinterest:ktlint:0.36.0")
 }
 ```
 

@@ -7,7 +7,8 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 
 open class InstallPreCommitHookTask : InstallHookTask("pre-commit") {
-    override val hookContent = """
+    override val hookContent =
+        """
             ${'$'}GRADLEW formatKotlin
 
             status=${'$'}?
@@ -19,7 +20,8 @@ open class InstallPreCommitHookTask : InstallHookTask("pre-commit") {
 }
 
 open class InstallPrePushHookTask : InstallHookTask("pre-push") {
-    override val hookContent = """
+    override val hookContent =
+        """
             ${'$'}GRADLEW lintKotlin
 
             status=${'$'}?
@@ -107,10 +109,11 @@ abstract class InstallHookTask(private val hookFile: String) : DefaultTask() {
 
         internal const val endHook = "##### KOTLINTER HOOK END #####\n"
 
-        internal val shebang = """
+        internal val shebang =
+            """
             #!/bin/sh
             set -e
-        """.trimIndent()
+            """.trimIndent()
 
         /**
          * Generate the hook script
@@ -121,7 +124,7 @@ abstract class InstallHookTask(private val hookFile: String) : DefaultTask() {
             addShebang: Boolean = false,
             includeEndHook: Boolean = true
         ): String = (if (addShebang) shebang else "") +
-                """
+            """
                 |$startHook
                 |GRADLEW=$gradlew
                 |$hookContent

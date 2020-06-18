@@ -21,13 +21,14 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
             resolve("settings.gradle") { writeText(settingsFile) }
             resolve("build.gradle") {
                 @Language("groovy")
-                val buildScript = """
+                val buildScript =
+                    """
                 plugins {
                     id 'kotlin'
                     id 'org.jmailen.kotlinter'
                 }
                 
-            """.trimIndent()
+                    """.trimIndent()
                 writeText(buildScript)
             }
         }
@@ -120,7 +121,8 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
         }
         projectRoot.resolve("src/main/kotlin/FileName.kt") {
             @Language("kotlin")
-            val content = """
+            val content =
+                """
                 class WrongFileName {
 
                   fun unnecessarySpace () = 2

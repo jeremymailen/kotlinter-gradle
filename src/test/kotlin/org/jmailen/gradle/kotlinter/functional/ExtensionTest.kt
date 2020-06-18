@@ -21,13 +21,14 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
             resolve("settings.gradle") { writeText(settingsFile) }
             resolve("build.gradle") {
                 @Language("groovy")
-                val buildScript = """
+                val buildScript =
+                    """
                 plugins {
                     id 'kotlin'
                     id 'org.jmailen.kotlinter'
                 }
                 
-                """.trimIndent()
+                    """.trimIndent()
                 writeText(buildScript)
             }
         }
@@ -37,11 +38,12 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
     fun `extension configures ignoreFailures`() {
         projectRoot.resolve("build.gradle") {
             @Language("groovy")
-            val script = """
+            val script =
+                """
                 kotlinter {
                     ignoreFailures = true
                 }
-            """.trimIndent()
+                """.trimIndent()
             appendText(script)
         }
         projectRoot.resolve("src/main/kotlin/FileName.kt") {
@@ -57,11 +59,12 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
     fun `extension configures indentSize`() {
         projectRoot.resolve("build.gradle") {
             @Language("groovy")
-            val script = """
+            val script =
+                """
                 kotlinter {
                     indentSize = 2
                 }
-            """.trimIndent()
+                """.trimIndent()
             appendText(script)
         }
         projectRoot.resolve("src/main/kotlin/TwoSpaces.kt") {
@@ -84,11 +87,12 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
     fun `extension configures reporters`() {
         projectRoot.resolve("build.gradle") {
             @Language("groovy")
-            val script = """
+            val script =
+                """
                 kotlinter {
                     reporters = ['html'] 
                 }
-            """.trimIndent()
+                """.trimIndent()
             appendText(script)
         }
         projectRoot.resolve("src/main/kotlin/KotlinClass.kt") {
@@ -106,11 +110,12 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
     fun `extension configures disabledRules`() {
         projectRoot.resolve("build.gradle") {
             @Language("groovy")
-            val script = """
+            val script =
+                """
                 kotlinter {
                     disabledRules = ["filename"]
                 }
-            """.trimIndent()
+                """.trimIndent()
             appendText(script)
         }
         projectRoot.resolve("src/main/kotlin/FileName.kt") {
@@ -126,7 +131,8 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
     fun `extension properties are evaluated only during task execution`() {
         projectRoot.resolve("build.gradle") {
             @Language("groovy")
-            val buildScript = """
+            val buildScript =
+                """
                 plugins {
                     id 'kotlin'
                     id 'org.jmailen.kotlinter'
@@ -156,16 +162,18 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
     fun `user customized values take precedence over extension values`() {
         projectRoot.resolve("src/main/kotlin/FileName.kt") {
             @Language("kotlin")
-            val kotlinClass = """
+            val kotlinClass =
+                """
                 class Precedence {
                     fun hi() = Unit
                 }
-            """.trimIndent()
+                """.trimIndent()
             writeText(kotlinClass)
         }
         projectRoot.resolve("build.gradle") {
             @Language("groovy")
-            val script = """
+            val script =
+                """
                 kotlinter {
                     disabledRules = ['filename']
                 }
@@ -174,7 +182,7 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
                     disabledRules = ['final-newline']
                 }
                 
-            """.trimIndent()
+                """.trimIndent()
             appendText(script)
         }
 
@@ -188,12 +196,13 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
     fun `shows deprecation warning for continuationIndentSize property`() {
         projectRoot.resolve("build.gradle") {
             @Language("groovy")
-            val script = """
+            val script =
+                """
                 kotlinter {
                     continuationIndentSize = 100
                 }
                 
-            """.trimIndent()
+                """.trimIndent()
             appendText(script)
         }
 

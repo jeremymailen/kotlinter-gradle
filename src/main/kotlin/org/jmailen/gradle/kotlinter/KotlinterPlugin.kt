@@ -34,16 +34,16 @@ class KotlinterPlugin : Plugin<Project> {
             }
         }
 
+        if (project.rootProject == project) {
+            registerPrePushHookTask()
+        }
+
         // for known kotlin plugins, register tasks by convention.
         extendablePlugins.forEach { (pluginId, sourceResolver) ->
             pluginManager.withPlugin(pluginId) {
 
                 val lintKotlin = registerParentLintTask()
                 val formatKotlin = registerParentFormatTask()
-
-                if (project.rootProject == project) {
-                    registerPrePushHookTask()
-                }
 
                 sourceResolver.applyToAll(project) { id, resolveSources ->
                     val lintTaskPerSourceSet = tasks.register("lintKotlin${id.capitalize()}", LintTask::class.java) { lintTask ->

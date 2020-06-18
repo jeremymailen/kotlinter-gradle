@@ -22,13 +22,14 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
             resolve("settings.gradle") { writeText(settingsFile) }
             resolve("build.gradle") {
                 @Language("groovy")
-                val buildScript = """
+                val buildScript =
+                    """
                     plugins {
                         id 'kotlin'
                         id 'org.jmailen.kotlinter'
                     }
                 
-                """.trimIndent()
+                    """.trimIndent()
                 writeText(buildScript)
             }
         }
@@ -44,18 +45,20 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
         }
         projectRoot.resolve("src/main/kotlin/CustomClass.kt") {
             @Language("kotlin")
-            val validClass = """
+            val validClass =
+                """
                 class CustomClass {
                      private fun go() {
                           println("go")
                      }
                 }
-            """.trimIndent()
+                """.trimIndent()
             writeText(validClass)
         }
         projectRoot.resolve("build.gradle") {
             @Language("groovy")
-            val buildScript = """
+            val buildScript =
+                """
                 import org.jmailen.gradle.kotlinter.tasks.LintTask
     
                 task ktLint(type: LintTask) {
@@ -80,14 +83,15 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
     fun `ktLint custom task succeeds with default configuration`() {
         projectRoot.resolve("build.gradle") {
             @Language("groovy")
-            val buildScript = """
+            val buildScript =
+                """
                 import org.jmailen.gradle.kotlinter.tasks.LintTask
     
                 task minimalCustomTask(type: LintTask) {
                     source files('src')
                 }
                 
-            """.trimIndent()
+                """.trimIndent()
             appendText(buildScript)
         }
 
@@ -103,7 +107,8 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
         }
         projectRoot.resolve("build.gradle") {
             @Language("groovy")
-            val buildScript = """
+            val buildScript =
+                """
                 import org.jmailen.gradle.kotlinter.tasks.LintTask
     
                 task customizedLintTask(type: LintTask) {
@@ -117,7 +122,7 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                     fileBatchSize = 12
                 }
                 
-            """.trimIndent()
+                """.trimIndent()
             appendText(buildScript)
         }
 
@@ -133,7 +138,8 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
         }
         projectRoot.resolve("build.gradle") {
             @Language("groovy")
-            val buildScript = """
+            val buildScript =
+                """
                 import org.jmailen.gradle.kotlinter.tasks.FormatTask
     
                 task customizedFormatTask(type: FormatTask) {
@@ -145,7 +151,7 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                     fileBatchSize = 12
                 }
                 
-            """.trimIndent()
+                """.trimIndent()
             appendText(buildScript)
         }
 
@@ -158,14 +164,16 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
     fun `ktLint custom task skips reports generation if reports not configured`() {
         projectRoot.resolve("src/main/kotlin/MissingNewLine.kt") {
             @Language("kotlin")
-            val validClass = """
+            val validClass =
+                """
                 class MissingNewLine
-            """.trimIndent()
+                """.trimIndent()
             writeText(validClass)
         }
         projectRoot.resolve("build.gradle") {
             @Language("groovy")
-            val buildScript = """
+            val buildScript =
+                """
                 import org.jmailen.gradle.kotlinter.tasks.LintTask
     
                 task reportsNotConfigured(type: LintTask) {
@@ -197,7 +205,8 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
     fun `ktLint custom task became up-to-date on second run if reports not configured`() {
         projectRoot.resolve("build.gradle") {
             @Language("groovy")
-            val buildScript = """
+            val buildScript =
+                """
                 import org.jmailen.gradle.kotlinter.tasks.LintTask
     
                 task reportsNotConfigured(type: LintTask) {
@@ -231,7 +240,8 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
     fun `ktLint custom task treats reports as input parameter`() {
         projectRoot.resolve("build.gradle") {
             @Language("groovy")
-            val buildScript = """
+            val buildScript =
+                """
                 import org.jmailen.gradle.kotlinter.tasks.LintTask
     
                 task ktLintWithReports(type: LintTask) {

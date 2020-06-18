@@ -29,14 +29,16 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
         buildFile()
 
         val className = "KotlinClass"
-        kotlinSourceFile("$className.kt", """
+        kotlinSourceFile(
+            "$className.kt",
+            """
             class $className {
                 private fun hi(){
                     println ("hi")
                 }
             }
 
-        """.trimIndent()
+            """.trimIndent()
         )
 
         buildAndFail("lintKotlinMain").apply {
@@ -54,14 +56,16 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
     fun `lintKotlinMain succeeds when no lint errors detected`() {
         settingsFile()
         buildFile()
-        kotlinSourceFile("KotlinClass.kt", """
+        kotlinSourceFile(
+            "KotlinClass.kt",
+            """
             class KotlinClass {
                 private fun hi() {
                     println("hi")
                 }
             }
 
-        """.trimIndent()
+            """.trimIndent()
         )
 
         build("lintKotlinMain").apply {
@@ -74,7 +78,8 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
         settingsFile()
         buildFile()
         @Language("kotlin")
-        val kotlinClass = """
+        val kotlinClass =
+            """
             import System.*
             
             class KotlinClass{
@@ -82,7 +87,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
                     out.println("Hello")
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
         kotlinSourceFile("KotlinClass.kt", kotlinClass)
 
         build("formatKotlin").apply {
@@ -98,10 +103,13 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
     fun `check task runs lintFormat`() {
         settingsFile()
         buildFile()
-        kotlinSourceFile("CustomObject.kt", """
+        kotlinSourceFile(
+            "CustomObject.kt",
+            """
             object CustomObject
             
-        """.trimIndent())
+            """.trimIndent()
+        )
 
         build("check").apply {
             assertEquals(SUCCESS, task(":lintKotlin")?.outcome)
@@ -114,7 +122,8 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
 
     private fun buildFile() = buildFile.apply {
         @Language("groovy")
-        val buildscript = """
+        val buildscript =
+            """
             plugins {
                 id 'org.jetbrains.kotlin.jvm' version '1.3.41'
                 id 'org.jmailen.kotlinter'
@@ -123,7 +132,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
             repositories {
                 jcenter()
             }
-        """.trimIndent()
+            """.trimIndent()
         writeText(buildscript)
     }
 

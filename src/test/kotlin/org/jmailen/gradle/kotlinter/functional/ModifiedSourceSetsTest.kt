@@ -21,7 +21,8 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
             resolve("settings.gradle") { writeText(settingsFile) }
             resolve("build.gradle") {
                 @Language("groovy")
-                val buildScript = """
+                val buildScript =
+                    """
                 subprojects {
                     repositories {
                         google()
@@ -29,13 +30,14 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
                     }
                 }
                 
-            """.trimIndent()
+                    """.trimIndent()
                 writeText(buildScript)
             }
             androidModuleRoot = resolve("androidproject") {
                 resolve("build.gradle") {
                     @Language("groovy")
-                    val androidBuildScript = """
+                    val androidBuildScript =
+                        """
                         plugins {
                             id 'com.android.library'
                             id 'kotlin-android'
@@ -65,7 +67,7 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
                             }
                         }
                         
-                    """.trimIndent()
+                        """.trimIndent()
                     writeText(androidBuildScript)
                 }
                 resolve("src/main/AndroidManifest.xml") {
@@ -87,7 +89,8 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
             kotlinModuleRoot = resolve("kotlinproject") {
                 resolve("build.gradle") {
                     @Language("groovy")
-                    val kotlinBuildScript = """
+                    val kotlinBuildScript =
+                        """
                         plugins {
                             id 'kotlin'
                             id 'org.jmailen.kotlinter'
@@ -99,7 +102,7 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
                                 java.srcDirs = ["src/debug/kotlin"]
                             }
                         }
-                    """.trimIndent()
+                        """.trimIndent()
                     writeText(kotlinBuildScript)
                 }
                 resolve("random/path/MainSourceSet.kt") {
@@ -146,8 +149,9 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
     }
 
     @Language("groovy")
-    private val settingsFile = """
+    private val settingsFile =
+        """
         rootProject.name = 'kotlinter'
         include 'androidproject', 'kotlinproject'
-    """.trimIndent()
+        """.trimIndent()
 }

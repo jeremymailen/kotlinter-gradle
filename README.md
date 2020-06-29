@@ -115,10 +115,24 @@ Granular tasks exist for each source set in the project: `formatKotlin`*`SourceS
 
 ### Git Hooks
 
-Kotlinter can install a hook to run pre-push (`installKotlinterPrePushHook`). The hook runs `lintKotlin` and, if there are errors, `formatKotlin` and exits
-non-zero leaving changed files to be committed.
+Kotlinter can install a hook to run pre-push (`installKotlinterPrePushHook`). The hook runs `lintKotlin` and,
+if there are errors, `formatKotlin` and exits non-zero leaving changed files to be committed.
 
 You *must* apply the kotlinter plugin to your root project to make this task available.
+
+To install the hook automatically when someone runs the build, add this to your root project `build.gradle.kts`:
+
+```kotlin
+plugins {
+    id("org.jmailen.kotlinter") version "2.4.1" apply false
+}
+
+apply(plugin = "org.jmailen.kotlinter")
+
+tasks.check {
+    dependsOn("installKotlinterPrePushHook")
+}
+```
 
 ### Configuration
 Options are configured in the `kotlinter` extension. Defaults shown (you may omit the configuration block entirely if you want these defaults).

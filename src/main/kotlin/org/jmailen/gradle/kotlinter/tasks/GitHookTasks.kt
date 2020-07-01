@@ -64,30 +64,53 @@ abstract class InstallHookTask(private val hookFile: String) : DefaultTask() {
             }
         }
 
-        if (hookFile.length() == 0L) {
+        if (createOrUpdate(hookFile)) {
+            logger.quiet("Wrote hook to $hookFile")
+        }
+    }
+
+    /**
+     * Create or update the hook file.
+     *
+     * @return Boolean  True if the file was written to, false otherwise (e.g. hook already up-to-date)
+     */
+    private fun createOrUpdate(hookFile: File): Boolean {
+        return if (hookFile.length() == 0L) {
             logger.info("Writing hook to empty file")
             hookFile.writeText(generateHook(gradleCommand, hookContent, addShebang = true))
+            true
         } else {
             val hookFileContent = hookFile.readText()
             val startIndex = hookFileContent.indexOf(startHook)
             if (startIndex == -1) {
                 logger.info("Appending hook to end of existing non-empty file")
                 hookFile.appendText(generateHook(gradleCommand, hookContent))
+                true
             } else {
-                logger.info("Updating existing kotlinter-installed hook")
                 val endIndex = hookFileContent.indexOf(endHook)
                 val newHookFileContent = hookFileContent.replaceRange(
                     startIndex,
                     endIndex,
                     generateHook(gradleCommand, hookContent, includeEndHook = false)
                 )
-                hookFile.writeText(newHookFileContent)
+                if (newHookFileContent != hookFileContent) {
+                    logger.info("Updating existing kotlinter-installed hook")
+                    hookFile.writeText(newHookFileContent)
+                    true
+                } else {
+                    logger.info("Not altering up-to-date hook")
+                    false
+                }
             }
         }
-
-        logger.quiet("Wrote hook to $hookFile")
     }
 
+    /**
+     * Find or guess a Gradle command for use in the hook script.
+     *
+     * If the Gradle wrapper is found in the project root directory, that is used,
+     * otherwise we hope for a `gradle` in the PATH
+     */
     private val gradleCommand: String by lazy {
         val gradlewFilename = if (System.getProperty("os.name").toLowerCase().contains("win")) {
             "gradlew.bat"

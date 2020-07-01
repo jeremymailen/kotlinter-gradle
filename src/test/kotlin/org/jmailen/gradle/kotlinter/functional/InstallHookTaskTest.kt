@@ -130,11 +130,14 @@ abstract class InstallHookTaskTest(
             }
         }
 
+        val hookLastModified = File(testProjectDir.root, ".git/hooks/$hookFile").lastModified()
+
         build(taskName).apply {
             assertEquals(SUCCESS, task(":$taskName")?.outcome)
             testProjectDir.root.apply {
                 resolve(".git/hooks/$hookFile") {
                     assertEquals(hookContent, readText())
+                    assertEquals(hookLastModified, lastModified())
                 }
             }
         }

@@ -122,17 +122,38 @@ You *must* apply the kotlinter plugin to your root project to make this task ava
 
 To install the hook automatically when someone runs the build, add this to your root project `build.gradle.kts`:
 
+<details open>
+<summary>Kotlin</summary>
+
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "2.4.1" apply false
+    java // Necessary to add the check task
+    id("org.jmailen.kotlinter") version "2.4.1"
 }
-
-apply(plugin = "org.jmailen.kotlinter")
 
 tasks.check {
     dependsOn("installKotlinterPrePushHook")
 }
 ```
+
+</details>
+
+<details>
+<summary>Groovy</summary>
+
+```groovy
+plugins {
+    java // Necessary to add the check task
+    id "org.jmailen.kotlinter" version "2.4.1"
+}
+
+task check {
+    dependsOn "installKotlinterPrePushHook"
+}
+```
+
+</details>
+
 
 ### Configuration
 Options are configured in the `kotlinter` extension. Defaults shown (you may omit the configuration block entirely if you want these defaults).

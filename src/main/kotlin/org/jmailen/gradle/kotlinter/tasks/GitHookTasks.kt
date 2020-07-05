@@ -72,7 +72,7 @@ abstract class InstallHookTask(private val hookFile: String) : DefaultTask() {
     /**
      * Create or update the hook file.
      *
-     * @return Boolean  True if the file was written to, false otherwise (e.g. hook already up-to-date)
+     * @return  True if the file was written to, false otherwise (e.g. hook already up-to-date)
      */
     private fun createOrUpdate(hookFile: File): Boolean {
         return if (hookFile.length() == 0L) {

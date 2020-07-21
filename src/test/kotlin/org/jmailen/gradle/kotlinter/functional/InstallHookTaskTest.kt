@@ -3,6 +3,7 @@ package org.jmailen.gradle.kotlinter.functional
 import java.io.File
 import org.gradle.testkit.runner.TaskOutcome.FAILED
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.jmailen.gradle.kotlinter.functional.utils.resolve
 import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
 import org.jmailen.gradle.kotlinter.tasks.InstallHookTask
@@ -113,6 +114,29 @@ abstract class InstallHookTaskTest(
     }
 
     @Test
+    fun `Updates changed hook file`() {
+        File(testProjectDir.root, ".git").apply { mkdir() }
+        File(testProjectDir.root, ".git/hooks").apply { mkdir() }
+
+        build(taskName).apply {
+            assertEquals(SUCCESS, task(":$taskName")?.outcome)
+        }
+
+        File(testProjectDir.root, ".git/hooks/$hookFile").apply {
+            writeText(readText().replace("GRADLEW", "FOOBAR"))
+        }
+
+        build(taskName).apply {
+            assertEquals(SUCCESS, task(":$taskName")?.outcome)
+            testProjectDir.root.apply {
+                resolve(".git/hooks/$hookFile") {
+                    assertTrue(readText().contains("${'$'}GRADLEW formatKotlin"))
+                }
+            }
+        }
+    }
+
+    @Test
     fun `Repeatedly updating doesn't change hook`() {
         File(testProjectDir.root, ".git").apply { mkdir() }
         File(testProjectDir.root, ".git/hooks").apply { mkdir() }
@@ -123,7 +147,6 @@ abstract class InstallHookTaskTest(
             testProjectDir.root.apply {
                 resolve(".git/hooks/$hookFile") {
                     hookContent = readText()
-                    println(hookContent)
                     assertTrue(hookContent.contains("${'$'}GRADLEW formatKotlin"))
                     assertTrue(canExecute())
                 }
@@ -133,7 +156,7 @@ abstract class InstallHookTaskTest(
         val hookLastModified = File(testProjectDir.root, ".git/hooks/$hookFile").lastModified()
 
         build(taskName).apply {
-            assertEquals(SUCCESS, task(":$taskName")?.outcome)
+            assertEquals(UP_TO_DATE, task(":$taskName")?.outcome)
             testProjectDir.root.apply {
                 resolve(".git/hooks/$hookFile") {
                     assertEquals(hookContent, readText())

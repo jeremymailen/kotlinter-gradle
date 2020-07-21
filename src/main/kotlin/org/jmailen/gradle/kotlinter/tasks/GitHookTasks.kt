@@ -36,70 +36,113 @@ open class InstallPrePushHookTask : InstallHookTask("pre-push") {
 /**
  * Install or update a kotlinter-gradle hook.
  */
-abstract class InstallHookTask(private val hookFile: String) : DefaultTask() {
+abstract class InstallHookTask(hookPath: String) : DefaultTask() {
     @get:Internal
     abstract val hookContent: String
 
+    @get:Internal
+    val dotGitDir = File(project.rootDir, ".git")
+
+    @get:Internal
+    val hookDir = File(dotGitDir.absolutePath, "hooks")
+
+    @get:Internal
+    val hookFile = File(hookDir, "/$hookPath")
+
+    init {
+        outputs.upToDateWhen { !shouldRun() }
+    }
+
+    private fun shouldRun(): Boolean {
+        if (!hookDir.exists()) {
+            return true
+        }
+
+        if (!hookFile.exists()) {
+            return true
+        }
+
+        if (shouldUpdateHook()) {
+            return true
+        }
+
+        return false
+    }
+
     @TaskAction
     fun run() {
-        val dotGitDir = File(project.rootDir, ".git")
         if (!dotGitDir.exists() || !dotGitDir.isDirectory) {
             throw GradleException(".git directory not found at ${dotGitDir.path}")
         }
         logger.info(".git directory: $dotGitDir")
 
-        val hookDir = File(dotGitDir.absolutePath, "hooks").apply {
-            if (!exists()) {
-                logger.debug("Creating hook dir $this")
-                mkdir()
-            }
+        if (!hookDir.exists()) {
+            logger.debug("Creating hook dir $hookDir")
+            hookDir.mkdir()
         }
         logger.info("hookDir: $hookDir")
 
-        val hookFile = File(hookDir, "/$hookFile").apply {
-            if (!exists()) {
-                logger.info("Creating $this anew")
-                createNewFile()
-                setExecutable(true)
-            }
+        if (!hookFile.exists()) {
+            logger.info("Creating $hookFile anew")
+            hookFile.createNewFile()
+            hookFile.setExecutable(true)
         }
 
-        if (createOrUpdate(hookFile)) {
-            logger.quiet("Wrote hook to $hookFile")
+        createOrUpdateHook()
+        logger.quiet("Wrote hook to $hookFile")
+    }
+
+    private fun shouldUpdateHook(): Boolean {
+        if (hookFile.length() == 0L) {
+            return true
         }
+
+        val hookFileContent = hookFile.readText()
+        val startHookMarker = hookFileContent.indexOf(startHook)
+        if (startHookMarker == -1) {
+            return true
+        }
+
+        val endIndex = hookFileContent.indexOf(endHook)
+        val newHookFileContent = hookFileContent.replaceRange(
+            startHookMarker,
+            endIndex,
+            generateHook(gradleCommand, hookContent, includeEndHook = false)
+        )
+        if (newHookFileContent != hookFileContent) {
+            return true
+        }
+
+        return false
     }
 
     /**
      * Create or update the hook file.
      *
-     * @return  True if the file was written to, false otherwise (e.g. hook already up-to-date)
+     * @return True if the file was written to, false otherwise (e.g. hook already up-to-date)
      */
-    private fun createOrUpdate(hookFile: File): Boolean {
+    private fun createOrUpdateHook() {
         return if (hookFile.length() == 0L) {
             logger.info("Writing hook to empty file")
             hookFile.writeText(generateHook(gradleCommand, hookContent, addShebang = true))
-            true
         } else {
             val hookFileContent = hookFile.readText()
-            val startIndex = hookFileContent.indexOf(startHook)
-            if (startIndex == -1) {
+            val startHookMarker = hookFileContent.indexOf(startHook)
+            if (startHookMarker == -1) {
                 logger.info("Appending hook to end of existing non-empty file")
                 hookFile.appendText(generateHook(gradleCommand, hookContent))
-                true
             } else {
                 val endIndex = hookFileContent.indexOf(endHook)
                 val newHookFileContent = hookFileContent.replaceRange(
-                    startIndex,
+                    startHookMarker,
                     endIndex,
                     generateHook(gradleCommand, hookContent, includeEndHook = false)
                 )
                 if (newHookFileContent != hookFileContent) {
                     logger.info("Updating existing kotlinter-installed hook")
                     hookFile.writeText(newHookFileContent)
-                    true
                 } else {
                     logger.info("Not altering up-to-date hook")
-                    false
                 }
             }
         }
@@ -148,10 +191,10 @@ abstract class InstallHookTask(private val hookFile: String) : DefaultTask() {
             includeEndHook: Boolean = true
         ): String = (if (addShebang) shebang else "") +
             """
-                |$startHook
-                |GRADLEW=$gradlew
-                |$hookContent
-                |${if (includeEndHook) endHook else ""}
-                """.trimMargin()
+            |$startHook
+            |GRADLEW=$gradlew
+            |$hookContent
+            |${if (includeEndHook) endHook else ""}
+            """.trimMargin()
     }
 }

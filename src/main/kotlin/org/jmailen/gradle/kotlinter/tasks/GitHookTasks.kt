@@ -47,7 +47,13 @@ abstract class InstallHookTask(hookPath: String) : DefaultTask() {
     private val hookFile = File(hookDir, "/$hookPath")
 
     init {
-        outputs.upToDateWhen { !shouldRun() }
+        outputs.upToDateWhen {
+            hookDirExists &&
+                hookFileExists &&
+                !emptyHookFile &&
+                startHookMarkerIndex != -1 &&
+                newHookFileContent == hookFileContent
+        }
     }
 
     private val hookDirExists by lazy { hookDir.exists() }
@@ -68,14 +74,6 @@ abstract class InstallHookTask(hookPath: String) : DefaultTask() {
             endHookMarkerIndex,
             generateHook(gradleCommand, hookContent, includeEndHook = false)
         )
-    }
-
-    private fun shouldRun(): Boolean {
-        return !hookDirExists
-                || !hookFileExists
-                || emptyHookFile
-                || startHookMarkerIndex == -1
-                || newHookFileContent != hookFileContent
     }
 
     @TaskAction

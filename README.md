@@ -171,7 +171,7 @@ The `fileBatchSize` property configures the number of files that are processed i
 
 ### Editorconfig
 
-Kotlinter will configure itself using an `.editorconfig` file if one is present in your root project directory.
+Kotlinter will configure itself using an `.editorconfig` file if one is present.
 
 If a non-empty `disabledRules` value is specified in the `kotlinter` extension, it will take precedence over any `disabled_rules` in `.editorconfig`.
 

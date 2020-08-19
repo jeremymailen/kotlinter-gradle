@@ -72,7 +72,6 @@ class FormatWorkerRunnable @Inject constructor(
                 ruleSets = ruleSets,
                 script = script,
                 userData = userData(ktLintParams),
-                editorConfigPath = ktLintParams.editorConfigPath,
                 cb = { error, corrected ->
                     onError(error, corrected)
                 }

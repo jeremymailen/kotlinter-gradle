@@ -5,6 +5,5 @@ import java.io.Serializable
 data class KtLintParams(
     val indentSize: Int?,
     val experimentalRules: Boolean,
-    val disabledRules: List<String>,
-    val editorConfigPath: String?
+    val disabledRules: List<String>
 ) : Serializable

@@ -67,7 +67,6 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                     indentSize = 5
                     experimentalRules = true
                     disabledRules = ["final-newline"]
-                    editorConfigPath = project.rootProject.file(".editorconfig")
                 }
                 
             """
@@ -117,7 +116,6 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                     indentSize = 123
                     experimentalRules = true
                     disabledRules = ["final-newline"]
-                    editorConfigPath = project.rootProject.file(".editorconfig")
                     ignoreFailures = true
                     fileBatchSize = 12
                 }
@@ -147,7 +145,6 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                     indentSize = 123
                     experimentalRules = true
                     disabledRules = ["final-newline"]
-                    editorConfigPath = project.rootProject.file(".editorconfig")
                     fileBatchSize = 12
                 }
                 

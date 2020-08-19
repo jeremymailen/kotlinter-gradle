@@ -59,7 +59,6 @@ class KotlinterPlugin : Plugin<Project> {
                         lintTask.indentSize.set(provider { kotlinterExtension.indentSize })
                         lintTask.experimentalRules.set(provider { kotlinterExtension.experimentalRules })
                         lintTask.disabledRules.set(provider { kotlinterExtension.disabledRules.toList() })
-                        lintTask.editorConfigPath.set(editorConfigFile())
                         lintTask.fileBatchSize.set(provider { kotlinterExtension.fileBatchSize })
                     }
                     lintKotlin.configure { lintTask ->
@@ -72,7 +71,6 @@ class KotlinterPlugin : Plugin<Project> {
                         formatTask.indentSize.set(provider { kotlinterExtension.indentSize })
                         formatTask.experimentalRules.set(provider { kotlinterExtension.experimentalRules })
                         formatTask.disabledRules.set(provider { kotlinterExtension.disabledRules.toList() })
-                        formatTask.editorConfigPath.set(editorConfigFile())
                         formatTask.fileBatchSize.set(provider { kotlinterExtension.fileBatchSize })
                     }
                     formatKotlin.configure { formatTask ->
@@ -159,5 +157,3 @@ internal val String.id
     get() = split(" ").first()
 
 internal fun Project.reportFile(name: String) = file("$buildDir/reports/ktlint/$name")
-
-internal fun Project.editorConfigFile() = rootProject.file(".editorconfig").takeIf { it.exists() }

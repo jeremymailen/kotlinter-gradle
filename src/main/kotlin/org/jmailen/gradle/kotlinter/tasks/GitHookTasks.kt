@@ -1,10 +1,10 @@
 package org.jmailen.gradle.kotlinter.tasks
 
-import java.io.File
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
+import java.io.File
 
 open class InstallPreCommitHookTask : InstallHookTask("pre-commit") {
     override val hookContent =

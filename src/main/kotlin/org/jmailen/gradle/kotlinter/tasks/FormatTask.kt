@@ -1,6 +1,5 @@
 package org.jmailen.gradle.kotlinter.tasks
 
-import javax.inject.Inject
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -11,6 +10,7 @@ import org.jmailen.gradle.kotlinter.tasks.format.FormatExecutionContext
 import org.jmailen.gradle.kotlinter.tasks.format.FormatWorkerConfigurationAction
 import org.jmailen.gradle.kotlinter.tasks.format.FormatWorkerParameters
 import org.jmailen.gradle.kotlinter.tasks.format.FormatWorkerRunnable
+import javax.inject.Inject
 
 open class FormatTask @Inject constructor(
     private val workerExecutor: WorkerExecutor

@@ -1,6 +1,5 @@
 package org.jmailen.gradle.kotlinter.functional
 
-import java.io.File
 import org.gradle.testkit.runner.TaskOutcome
 import org.intellij.lang.annotations.Language
 import org.jmailen.gradle.kotlinter.functional.utils.androidManifest
@@ -9,6 +8,7 @@ import org.jmailen.gradle.kotlinter.functional.utils.resolve
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import java.io.File
 
 internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
 

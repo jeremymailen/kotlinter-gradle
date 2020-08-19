@@ -1,6 +1,5 @@
 package org.jmailen.gradle.kotlinter.tasks
 
-import java.io.File
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
@@ -10,6 +9,7 @@ import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_DISABLE
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_EXPERIMENTAL_RULES
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_FILE_BATCH_SIZE
 import org.jmailen.gradle.kotlinter.support.KtLintParams
+import java.io.File
 
 abstract class ConfigurableKtLintTask : SourceTask() {
 

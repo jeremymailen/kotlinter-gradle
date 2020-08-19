@@ -3,14 +3,14 @@ package org.jmailen.gradle.kotlinter.tasks.format
 import com.pinterest.ktlint.core.KtLint
 import com.pinterest.ktlint.core.LintError
 import com.pinterest.ktlint.core.RuleSet
-import java.io.File
-import javax.inject.Inject
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.Logger
 import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
 import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.resolveRuleSets
 import org.jmailen.gradle.kotlinter.support.userData
+import java.io.File
+import javax.inject.Inject
 
 /**
  * Runnable used in the Gradle Worker API to run format on a batch of files.

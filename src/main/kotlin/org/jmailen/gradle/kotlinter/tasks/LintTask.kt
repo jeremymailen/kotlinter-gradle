@@ -1,7 +1,5 @@
 package org.jmailen.gradle.kotlinter.tasks
 
-import java.io.File
-import javax.inject.Inject
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
@@ -20,6 +18,8 @@ import org.jmailen.gradle.kotlinter.tasks.lint.LintExecutionContext
 import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerConfigurationAction
 import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerParameters
 import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerRunnable
+import java.io.File
+import javax.inject.Inject
 
 @CacheableTask
 open class LintTask @Inject constructor(

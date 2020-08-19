@@ -1,10 +1,10 @@
 package org.jmailen.gradle.kotlinter.support
 
+import org.jmailen.gradle.kotlinter.tasks.format.FormatExecutionContext
+import org.jmailen.gradle.kotlinter.tasks.lint.LintExecutionContext
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
-import org.jmailen.gradle.kotlinter.tasks.format.FormatExecutionContext
-import org.jmailen.gradle.kotlinter.tasks.lint.LintExecutionContext
 
 /**
  * Global repository storing ExecutionContext that needs to be available in Worker Runnable.

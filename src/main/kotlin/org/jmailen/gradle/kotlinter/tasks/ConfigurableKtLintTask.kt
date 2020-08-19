@@ -1,18 +1,15 @@
 package org.jmailen.gradle.kotlinter.tasks
 
-import java.io.File
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SourceTask
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_DISABLED_RULES
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_EXPERIMENTAL_RULES
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_FILE_BATCH_SIZE
 import org.jmailen.gradle.kotlinter.support.KtLintParams
+import java.io.File
 
 abstract class ConfigurableKtLintTask : SourceTask() {
 
@@ -34,17 +31,12 @@ abstract class ConfigurableKtLintTask : SourceTask() {
     val experimentalRules = property(default = DEFAULT_EXPERIMENTAL_RULES)
     @Input
     val disabledRules = listProperty(default = DEFAULT_DISABLED_RULES.toList())
-    @Optional
-    @InputFile
-    @PathSensitive(PathSensitivity.RELATIVE)
-    val editorConfigPath = project.objects.fileProperty()
 
     @Internal
     protected fun getKtLintParams() = KtLintParams(
         indentSize = indentSize.orNull,
         experimentalRules = experimentalRules.get(),
-        disabledRules = disabledRules.get(),
-        editorConfigPath = editorConfigPath.asFile.orNull?.path
+        disabledRules = disabledRules.get()
     )
 
     @Internal

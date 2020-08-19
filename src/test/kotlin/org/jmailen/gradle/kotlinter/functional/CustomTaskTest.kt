@@ -1,7 +1,6 @@
 package org.jmailen.gradle.kotlinter.functional
 
 import groovy.util.GroovyTestCase.assertEquals
-import java.io.File
 import org.gradle.testkit.runner.TaskOutcome
 import org.intellij.lang.annotations.Language
 import org.jmailen.gradle.kotlinter.functional.utils.editorConfig
@@ -11,6 +10,7 @@ import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.io.File
 
 class CustomTaskTest : WithGradleTest.Kotlin() {
 
@@ -67,7 +67,6 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                     indentSize = 5
                     experimentalRules = true
                     disabledRules = ["final-newline"]
-                    editorConfigPath = project.rootProject.file(".editorconfig")
                 }
                 
             """
@@ -117,7 +116,6 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                     indentSize = 123
                     experimentalRules = true
                     disabledRules = ["final-newline"]
-                    editorConfigPath = project.rootProject.file(".editorconfig")
                     ignoreFailures = true
                     fileBatchSize = 12
                 }
@@ -147,7 +145,6 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                     indentSize = 123
                     experimentalRules = true
                     disabledRules = ["final-newline"]
-                    editorConfigPath = project.rootProject.file(".editorconfig")
                     fileBatchSize = 12
                 }
                 

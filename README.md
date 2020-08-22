@@ -221,6 +221,7 @@ import org.jmailen.gradle.kotlinter.tasks.FormatTask
 
 val ktLint by tasks.creating(LintTask::class) {
     group = "verification"
+    classpath.from(configurations.kotlinter)
     source(files("src"))
     reports = mapOf(
         "plain" to file("build/lint-report.txt"),
@@ -230,6 +231,7 @@ val ktLint by tasks.creating(LintTask::class) {
 
 val ktFormat by tasks.creating(FormatTask::class) {
     group = "formatting"
+    classpath.from(configurations.kotlinter)
     source(files("src"))
     report = file("build/format-report.txt")
 }
@@ -245,6 +247,7 @@ import org.jmailen.gradle.kotlinter.tasks.LintTask
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 
 task ktLint(type: LintTask, group: 'verification') {
+    classpath.from(configurations.kotlinter)
     source files('src')
     reports = [
             'plain': file('build/lint-report.txt'),
@@ -254,6 +257,7 @@ task ktLint(type: LintTask, group: 'verification') {
 }
 
 task ktFormat(type: FormatTask, group: 'formatting') {
+    classpath.from(configurations.kotlinter)
     source files('src')
     report = file('build/format-report.txt')
     disabledRules = ["import-ordering"]
@@ -270,9 +274,8 @@ If you need to use a different version of `ktlint` you can override the dependen
 <summary>Kotlin</summary>
 
 ```kotlin
-buildscript {
-    configurations.classpath
-        .resolutionStrategy.force("com.github.pinterest:ktlint:0.36.0")
+dependencies {
+    kotlinter("com.github.pinterest:ktlint:0.37.2")
 }
 ```
 
@@ -282,10 +285,8 @@ buildscript {
 <summary>Groovy</summary>
 
 ```groovy
-buildscript {
-    configurations.classpath {
-        resolutionStrategy { force 'com.github.pinterest:ktlint:0.36.0' }
-    }
+dependencies {
+    kotlinter 'com.github.pinterest:ktlint:0.37.2'
 }
 ```
 
@@ -293,17 +294,15 @@ buildscript {
 
 ### Custom Rules
 
-You can add custom ktlint RuleSets using the `buildscript` classpath:
+You can add custom ktlint RuleSets using the `kotlinter` dependency configuration:
 
 <details open>
 <summary>Kotlin</summary>
 
 ```kotlin
-buildscript {
-    dependencies {
-        classpath(files("libs/my-custom-ktlint-rules.jar"))
-        classpath("org.other.ktlint:custom-rules:1.0")
-    }
+dependencies {
+    kotlinter(files("libs/my-custom-ktlint-rules.jar"))
+    kotlinter("org.other.ktlint:custom-rules:1.0")
 }
 ```
 
@@ -313,11 +312,9 @@ buildscript {
 <summary>Groovy</summary>
 
 ```groovy
-buildscript {
-    dependencies {
-        classpath files('libs/my-custom-ktlint-rules.jar')
-        classpath 'org.other.ktlint:custom-rules:1.0'
-    }
+dependencies {
+    kotlinter files('libs/my-custom-ktlint-rules.jar')
+    kotlinter 'org.other.ktlint:custom-rules:1.0'
 }
 ```
 

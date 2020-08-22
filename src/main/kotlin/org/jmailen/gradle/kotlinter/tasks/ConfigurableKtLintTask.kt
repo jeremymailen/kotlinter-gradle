@@ -1,32 +1,25 @@
 package org.jmailen.gradle.kotlinter.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.SourceTask
+import org.gradle.internal.exceptions.MultiCauseException
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_DISABLED_RULES
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_EXPERIMENTAL_RULES
-import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_FILE_BATCH_SIZE
 import org.jmailen.gradle.kotlinter.support.KtLintParams
-import java.io.File
 
 abstract class ConfigurableKtLintTask : SourceTask() {
 
-    @Input
-    val fileBatchSize = property(default = DEFAULT_FILE_BATCH_SIZE)
+    @get:Classpath
+    val classpath = project.objects.fileCollection()
 
     @Input
     @Optional
     val indentSize = property<Int?>(default = null)
 
-    @Internal
-    @Deprecated("Scheduled to be removed in 3.0.0")
-    var continuationIndentSize: Int? = null
-        set(value) {
-            field = value
-            logger.warn("`continuationIndentSize` does not have any effect and will be removed in 3.0.0")
-        }
     @Input
     val experimentalRules = property(default = DEFAULT_EXPERIMENTAL_RULES)
     @Input
@@ -38,10 +31,6 @@ abstract class ConfigurableKtLintTask : SourceTask() {
         experimentalRules = experimentalRules.get(),
         disabledRules = disabledRules.get()
     )
-
-    @Internal
-    protected fun getChunkedSource(): List<List<File>> =
-        source.chunked(fileBatchSize.get())
 }
 
 internal inline fun <reified T> DefaultTask.property(default: T? = null) =
@@ -58,3 +47,15 @@ internal inline fun <reified K, reified V> DefaultTask.mapProperty(default: Map<
     project.objects.mapProperty(K::class.java, V::class.java).apply {
         set(default)
     }
+
+inline fun <reified T : Throwable> Throwable.workErrorCauses(): List<Throwable> {
+    return when (this) {
+        is MultiCauseException -> this.causes.map { it.cause }
+        else -> listOf(this.cause)
+    }.filter {
+        it?.let {
+            // class instance comparison doesn't work due to different classloaders
+            it.javaClass.canonicalName == T::class.java.canonicalName
+        } ?: false
+    }.filterNotNull()
+}

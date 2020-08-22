@@ -62,6 +62,7 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                 import org.jmailen.gradle.kotlinter.tasks.LintTask
     
                 task ktLint(type: LintTask) {
+                    classpath.from(configurations.kotlinter)
                     source files('src')
                     reports = ['plain': file('build/lint-report.txt')]
                     indentSize = 5
@@ -87,6 +88,7 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                 import org.jmailen.gradle.kotlinter.tasks.LintTask
     
                 task minimalCustomTask(type: LintTask) {
+                    classpath.from(configurations.kotlinter)
                     source files('src')
                 }
                 
@@ -111,13 +113,13 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                 import org.jmailen.gradle.kotlinter.tasks.LintTask
     
                 task customizedLintTask(type: LintTask) {
+                    classpath.from(configurations.kotlinter)
                     source files('src')
                     reports = ['plain': file('build/lint-report.txt')]
                     indentSize = 123
                     experimentalRules = true
                     disabledRules = ["final-newline"]
                     ignoreFailures = true
-                    fileBatchSize = 12
                 }
                 
                 """.trimIndent()
@@ -141,11 +143,11 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                 import org.jmailen.gradle.kotlinter.tasks.FormatTask
     
                 task customizedFormatTask(type: FormatTask) {
+                    classpath.from(configurations.kotlinter)
                     source files('src')
                     indentSize = 123
                     experimentalRules = true
                     disabledRules = ["final-newline"]
-                    fileBatchSize = 12
                 }
                 
                 """.trimIndent()
@@ -174,10 +176,12 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                 import org.jmailen.gradle.kotlinter.tasks.LintTask
     
                 task reportsNotConfigured(type: LintTask) {
+                    classpath.from(configurations.kotlinter)
                     source files('src')
                 }
                 
                 task reportsEmpty(type: LintTask) {
+                    classpath.from(configurations.kotlinter)
                     source files('src')
                     reports = [:]
                 }
@@ -207,10 +211,12 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                 import org.jmailen.gradle.kotlinter.tasks.LintTask
     
                 task reportsNotConfigured(type: LintTask) {
+                    classpath.from(configurations.kotlinter)
                     source files('src')
                 }
                 
                 task reportsEmpty(type: LintTask) {
+                    classpath.from(configurations.kotlinter)
                     source files('src')
                     reports = [:]
                 }
@@ -242,6 +248,7 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                 import org.jmailen.gradle.kotlinter.tasks.LintTask
     
                 task ktLintWithReports(type: LintTask) {
+                    classpath.from(configurations.kotlinter)
                     source files('src')
                     reports = reports = ['plain': file('build/lint-report.txt')]
                 }

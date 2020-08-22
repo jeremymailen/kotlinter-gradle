@@ -9,15 +9,11 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_IGNORE_FAILURES
-import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
-import org.jmailen.gradle.kotlinter.support.HasErrorReporter
-import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
-import org.jmailen.gradle.kotlinter.support.reporterFor
-import org.jmailen.gradle.kotlinter.tasks.lint.LintExecutionContext
-import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerConfigurationAction
-import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerParameters
-import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerRunnable
+import org.jmailen.gradle.kotlinter.support.KotlinterError
+import org.jmailen.gradle.kotlinter.support.LintFailure
+import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerAction
 import java.io.File
 import javax.inject.Inject
 
@@ -38,34 +34,25 @@ open class LintTask @Inject constructor(
 
     @TaskAction
     fun run() {
-        val hasErrorReporter = HasErrorReporter()
-        val reporters = reports.get().map { (reporter, report) ->
-            reporterFor(reporter, report)
-        } + hasErrorReporter
-        val executionContextRepository = ExecutionContextRepository.lintInstance
-        val executionContextRepositoryId =
-            executionContextRepository.register(LintExecutionContext(defaultRuleSetProviders, reporters, logger))
+        workerExecutor.classLoaderIsolation { q ->
+            q.classpath.from(classpath)
+        }.submit(LintWorkerAction::class.java) { p ->
+            p.name.set(name)
+            p.files.from(source)
+            p.projectDirectory.set(project.projectDir)
+            p.reporters.putAll(reports)
+            p.ktLintParams.set(getKtLintParams())
+        }
+        val result = workerExecutor.runCatching { await() }
 
-        reporters.onEach { it.beforeAll() }
-        getChunkedSource()
-            .map { files ->
-                LintWorkerParameters(
-                    files = files,
-                    projectDirectory = project.projectDir,
-                    executionContextRepositoryId = executionContextRepositoryId,
-                    name = name,
-                    ktLintParams = getKtLintParams()
-                )
-            }
-            .forEach { parameters ->
-                workerExecutor.submit(LintWorkerRunnable::class.java, LintWorkerConfigurationAction(parameters))
-            }
-        workerExecutor.await()
-        executionContextRepository.unregister(executionContextRepositoryId)
+        result.exceptionOrNull()?.workErrorCauses<KotlinterError>()?.ifNotEmpty {
+            forEach { logger.error(it.message, it.cause) }
+            throw GradleException("error linting sources for $name")
+        }
 
-        reporters.onEach { it.afterAll() }
-        if (hasErrorReporter.hasError && !ignoreFailures.get()) {
-            throw GradleException("Kotlin source failed lint check.")
+        val lintFailures = result.exceptionOrNull()?.workErrorCauses<LintFailure>() ?: emptyList()
+        if (lintFailures.isNotEmpty() && !ignoreFailures.get()) {
+            throw GradleException("$name sources failed lint check")
         }
     }
 }

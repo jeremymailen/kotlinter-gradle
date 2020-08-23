@@ -1,7 +1,6 @@
 package org.jmailen.gradle.kotlinter.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
@@ -12,9 +11,6 @@ import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_EXPERIM
 import org.jmailen.gradle.kotlinter.support.KtLintParams
 
 abstract class ConfigurableKtLintTask : SourceTask() {
-
-    @get:Classpath
-    val classpath = project.objects.fileCollection()
 
     @Input
     @Optional

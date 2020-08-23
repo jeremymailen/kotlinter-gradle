@@ -13,16 +13,24 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.workers.WorkQueue
+import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jmailen.gradle.kotlinter.support.reporterFileExtension
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.InstallPreCommitHookTask
 import org.jmailen.gradle.kotlinter.tasks.InstallPrePushHookTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
+import javax.inject.Inject
 
-class KotlinterPlugin : Plugin<Project> {
+class KotlinterPlugin @Inject constructor(
+    private val workerExecutor: WorkerExecutor
+) : Plugin<Project> {
     companion object {
         const val ktlintVersion = "0.37.2"
+        const val kotlinVersion = "1.3.72"
+
+        lateinit var workQueue: WorkQueue
     }
 
     val extendablePlugins = mapOf(
@@ -32,7 +40,9 @@ class KotlinterPlugin : Plugin<Project> {
 
     override fun apply(project: Project) = with(project) {
         val kotlinterExtension = extensions.create("kotlinter", KotlinterExtension::class.java)
-        val kotlinterConfiguration = project.registerConfiguration(ktlintVersion)
+        workQueue = workerExecutor.classLoaderIsolation { q ->
+            q.classpath.from(project.registerConfiguration())
+        }
 
         if (project.rootProject == project) {
             registerPrePushHookTask()
@@ -47,7 +57,6 @@ class KotlinterPlugin : Plugin<Project> {
 
                 sourceResolver.applyToAll(project) { id, resolvedSources ->
                     val lintTaskPerSourceSet = tasks.register("lintKotlin${id.capitalize()}", LintTask::class.java) { lintTask ->
-                        lintTask.classpath.from(kotlinterConfiguration)
                         lintTask.source(resolvedSources)
                         lintTask.ignoreFailures.set(provider { kotlinterExtension.ignoreFailures })
                         lintTask.reports.set(
@@ -66,7 +75,6 @@ class KotlinterPlugin : Plugin<Project> {
                     }
 
                     val formatKotlinPerSourceSet = tasks.register("formatKotlin${id.capitalize()}", FormatTask::class.java) { formatTask ->
-                        formatTask.classpath.from(kotlinterConfiguration)
                         formatTask.source(resolvedSources)
                         formatTask.report.set(reportFile("$id-format.txt"))
                         formatTask.indentSize.set(provider { kotlinterExtension.indentSize })
@@ -81,8 +89,9 @@ class KotlinterPlugin : Plugin<Project> {
         }
     }
 
-    private fun Project.registerConfiguration(ktlintVersion: String): Configuration {
+    private fun Project.registerConfiguration(): Configuration {
         repositories.jcenter()
+        repositories.mavenLocal()
         return configurations.create("kotlinter").defaultDependencies { kd ->
             kd.add(dependencies.create("com.pinterest.ktlint:ktlint-core:$ktlintVersion"))
             kd.add(dependencies.create("com.pinterest.ktlint:ktlint-reporter-checkstyle:$ktlintVersion"))
@@ -91,6 +100,8 @@ class KotlinterPlugin : Plugin<Project> {
             kd.add(dependencies.create("com.pinterest.ktlint:ktlint-reporter-plain:$ktlintVersion"))
             kd.add(dependencies.create("com.pinterest.ktlint:ktlint-ruleset-experimental:$ktlintVersion"))
             kd.add(dependencies.create("com.pinterest.ktlint:ktlint-ruleset-standard:$ktlintVersion"))
+
+            kd.add(dependencies.create("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion"))
         }.setVisible(false)
     }
 

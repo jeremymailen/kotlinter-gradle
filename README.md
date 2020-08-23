@@ -221,7 +221,6 @@ import org.jmailen.gradle.kotlinter.tasks.FormatTask
 
 val ktLint by tasks.creating(LintTask::class) {
     group = "verification"
-    classpath.from(configurations.kotlinter)
     source(files("src"))
     reports = mapOf(
         "plain" to file("build/lint-report.txt"),
@@ -231,7 +230,6 @@ val ktLint by tasks.creating(LintTask::class) {
 
 val ktFormat by tasks.creating(FormatTask::class) {
     group = "formatting"
-    classpath.from(configurations.kotlinter)
     source(files("src"))
     report = file("build/format-report.txt")
 }
@@ -247,7 +245,6 @@ import org.jmailen.gradle.kotlinter.tasks.LintTask
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 
 task ktLint(type: LintTask, group: 'verification') {
-    classpath.from(configurations.kotlinter)
     source files('src')
     reports = [
             'plain': file('build/lint-report.txt'),
@@ -257,7 +254,6 @@ task ktLint(type: LintTask, group: 'verification') {
 }
 
 task ktFormat(type: FormatTask, group: 'formatting') {
-    classpath.from(configurations.kotlinter)
     source files('src')
     report = file('build/format-report.txt')
     disabledRules = ["import-ordering"]

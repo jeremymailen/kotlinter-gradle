@@ -12,6 +12,7 @@ plugins {
 repositories {
     jcenter()
     google()
+    mavenLocal()
 }
 
 val pluginId = "org.jmailen.kotlinter"
@@ -19,7 +20,7 @@ val githubUrl ="https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "3.0.0a"
+version = "3.0.0b"
 group = "org.jmailen.gradle"
 description = projectDescription
 

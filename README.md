@@ -126,11 +126,6 @@ To install the hook automatically when someone runs the build, add this to your 
 <summary>Kotlin</summary>
 
 ```kotlin
-plugins {
-    java // Necessary to add the check task
-    id("org.jmailen.kotlinter") version "2.4.1"
-}
-
 tasks.check {
     dependsOn("installKotlinterPrePushHook")
 }
@@ -142,11 +137,6 @@ tasks.check {
 <summary>Groovy</summary>
 
 ```groovy
-plugins {
-    java // Necessary to add the check task
-    id "org.jmailen.kotlinter" version "2.4.1"
-}
-
 task check {
     dependsOn "installKotlinterPrePushHook"
 }

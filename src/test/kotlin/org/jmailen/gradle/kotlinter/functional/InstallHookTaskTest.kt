@@ -1,6 +1,5 @@
 package org.jmailen.gradle.kotlinter.functional
 
-import java.io.File
 import org.gradle.testkit.runner.TaskOutcome.FAILED
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
@@ -12,6 +11,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.io.File
 
 abstract class InstallHookTaskTest(
     private val taskName: String,

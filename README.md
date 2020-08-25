@@ -19,7 +19,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "2.4.1"
+    id("org.jmailen.kotlinter") version "3.0.0"
 }
 ```
 
@@ -30,7 +30,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "2.4.1"
+    id "org.jmailen.kotlinter" version "3.0.0"
 }
 ```
 
@@ -50,7 +50,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jmailen.gradle:kotlinter-gradle:2.4.1")
+        classpath("org.jmailen.gradle:kotlinter-gradle:3.0.0")
     }
 }
 ```
@@ -75,7 +75,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.jmailen.gradle:kotlinter-gradle:2.4.1"
+        classpath "org.jmailen.gradle:kotlinter-gradle:3.0.0"
     }
 }
 ```
@@ -90,7 +90,8 @@ apply plugin: "org.jmailen.kotlinter"
 
 ### Compatibility
 
-Kotlinter is compatible with Kotlin Gradle plugins 1.3.30+ and Java 13/12/11/10/9/8.
+Kotlinter >= 3.0.0 is compatible with Kotlin Gradle plugins 1.4.0+ and Java 13/12/11/10/9/8.
+Kotlinter <= 2.4.1 is compatible with Kotlin Gradle plugins 1.3.30+ and Java 13/12/11/10/9/8.
 
 ### Features
 
@@ -133,7 +134,6 @@ kotlinter {
     reporters = arrayOf("checkstyle", "plain")
     experimentalRules = false
     disabledRules = emptyArray<String>()
-    fileBatchSize = 30
 }
 ```
 
@@ -149,7 +149,6 @@ kotlinter {
     reporters = ['checkstyle', 'plain']
     experimentalRules = false
     disabledRules = []
-    fileBatchSize = 30
 }
 ```
 
@@ -167,11 +166,9 @@ disabledRules = ["no-wildcard-imports"]
 ```
 You must prefix rule ids not part of the standard rule set with `<rule-set-id>:<rule-id>`. For example `experimental:annotation`.
 
-The `fileBatchSize` property configures the number of files that are processed in one Gradle Worker API call.
-
 ### Editorconfig
 
-Kotlinter will configure itself using an `.editorconfig` file if one is present in your root project directory.
+Kotlinter will configure itself using an `.editorconfig` file if one is present.
 
 If a non-empty `disabledRules` value is specified in the `kotlinter` extension, it will take precedence over any `disabled_rules` in `.editorconfig`.
 
@@ -219,7 +216,7 @@ If you aren't using autoconfiguration from a supported plugin or otherwise need 
 import org.jmailen.gradle.kotlinter.tasks.LintTask
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 
-val ktLint by tasks.creating(LintTask::class) {
+tasks.create<LintTask>("ktLint") {
     group = "verification"
     source(files("src"))
     reports = mapOf(
@@ -228,7 +225,7 @@ val ktLint by tasks.creating(LintTask::class) {
     )
 }
 
-val ktFormat by tasks.creating(FormatTask::class) {
+tasks.create<FormatTask>("ktFormat") {
     group = "formatting"
     source(files("src"))
     report = file("build/format-report.txt")
@@ -271,8 +268,19 @@ If you need to use a different version of `ktlint` you can override the dependen
 
 ```kotlin
 buildscript {
-    configurations.classpath
-        .resolutionStrategy.force("com.github.pinterest:ktlint:0.36.0")
+    configurations.classpath {
+        resolutionStrategy {
+            force(
+                "com.pinterest.ktlint:ktlint-core:0.37.2",
+                "com.pinterest.ktlint:ktlint-reporter-checkstyle:0.37.2",
+                "com.pinterest.ktlint:ktlint-reporter-json:0.37.2",
+                "com.pinterest.ktlint:ktlint-reporter-html:0.37.2",
+                "com.pinterest.ktlint:ktlint-reporter-plain:0.37.2",
+                "com.pinterest.ktlint:ktlint-ruleset-experimental:0.37.2",
+                "com.pinterest.ktlint:ktlint-ruleset-standard:0.37.2"
+            )
+        }
+    }
 }
 ```
 
@@ -284,7 +292,17 @@ buildscript {
 ```groovy
 buildscript {
     configurations.classpath {
-        resolutionStrategy { force 'com.github.pinterest:ktlint:0.36.0' }
+        resolutionStrategy {
+            force(
+                "com.pinterest.ktlint:ktlint-core:0.37.2",
+                "com.pinterest.ktlint:ktlint-reporter-checkstyle:0.37.2",
+                "com.pinterest.ktlint:ktlint-reporter-json:0.37.2",
+                "com.pinterest.ktlint:ktlint-reporter-html:0.37.2",
+                "com.pinterest.ktlint:ktlint-reporter-plain:0.37.2",
+                "com.pinterest.ktlint:ktlint-ruleset-experimental:0.37.2",
+                "com.pinterest.ktlint:ktlint-ruleset-standard:0.37.2"
+            )
+        }
     }
 }
 ```

@@ -1,7 +1,6 @@
 package org.jmailen.gradle.kotlinter.functional
 
 import groovy.util.GroovyTestCase.assertEquals
-import java.io.File
 import org.gradle.testkit.runner.TaskOutcome
 import org.intellij.lang.annotations.Language
 import org.jmailen.gradle.kotlinter.functional.utils.kotlinClass
@@ -10,6 +9,7 @@ import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.io.File
 
 internal class ExtensionTest : WithGradleTest.Kotlin() {
 
@@ -189,25 +189,6 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
         buildAndFail("lintKotlin").apply {
             assertEquals(TaskOutcome.FAILED, task(":lintKotlinMain")?.outcome)
             assertTrue(output.contains("[filename] class Precedence should be declared in a file named Precedence.kt"))
-        }
-    }
-
-    @Test
-    fun `shows deprecation warning for continuationIndentSize property`() {
-        projectRoot.resolve("build.gradle") {
-            @Language("groovy")
-            val script =
-                """
-                kotlinter {
-                    continuationIndentSize = 100
-                }
-                
-                """.trimIndent()
-            appendText(script)
-        }
-
-        build("lintKotlin").apply {
-            assertTrue(output.contains("`continuationIndentSize` does not have any effect"))
         }
     }
 }

@@ -5,7 +5,7 @@ plugins {
     id("com.gradle.plugin-publish") version "0.12.0"
     `java-gradle-plugin`
     `maven-publish`
-    id("org.jmailen.kotlinter") version "2.4.1"
+    // id("org.jmailen.kotlinter") version "2.4.1"
     idea
 }
 

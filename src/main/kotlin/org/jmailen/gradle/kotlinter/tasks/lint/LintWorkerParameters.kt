@@ -1,17 +1,17 @@
 package org.jmailen.gradle.kotlinter.tasks.lint
 
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
+import org.gradle.workers.WorkParameters
 import org.jmailen.gradle.kotlinter.support.KtLintParams
 import java.io.File
-import java.io.Serializable
-import java.util.UUID
 
-/**
- * Serializable stateless parameters that are needed by the LintWorkerRunnable.
- */
-data class LintWorkerParameters(
-    val files: List<File>,
-    val projectDirectory: File,
-    val name: String,
-    val executionContextRepositoryId: UUID,
-    val ktLintParams: KtLintParams
-) : Serializable
+interface LintWorkerParameters : WorkParameters {
+    val name: Property<String>
+    val files: ConfigurableFileCollection
+    val projectDirectory: RegularFileProperty
+    val reporters: MapProperty<String, File>
+    val ktLintParams: Property<KtLintParams>
+}

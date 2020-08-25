@@ -1,16 +1,15 @@
 package org.jmailen.gradle.kotlinter.tasks.format
 
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.gradle.workers.WorkParameters
 import org.jmailen.gradle.kotlinter.support.KtLintParams
-import java.io.File
-import java.io.Serializable
-import java.util.UUID
 
-/**
- * Serializable stateless parameters that are needed by the FormatWorkerRunnable.
- */
-data class FormatWorkerParameters(
-    val files: List<File>,
-    val projectDirectory: File,
-    val executionContextRepositoryId: UUID,
-    val ktLintParams: KtLintParams
-) : Serializable
+interface FormatWorkerParameters : WorkParameters {
+    val name: Property<String>
+    val files: ConfigurableFileCollection
+    val projectDirectory: RegularFileProperty
+    val ktLintParams: Property<KtLintParams>
+    val output: RegularFileProperty
+}

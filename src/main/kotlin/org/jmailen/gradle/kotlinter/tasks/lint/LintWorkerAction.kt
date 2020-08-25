@@ -2,37 +2,40 @@ package org.jmailen.gradle.kotlinter.tasks.lint
 
 import com.pinterest.ktlint.core.KtLint
 import com.pinterest.ktlint.core.LintError
-import com.pinterest.ktlint.core.Reporter
 import com.pinterest.ktlint.core.RuleSet
 import org.gradle.api.logging.Logger
-import org.jmailen.gradle.kotlinter.support.ExecutionContextRepository
+import org.gradle.api.logging.Logging
+import org.gradle.internal.logging.slf4j.DefaultContextAwareTaskLogger
+import org.gradle.workers.WorkAction
+import org.jmailen.gradle.kotlinter.support.KotlinterError
+import org.jmailen.gradle.kotlinter.support.LintFailure
+import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
+import org.jmailen.gradle.kotlinter.support.reporterFor
 import org.jmailen.gradle.kotlinter.support.resolveRuleSets
 import org.jmailen.gradle.kotlinter.support.userData
+import org.jmailen.gradle.kotlinter.tasks.LintTask
 import java.io.File
-import javax.inject.Inject
 
-/**
- * Runnable used in the Gradle Worker API to run lint on a batch of files.
- */
-class LintWorkerRunnable @Inject constructor(
-    parameters: LintWorkerParameters
-) : Runnable {
+abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
+    private val logger: Logger = DefaultContextAwareTaskLogger(Logging.getLogger(LintTask::class.java))
+    private val reporters = parameters.reporters.get().map { (reporterName, outputPath) ->
+        reporterFor(reporterName, outputPath)
+    }
+    private val files: List<File> = parameters.files.toList()
+    private val projectDirectory: File = parameters.projectDirectory.asFile.get()
+    private val name: String = parameters.name.get()
+    private val ktLintParams = parameters.ktLintParams.get()
 
-    private val executionContext = ExecutionContextRepository.lintInstance.get(parameters.executionContextRepositoryId)
-    private val reporters: List<Reporter> = executionContext.reporters
-    private val logger: Logger = executionContext.logger
-    private val files: List<File> = parameters.files
-    private val projectDirectory: File = parameters.projectDirectory
-    private val name: String = parameters.name
-    private val ktLintParams = parameters.ktLintParams
+    override fun execute() {
+        var hasError = false
 
-    override fun run() {
-        files
-            .forEach { file ->
+        try {
+            reporters.onEach { it.beforeAll() }
+            files.forEach { file ->
+                val ruleSets = resolveRuleSets(defaultRuleSetProviders, ktLintParams.experimentalRules)
                 val relativePath = file.toRelativeString(projectDirectory)
                 reporters.onEach { it.before(relativePath) }
                 logger.debug("$name linting: $relativePath")
-
                 val lintFunc = when (file.extension) {
                     "kt" -> ::lintKt
                     "kts" -> ::lintKts
@@ -41,17 +44,21 @@ class LintWorkerRunnable @Inject constructor(
                         null
                     }
                 }
-
-                val ruleSets = resolveRuleSets(executionContext.ruleSetProviders, ktLintParams.experimentalRules)
                 lintFunc?.invoke(file, ruleSets) { error ->
+                    hasError = true
                     reporters.onEach { it.onLintError(relativePath, error, false) }
-
-                    val errorStr = "${file.path}:${error.line}:${error.col}: Lint error > [${error.ruleId}] ${error.detail}"
-                    logger.quiet(errorStr)
+                    logger.quiet("${file.path}:${error.line}:${error.col}: Lint error > [${error.ruleId}] ${error.detail}")
                 }
-
                 reporters.onEach { it.after(relativePath) }
             }
+            reporters.onEach { it.afterAll() }
+        } catch (t: Throwable) {
+            throw KotlinterError("lint worker execution error", t)
+        }
+
+        if (hasError) {
+            throw LintFailure("kotlin source failed lint check")
+        }
     }
 
     private fun lintKt(file: File, ruleSets: List<RuleSet>, onError: (error: LintError) -> Unit) =

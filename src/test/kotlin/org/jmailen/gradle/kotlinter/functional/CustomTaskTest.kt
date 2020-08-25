@@ -117,7 +117,6 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                     experimentalRules = true
                     disabledRules = ["final-newline"]
                     ignoreFailures = true
-                    fileBatchSize = 12
                 }
                 
                 """.trimIndent()
@@ -145,7 +144,6 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                     indentSize = 123
                     experimentalRules = true
                     disabledRules = ["final-newline"]
-                    fileBatchSize = 12
                 }
                 
                 """.trimIndent()

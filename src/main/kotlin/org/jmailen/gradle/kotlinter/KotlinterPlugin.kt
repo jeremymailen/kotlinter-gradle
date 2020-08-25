@@ -27,9 +27,6 @@ class KotlinterPlugin @Inject constructor(
     private val workerExecutor: WorkerExecutor
 ) : Plugin<Project> {
     companion object {
-        const val ktlintVersion = "0.37.2"
-        const val kotlinVersion = "1.3.72"
-
         lateinit var workQueue: WorkQueue
     }
 
@@ -40,9 +37,7 @@ class KotlinterPlugin @Inject constructor(
 
     override fun apply(project: Project) = with(project) {
         val kotlinterExtension = extensions.create("kotlinter", KotlinterExtension::class.java)
-        workQueue = workerExecutor.classLoaderIsolation { q ->
-            q.classpath.from(project.registerConfiguration())
-        }
+        workQueue = workerExecutor.noIsolation()
 
         if (project.rootProject == project) {
             registerPrePushHookTask()
@@ -87,22 +82,6 @@ class KotlinterPlugin @Inject constructor(
                 }
             }
         }
-    }
-
-    private fun Project.registerConfiguration(): Configuration {
-        repositories.jcenter()
-        repositories.mavenLocal()
-        return configurations.create("kotlinter").defaultDependencies { kd ->
-            kd.add(dependencies.create("com.pinterest.ktlint:ktlint-core:$ktlintVersion"))
-            kd.add(dependencies.create("com.pinterest.ktlint:ktlint-reporter-checkstyle:$ktlintVersion"))
-            kd.add(dependencies.create("com.pinterest.ktlint:ktlint-reporter-json:$ktlintVersion"))
-            kd.add(dependencies.create("com.pinterest.ktlint:ktlint-reporter-html:$ktlintVersion"))
-            kd.add(dependencies.create("com.pinterest.ktlint:ktlint-reporter-plain:$ktlintVersion"))
-            kd.add(dependencies.create("com.pinterest.ktlint:ktlint-ruleset-experimental:$ktlintVersion"))
-            kd.add(dependencies.create("com.pinterest.ktlint:ktlint-ruleset-standard:$ktlintVersion"))
-
-            kd.add(dependencies.create("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion"))
-        }.setVisible(false)
     }
 
     private fun Project.registerParentLintTask() =

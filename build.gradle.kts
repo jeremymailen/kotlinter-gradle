@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.3.72"
+    kotlin("jvm") version "1.4.0"
     id("com.gradle.plugin-publish") version "0.12.0"
     `java-gradle-plugin`
     `maven-publish`
@@ -12,7 +12,6 @@ plugins {
 repositories {
     jcenter()
     google()
-    mavenLocal()
 }
 
 val pluginId = "org.jmailen.kotlinter"
@@ -20,7 +19,7 @@ val githubUrl ="https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "3.0.0b"
+version = "3.0.0"
 group = "org.jmailen.gradle"
 description = projectDescription
 
@@ -28,7 +27,7 @@ object Versions {
     const val androidTools = "4.0.1"
     const val jetbrainsAnnotations = "20.0.0"
     const val junit = "4.13"
-    const val ktlint = "0.37.2"
+    const val ktlint = "0.38.1"
     const val mockitoKotlin = "2.2.0"
 }
 
@@ -37,16 +36,15 @@ dependencies {
     compileOnly("com.android.tools.build:gradle:${Versions.androidTools}")
 
     listOf(
-        "com.pinterest.ktlint:ktlint-core",
-        "com.pinterest.ktlint:ktlint-reporter-checkstyle",
-        "com.pinterest.ktlint:ktlint-reporter-json",
-        "com.pinterest.ktlint:ktlint-reporter-html",
-        "com.pinterest.ktlint:ktlint-reporter-plain",
-        "com.pinterest.ktlint:ktlint-ruleset-experimental",
-        "com.pinterest.ktlint:ktlint-ruleset-standard"
-    ).forEach {
-        compileOnly("$it:${Versions.ktlint}")
-        testImplementation("$it:${Versions.ktlint}")
+        "ktlint-core",
+        "ktlint-reporter-checkstyle",
+        "ktlint-reporter-json",
+        "ktlint-reporter-html",
+        "ktlint-reporter-plain",
+        "ktlint-ruleset-experimental",
+        "ktlint-ruleset-standard"
+    ).forEach { module ->
+        implementation("com.pinterest.ktlint:$module:${Versions.ktlint}")
     }
 
     testImplementation("junit:junit:${Versions.junit}")
@@ -130,15 +128,16 @@ publishing {
                 }
             }
         }
-
     }
 }
 
 tasks {
     withType<KotlinCompile>().configureEach {
-        kotlinOptions.apiVersion = "1.3"
-        kotlinOptions.languageVersion = "1.3"
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions {
+            apiVersion = "1.3"
+            languageVersion = "1.3"
+            jvmTarget = "1.8"
+        }
     }
 
     wrapper {

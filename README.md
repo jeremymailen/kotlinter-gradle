@@ -311,7 +311,7 @@ buildscript {
 
 ### Custom Rules
 
-You can add custom ktlint RuleSets using the `kotlinter` dependency configuration:
+You can add custom ktlint RuleSets using the `buildscript` classpath:
 
 <details open>
 <summary>Kotlin</summary>

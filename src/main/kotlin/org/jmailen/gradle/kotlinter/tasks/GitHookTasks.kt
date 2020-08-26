@@ -143,7 +143,7 @@ abstract class InstallHookTask(hookPath: String) : DefaultTask() {
             logger.info("Using gradlew wrapper at ${gradlew.path}")
             gradlew.path
         } else {
-            "gradle"
+            gradlewFilename
         }
     }
 

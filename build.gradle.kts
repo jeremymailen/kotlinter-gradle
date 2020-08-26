@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.nio.file.Files
 
 plugins {
     kotlin("jvm") version "1.4.0"
@@ -143,4 +144,42 @@ tasks {
     wrapper {
         gradleVersion = "6.6"
     }
+
+    val writeVersion by registering {
+        doLast {
+            // Build version path from project group & name
+            val versionPath = versionDir(project)
+                .let { basePath ->
+                    project.group.toString()
+                        .split(".")
+                        .fold(basePath) { path, component -> path.resolve(component) }
+                }
+                .resolve(project.rootProject.name)
+                .resolve("version.properties")
+            versionPath.parent.toFile().mkdirs()
+            Files.newBufferedWriter(versionPath).use {
+                it.write("version = $version\n")
+            }
+        }
+    }
+
+    // Write version before processing resources
+    processResources {
+        dependsOn(writeVersion)
+    }
 }
+
+sourceSets {
+    main {
+        // Add version dir to resources
+        resources.srcDir(versionDir(project))
+    }
+}
+
+/**
+ * Dir to put version file in
+ */
+fun versionDir(project: Project) =
+    project.buildDir.toPath()
+        .resolve("generated-resources")
+        .resolve("version")

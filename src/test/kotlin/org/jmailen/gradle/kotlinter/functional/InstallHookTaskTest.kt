@@ -80,6 +80,7 @@ abstract class InstallHookTaskTest(
                 resolve(".git/hooks/$hookFile") {
                     val hookContents = readText()
                     assertTrue(hookContents.startsWith(existingHook))
+                    assertTrue(hookContents.contains(InstallHookTask.startHook))
                     assertTrue(hookContents.contains("${'$'}GRADLEW formatKotlin"))
                 }
             }
@@ -123,14 +124,20 @@ abstract class InstallHookTaskTest(
         }
 
         File(testProjectDir.root, ".git/hooks/$hookFile").apply {
-            writeText(readText().replace("GRADLEW", "FOOBAR"))
+            val hookContents = readText()
+            writeText(hookContents
+                .replace(InstallHookTask.startHookRegex, "\n##### KOTLINTER TESTING HOOK #####")
+                .replace("GRADLEW", "FOOBAR")
+            )
         }
 
         build(taskName).apply {
             assertEquals(SUCCESS, task(":$taskName")?.outcome)
             testProjectDir.root.apply {
                 resolve(".git/hooks/$hookFile") {
-                    assertTrue(readText().contains("${'$'}GRADLEW formatKotlin"))
+                    val hookContents = readText()
+                    assertTrue(hookContents.contains(InstallHookTask.startHook))
+                    assertTrue(hookContents.contains("${'$'}GRADLEW formatKotlin"))
                 }
             }
         }

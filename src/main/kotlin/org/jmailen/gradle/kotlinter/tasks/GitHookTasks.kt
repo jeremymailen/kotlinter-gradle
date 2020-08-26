@@ -5,6 +5,8 @@ import org.gradle.api.GradleException
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.io.File
+import java.io.FileInputStream
+import java.util.*
 
 open class InstallPreCommitHookTask : InstallHookTask("pre-commit") {
     override val hookContent =
@@ -64,7 +66,7 @@ abstract class InstallHookTask(hookPath: String) : DefaultTask() {
 
     private val hookFileContent by lazy { hookFile.readText() }
 
-    private val startHookMarkerIndex by lazy { hookFileContent.indexOf(startHook) }
+    private val startHookMarkerIndex by lazy { startHookRegex.find(hookFileContent)?.range?.first ?: -1 }
 
     private val endHookMarkerIndex by lazy { hookFileContent.indexOf(endHook) }
 
@@ -146,8 +148,6 @@ abstract class InstallHookTask(hookPath: String) : DefaultTask() {
     }
 
     companion object {
-        internal const val startHook = "\n##### KOTLINTER HOOK START #####"
-
         internal const val endHook = "##### KOTLINTER HOOK END #####\n"
 
         internal val shebang =
@@ -155,6 +155,25 @@ abstract class InstallHookTask(hookPath: String) : DefaultTask() {
             #!/bin/sh
             set -e
             """.trimIndent()
+
+        private const val startHookPrefix = "\n##### KOTLINTER"
+
+        private const val startHookPostfix = "HOOK START #####"
+
+        internal val startHookRegex = """$startHookPrefix [^ ]+ $startHookPostfix""".toRegex()
+
+        internal val startHook: String
+        init {
+            val version = this::class.java.classLoader
+                .getResourceAsStream("org/jmailen/gradle/kotlinter-gradle/version.properties")
+                ?.let {
+                    Properties().apply {
+                        load(it)
+                        getProperty("version")
+                    }
+                }
+            startHook = "$startHookPrefix ${version ?: "unknown"} $startHookPostfix"
+        }
 
         /**
          * Generate the hook script

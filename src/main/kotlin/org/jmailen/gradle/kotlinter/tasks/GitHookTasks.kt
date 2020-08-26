@@ -5,7 +5,6 @@ import org.gradle.api.GradleException
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.io.File
-import java.io.FileInputStream
 import java.util.*
 
 open class InstallPreCommitHookTask : InstallHookTask("pre-commit") {

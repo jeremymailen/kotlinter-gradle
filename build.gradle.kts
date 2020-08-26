@@ -145,6 +145,9 @@ tasks {
         gradleVersion = "6.6"
     }
 
+    /**
+     * Write the version to a resource file so the GitHookTask can use it in the hook content
+     */
     val writeVersion by registering {
         doLast {
             // Build version path from project group & name

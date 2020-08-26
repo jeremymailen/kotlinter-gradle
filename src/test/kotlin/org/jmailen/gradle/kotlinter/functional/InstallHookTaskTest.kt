@@ -89,6 +89,7 @@ abstract class InstallHookTaskTest(
 
     @Test
     fun `updates previously installed kotlinter hook`() {
+        // Write something that has the start & end markers, but a dummy middle
         val placeholder = "Not actually the hook, just a placeholder"
         File(testProjectDir.root, ".git").apply { mkdir() }
         File(testProjectDir.root, ".git/hooks").apply { mkdir() }
@@ -102,6 +103,7 @@ abstract class InstallHookTaskTest(
             )
         }
 
+        // Ensure hook task updates hook content to what it should be
         build(taskName).apply {
             assertEquals(SUCCESS, task(":$taskName")?.outcome)
             testProjectDir.root.apply {
@@ -119,10 +121,12 @@ abstract class InstallHookTaskTest(
         File(testProjectDir.root, ".git").apply { mkdir() }
         File(testProjectDir.root, ".git/hooks").apply { mkdir() }
 
+        // Write hook
         build(taskName).apply {
             assertEquals(SUCCESS, task(":$taskName")?.outcome)
         }
 
+        // Change hook content
         File(testProjectDir.root, ".git/hooks/$hookFile").apply {
             val hookContents = readText()
             writeText(hookContents
@@ -131,6 +135,7 @@ abstract class InstallHookTaskTest(
             )
         }
 
+        // Ensure hook task updates hook content back to what it should be
         build(taskName).apply {
             assertEquals(SUCCESS, task(":$taskName")?.outcome)
             testProjectDir.root.apply {
@@ -144,10 +149,11 @@ abstract class InstallHookTaskTest(
     }
 
     @Test
-    fun `Repeatedly updating doesn't change hook`() {
+    fun `Repeatedly updating doesn't touch hook`() {
         File(testProjectDir.root, ".git").apply { mkdir() }
         File(testProjectDir.root, ".git/hooks").apply { mkdir() }
 
+        // First exection of task writes hook
         lateinit var hookContent: String
         build(taskName).apply {
             assertEquals(SUCCESS, task(":$taskName")?.outcome)
@@ -162,6 +168,7 @@ abstract class InstallHookTaskTest(
 
         val hookLastModified = File(testProjectDir.root, ".git/hooks/$hookFile").lastModified()
 
+        // Subsequent exections don't alter hook (mtime is preserved)
         build(taskName).apply {
             assertEquals(UP_TO_DATE, task(":$taskName")?.outcome)
             testProjectDir.root.apply {

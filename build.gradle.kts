@@ -5,7 +5,7 @@ plugins {
     id("com.gradle.plugin-publish") version "0.12.0"
     `java-gradle-plugin`
     `maven-publish`
-    id("org.jmailen.kotlinter") version "3.0.0"
+    id("org.jmailen.kotlinter") version "3.0.1"
     idea
 }
 
@@ -19,7 +19,7 @@ val githubUrl ="https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "3.0.1"
+version = "3.0.2"
 group = "org.jmailen.gradle"
 description = projectDescription
 
@@ -52,9 +52,34 @@ dependencies {
     testImplementation("org.jetbrains:annotations:${Versions.jetbrainsAnnotations}")
 }
 
-// Required to put the Kotlin plugin on the classpath for the functional test suite
-tasks.withType<PluginUnderTestMetadata>().configureEach {
-    pluginClasspath.from(configurations.compileOnly)
+tasks {
+    val generateVersionProperties = create("generateVersionProperties") {
+        doLast {
+            val resourcesDir = sourceSets.main.get().resources.sourceDirectories.asPath
+            File(mkdir(resourcesDir), "version.properties").writeText("version = ${version}")
+        }
+    }
+
+    processResources {
+        dependsOn(generateVersionProperties)
+    }
+
+    withType<KotlinCompile>().configureEach {
+        kotlinOptions {
+            apiVersion = "1.3"
+            languageVersion = "1.3"
+            jvmTarget = "1.8"
+        }
+    }
+
+    // Required to put the Kotlin plugin on the classpath for the functional test suite
+    withType<PluginUnderTestMetadata>().configureEach {
+        pluginClasspath.from(configurations.compileOnly)
+    }
+
+    wrapper {
+        gradleVersion = "6.6"
+    }
 }
 
 val sourcesJar by tasks.registering(Jar::class) {
@@ -128,19 +153,5 @@ publishing {
                 }
             }
         }
-    }
-}
-
-tasks {
-    withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            apiVersion = "1.3"
-            languageVersion = "1.3"
-            jvmTarget = "1.8"
-        }
-    }
-
-    wrapper {
-        gradleVersion = "6.6"
     }
 }

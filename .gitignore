@@ -6,3 +6,4 @@ out
 TODO.md
 .idea
 .gradle
+src/main/resources/version.properties

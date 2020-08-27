@@ -19,7 +19,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "3.0.1"
+    id("org.jmailen.kotlinter") version "3.0.2"
 }
 ```
 
@@ -30,7 +30,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "3.0.1"
+    id "org.jmailen.kotlinter" version "3.0.2"
 }
 ```
 
@@ -50,7 +50,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jmailen.gradle:kotlinter-gradle:3.0.1")
+        classpath("org.jmailen.gradle:kotlinter-gradle:3.0.2")
     }
 }
 ```
@@ -75,7 +75,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.jmailen.gradle:kotlinter-gradle:3.0.1"
+        classpath "org.jmailen.gradle:kotlinter-gradle:3.0.2"
     }
 }
 ```
@@ -116,10 +116,34 @@ Granular tasks exist for each source set in the project: `formatKotlin`*`SourceS
 
 ### Git Hooks
 
-Kotlinter can install a hook to run pre-push (`installKotlinterPrePushHook`). The hook runs `lintKotlin` and, if there are errors, `formatKotlin` and exits
-non-zero leaving changed files to be committed.
+Kotlinter can install a hook to run pre-push (`installKotlinterPrePushHook`). The hook runs `lintKotlin` and, if there are errors, `formatKotlin` and exits non-zero leaving changed files to be committed.
 
 You *must* apply the kotlinter plugin to your root project to make this task available.
+
+To install the hook automatically when someone runs the build, add this to your root project `build.gradle.kts`:
+
+<details open>
+<summary>Kotlin</summary>
+
+```kotlin
+tasks.check {
+    dependsOn("installKotlinterPrePushHook")
+}
+```
+
+</details>
+
+<details>
+<summary>Groovy</summary>
+
+```groovy
+task check {
+    dependsOn "installKotlinterPrePushHook"
+}
+```
+
+</details>
+
 
 ### Configuration
 Options are configured in the `kotlinter` extension. Defaults shown (you may omit the configuration block entirely if you want these defaults).

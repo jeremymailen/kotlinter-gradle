@@ -1,9 +1,9 @@
 package org.jmailen.gradle.kotlinter.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.GradleException
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
+import org.jmailen.gradle.kotlinter.support.VersionProperties
 import java.io.File
 
 open class InstallPreCommitHookTask : InstallHookTask("pre-commit") {
@@ -36,45 +36,36 @@ open class InstallPrePushHookTask : InstallHookTask("pre-push") {
 /**
  * Install or update a kotlinter-gradle hook.
  */
-abstract class InstallHookTask(private val hookFile: String) : DefaultTask() {
+abstract class InstallHookTask(hookFileName: String) : DefaultTask() {
+    @Internal val hooksDir = project.rootProject.file(".git/hooks").apply { mkdirs() }
+    @Internal val hookFile = File(hooksDir, hookFileName).apply {
+        createNewFile().and(setExecutable(true))
+    }
+    @get:Internal
+    val hookFileContent by lazy { hookFile.readText() }
+
     @get:Internal
     abstract val hookContent: String
 
+    init {
+        outputs.upToDateWhen {
+            hookFileContent.contains(hookVersion)
+        }
+    }
+
     @TaskAction
     fun run() {
-        val dotGitDir = File(project.rootDir, ".git")
-        if (!dotGitDir.exists() || !dotGitDir.isDirectory) {
-            throw GradleException(".git directory not found at ${dotGitDir.path}")
-        }
-        logger.info(".git directory: $dotGitDir")
 
-        val hookDir = File(dotGitDir.absolutePath, "hooks").apply {
-            if (!exists()) {
-                logger.debug("Creating hook dir $this")
-                mkdir()
-            }
-        }
-        logger.info("hookDir: $hookDir")
-
-        val hookFile = File(hookDir, "/$hookFile").apply {
-            if (!exists()) {
-                logger.info("Creating $this anew")
-                createNewFile()
-                setExecutable(true)
-            }
-        }
-
-        if (hookFile.length() == 0L) {
-            logger.info("Writing hook to empty file")
+        if (hookFileContent.isEmpty()) {
+            logger.info("creating hook file: $hookFile")
             hookFile.writeText(generateHook(gradleCommand, hookContent, addShebang = true))
         } else {
-            val hookFileContent = hookFile.readText()
             val startIndex = hookFileContent.indexOf(startHook)
             if (startIndex == -1) {
-                logger.info("Appending hook to end of existing non-empty file")
+                logger.info("adding hook to file: $hookFile")
                 hookFile.appendText(generateHook(gradleCommand, hookContent))
             } else {
-                logger.info("Updating existing kotlinter-installed hook")
+                logger.info("replacing hook in file: $hookFile")
                 val endIndex = hookFileContent.indexOf(endHook)
                 val newHookFileContent = hookFileContent.replaceRange(
                     startIndex,
@@ -89,7 +80,7 @@ abstract class InstallHookTask(private val hookFile: String) : DefaultTask() {
     }
 
     private val gradleCommand: String by lazy {
-        val gradlewFilename = if (System.getProperty("os.name").toLowerCase().contains("win")) {
+        val gradlewFilename = if (System.getProperty("os.name").contains("win", true)) {
             "gradlew.bat"
         } else {
             "gradlew"
@@ -105,9 +96,13 @@ abstract class InstallHookTask(private val hookFile: String) : DefaultTask() {
     }
 
     companion object {
-        internal const val startHook = "\n##### KOTLINTER HOOK START #####"
+        private val version = VersionProperties().version()
 
-        internal const val endHook = "##### KOTLINTER HOOK END #####\n"
+        internal val startHook = "\n##### KOTLINTER HOOK START #####"
+
+        internal val hookVersion = "##### KOTLINTER $version #####"
+
+        internal val endHook = "##### KOTLINTER HOOK END #####\n"
 
         internal val shebang =
             """
@@ -126,6 +121,7 @@ abstract class InstallHookTask(private val hookFile: String) : DefaultTask() {
         ): String = (if (addShebang) shebang else "") +
             """
                 |$startHook
+                |$hookVersion
                 |GRADLEW=$gradlew
                 |$hookContent
                 |${if (includeEndHook) endHook else ""}

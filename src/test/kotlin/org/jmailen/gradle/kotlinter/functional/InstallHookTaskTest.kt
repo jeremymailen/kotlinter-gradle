@@ -1,7 +1,7 @@
 package org.jmailen.gradle.kotlinter.functional
 
-import org.gradle.testkit.runner.TaskOutcome.FAILED
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.jmailen.gradle.kotlinter.functional.utils.resolve
 import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
 import org.jmailen.gradle.kotlinter.tasks.InstallHookTask
@@ -38,14 +38,6 @@ abstract class InstallHookTaskTest(
     }
 
     @Test
-    fun `fails when dotgit dir not found`() {
-        buildAndFail(taskName).apply {
-            assertTrue(output.contains(Regex("\\.git directory not found at .*/\\.git")))
-            assertEquals(FAILED, task(":$taskName")?.outcome)
-        }
-    }
-
-    @Test
     fun `installs hook in project without hook directory`() {
         File(testProjectDir.root, ".git").apply { mkdir() }
 
@@ -67,8 +59,7 @@ abstract class InstallHookTaskTest(
                 #!/bin/bash
                 This is some existing hook
             """.trimIndent()
-        File(testProjectDir.root, ".git").apply { mkdir() }
-        File(testProjectDir.root, ".git/hooks").apply { mkdir() }
+        File(testProjectDir.root, ".git/hooks").apply { mkdirs() }
         File(testProjectDir.root, ".git/hooks/$hookFile").apply {
             writeText(existingHook)
         }
@@ -88,8 +79,7 @@ abstract class InstallHookTaskTest(
     @Test
     fun `updates previously installed kotlinter hook`() {
         val placeholder = "Not actually the hook, just a placeholder"
-        File(testProjectDir.root, ".git").apply { mkdir() }
-        File(testProjectDir.root, ".git/hooks").apply { mkdir() }
+        File(testProjectDir.root, ".git/hooks").apply { mkdirs() }
         File(testProjectDir.root, ".git/hooks/$hookFile").apply {
             writeText(
                 """
@@ -113,10 +103,7 @@ abstract class InstallHookTaskTest(
     }
 
     @Test
-    fun `Repeatedly updating doesn't change hook`() {
-        File(testProjectDir.root, ".git").apply { mkdir() }
-        File(testProjectDir.root, ".git/hooks").apply { mkdir() }
-
+    fun `up-to-date when after hook installed`() {
         lateinit var hookContent: String
         build(taskName).apply {
             assertEquals(SUCCESS, task(":$taskName")?.outcome)
@@ -131,7 +118,7 @@ abstract class InstallHookTaskTest(
         }
 
         build(taskName).apply {
-            assertEquals(SUCCESS, task(":$taskName")?.outcome)
+            assertEquals(UP_TO_DATE, task(":$taskName")?.outcome)
             testProjectDir.root.apply {
                 resolve(".git/hooks/$hookFile") {
                     assertEquals(hookContent, readText())

@@ -4,7 +4,6 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.SourceDirectorySet
@@ -13,22 +12,14 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
-import org.gradle.workers.WorkQueue
-import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jmailen.gradle.kotlinter.support.reporterFileExtension
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.InstallPreCommitHookTask
 import org.jmailen.gradle.kotlinter.tasks.InstallPrePushHookTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
-import javax.inject.Inject
 
-class KotlinterPlugin @Inject constructor(
-    private val workerExecutor: WorkerExecutor
-) : Plugin<Project> {
-    companion object {
-        lateinit var workQueue: WorkQueue
-    }
+class KotlinterPlugin : Plugin<Project> {
 
     val extendablePlugins = mapOf(
         "org.jetbrains.kotlin.jvm" to KotlinJvmSourceSetResolver,
@@ -37,7 +28,6 @@ class KotlinterPlugin @Inject constructor(
 
     override fun apply(project: Project) = with(project) {
         val kotlinterExtension = extensions.create("kotlinter", KotlinterExtension::class.java)
-        workQueue = workerExecutor.noIsolation()
 
         if (project.rootProject == project) {
             registerPrePushHookTask()

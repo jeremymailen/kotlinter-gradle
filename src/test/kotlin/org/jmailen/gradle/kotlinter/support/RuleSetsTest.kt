@@ -53,7 +53,8 @@ class RuleSetsTest {
                     }
 
                 """.trimIndent(),
-                resolveRuleSets(defaultRuleSetProviders), cb = { _, _ -> }
+                resolveRuleSets(defaultRuleSetProviders),
+                cb = { _, _ -> }
             )
         )
     }

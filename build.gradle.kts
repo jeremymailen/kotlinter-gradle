@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.0"
+    kotlin("jvm") version "1.4.10"
     id("com.gradle.plugin-publish") version "0.12.0"
     `java-gradle-plugin`
     `maven-publish`
@@ -19,7 +19,7 @@ val githubUrl ="https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "3.0.2"
+version = "3.1.0"
 group = "org.jmailen.gradle"
 description = projectDescription
 

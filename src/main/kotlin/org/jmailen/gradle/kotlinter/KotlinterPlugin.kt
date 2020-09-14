@@ -1,18 +1,10 @@
 package org.jmailen.gradle.kotlinter
 
-import com.android.build.gradle.BaseExtension
-import com.android.build.gradle.api.AndroidSourceSet
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.file.ConfigurableFileTree
-import org.gradle.api.file.FileTree
-import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.internal.HasConvention
-import org.gradle.api.plugins.JavaPluginConvention
-import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.SourceSetContainer
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jmailen.gradle.kotlinter.pluginapplier.AndroidSourceSetApplier
+import org.jmailen.gradle.kotlinter.pluginapplier.KotlinJvmSourceSetApplier
+import org.jmailen.gradle.kotlinter.pluginapplier.KotlinMultiplatformSourceSetApplier
 import org.jmailen.gradle.kotlinter.support.reporterFileExtension
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.InstallPreCommitHookTask
@@ -22,14 +14,15 @@ import org.jmailen.gradle.kotlinter.tasks.LintTask
 class KotlinterPlugin : Plugin<Project> {
 
     val extendablePlugins = mapOf(
-        "org.jetbrains.kotlin.jvm" to KotlinJvmSourceSetResolver,
-        "kotlin-android" to AndroidSourceSetResolver
+        "org.jetbrains.kotlin.jvm" to KotlinJvmSourceSetApplier,
+        "org.jetbrains.kotlin.multiplatform" to KotlinMultiplatformSourceSetApplier,
+        "kotlin-android" to AndroidSourceSetApplier
     )
 
     override fun apply(project: Project) = with(project) {
         val kotlinterExtension = extensions.create("kotlinter", KotlinterExtension::class.java)
 
-        if (project.rootProject == project) {
+        if (this == rootProject) {
             registerPrePushHookTask()
         }
 
@@ -40,7 +33,7 @@ class KotlinterPlugin : Plugin<Project> {
                 val lintKotlin = registerParentLintTask()
                 val formatKotlin = registerParentFormatTask()
 
-                sourceResolver.applyToAll(project) { id, resolvedSources ->
+                sourceResolver.applyToAll(this) { id, resolvedSources ->
                     val lintTaskPerSourceSet = tasks.register("lintKotlin${id.capitalize()}", LintTask::class.java) { lintTask ->
                         lintTask.source(resolvedSources)
                         lintTask.ignoreFailures.set(provider { kotlinterExtension.ignoreFailures })
@@ -99,51 +92,6 @@ class KotlinterPlugin : Plugin<Project> {
             it.group = "build setup"
             it.description = "Installs Kotlinter Git pre-commit hook"
         }
-}
-
-internal typealias SourceSetAction = (String, Provider<FileTree>) -> Unit
-
-interface SourceSetResolver {
-    fun applyToAll(project: Project, action: SourceSetAction)
-}
-
-internal object KotlinJvmSourceSetResolver : SourceSetResolver {
-
-    override fun applyToAll(project: Project, action: SourceSetAction) {
-        getSourceSets(project).all { sourceSet ->
-            sourceSet.kotlin?.let { directorySet ->
-                action(directorySet.name.id, project.provider { directorySet })
-            }
-        }
-    }
-
-    private fun getSourceSets(project: Project): SourceSetContainer =
-        project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
-
-    private val SourceSet.kotlin: SourceDirectorySet?
-        get() = ((getConvention("kotlin") ?: getConvention("kotlin2js")) as? KotlinSourceSet)?.kotlin
-
-    private fun SourceSet.getConvention(name: String): Any? =
-        (this as HasConvention).convention.plugins[name]
-}
-
-internal object AndroidSourceSetResolver : SourceSetResolver {
-
-    override fun applyToAll(project: Project, action: SourceSetAction) {
-        val android = project.extensions.findByName("android")
-        (android as? BaseExtension)?.let {
-            it.sourceSets.all { sourceSet ->
-                val id = sourceSet.name.id
-                action(id, project.provider { getKotlinFiles(project, sourceSet) })
-            }
-        }
-    }
-
-    private fun getKotlinFiles(project: Project, sourceSet: AndroidSourceSet) = sourceSet.java.srcDirs.map { dir ->
-        project.fileTree(dir) { it.include("**/*.kt") }
-    }.reduce { merged: FileTree, tree: ConfigurableFileTree ->
-        merged + tree
-    }
 }
 
 internal val String.id

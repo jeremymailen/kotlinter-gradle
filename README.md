@@ -19,7 +19,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "3.0.2"
+    id("org.jmailen.kotlinter") version "3.1.0"
 }
 ```
 
@@ -30,7 +30,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "3.0.2"
+    id "org.jmailen.kotlinter" version "3.1.0"
 }
 ```
 
@@ -50,7 +50,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jmailen.gradle:kotlinter-gradle:3.0.2")
+        classpath("org.jmailen.gradle:kotlinter-gradle:3.1.0")
     }
 }
 ```
@@ -75,7 +75,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.jmailen.gradle:kotlinter-gradle:3.0.2"
+        classpath "org.jmailen.gradle:kotlinter-gradle:3.1.0"
     }
 }
 ```
@@ -95,7 +95,10 @@ Kotlinter <= 2.4.1 is compatible with Kotlin Gradle plugins 1.3.30+ and Java 13/
 
 ### Features
 
-- Supports Kotlin Gradle plugins: [JVM](https://plugins.gradle.org/plugin/org.jetbrains.kotlin.jvm) and [Android](https://plugins.gradle.org/plugin/org.jetbrains.kotlin.android)
+- Supports Kotlin Gradle plugins:
+  - [JVM](https://plugins.gradle.org/plugin/org.jetbrains.kotlin.jvm)
+  - [Multiplatform](https://plugins.gradle.org/plugin/org.jetbrains.kotlin.multiplatform)
+  - [Android](https://plugins.gradle.org/plugin/org.jetbrains.kotlin.android)
 - Supports `.kt` and `.kts` files
 - Standalone `LintTask` and `FormatTask` types for defining custom tasks
 - Incremental build support and fast parallelization with Gradle Worker API
@@ -104,7 +107,7 @@ Kotlinter <= 2.4.1 is compatible with Kotlin Gradle plugins 1.3.30+ and Java 13/
 
 ### Tasks
 
-If your project uses the JetBrains Kotlin JVM or Android Gradle plugins, standard tasks are created:
+When your project uses one of the supported Kotlin Gradle plugins, Kotlinter adds these tasks:
 
 `formatKotlin`: format Kotlin source code according to `ktlint` rules or warn when auto-format not possible.
 
@@ -112,13 +115,13 @@ If your project uses the JetBrains Kotlin JVM or Android Gradle plugins, standar
 
 Also `check` becomes dependent on `lintKotlin`.
 
-Granular tasks exist for each source set in the project: `formatKotlin`*`SourceSet`* and `lintKotlin`*`SourceSet`*.
+Granular tasks are added for each source set in the project: `formatKotlin`*`SourceSet`* and `lintKotlin`*`SourceSet`*.
 
 ### Git Hooks
 
 Kotlinter can install a hook to run pre-push (`installKotlinterPrePushHook`). The hook runs `lintKotlin` and, if there are errors, `formatKotlin` and exits non-zero leaving changed files to be committed.
 
-You *must* apply the kotlinter plugin to your root project to make this task available.
+You *must* apply the kotlinter plugin to your root project to make this task available. If using `git worktree` you must install the hook from the parent git directory.
 
 To install the hook automatically when someone runs the build, add this to your root project `build.gradle.kts`:
 

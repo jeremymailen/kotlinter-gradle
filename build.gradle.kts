@@ -5,7 +5,7 @@ plugins {
     id("com.gradle.plugin-publish") version "0.12.0"
     `java-gradle-plugin`
     `maven-publish`
-    id("org.jmailen.kotlinter") version "3.1.0"
+    id("org.jmailen.kotlinter") version "3.1.1"
     idea
 }
 
@@ -19,7 +19,7 @@ val githubUrl ="https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "3.1.1"
+version = "3.2.0"
 group = "org.jmailen.gradle"
 description = projectDescription
 
@@ -27,7 +27,7 @@ object Versions {
     const val androidTools = "4.0.1"
     const val jetbrainsAnnotations = "20.0.0"
     const val junit = "4.13"
-    const val ktlint = "0.38.1"
+    const val ktlint = "0.39.0"
     const val mockitoKotlin = "2.2.0"
 }
 

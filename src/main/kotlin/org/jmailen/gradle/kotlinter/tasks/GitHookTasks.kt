@@ -1,6 +1,7 @@
 package org.jmailen.gradle.kotlinter.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.jmailen.gradle.kotlinter.support.VersionProperties
@@ -36,25 +37,23 @@ open class InstallPrePushHookTask : InstallHookTask("pre-push") {
 /**
  * Install or update a kotlinter-gradle hook.
  */
-abstract class InstallHookTask(hookFileName: String) : DefaultTask() {
-    @Internal val hooksDir = project.rootProject.file(".git/hooks").apply { mkdirs() }
-    @Internal val hookFile = File(hooksDir, hookFileName).apply {
-        createNewFile().and(setExecutable(true))
-    }
-    @get:Internal
-    val hookFileContent by lazy { hookFile.readText() }
+abstract class InstallHookTask(@get:Internal val hookFileName: String) : DefaultTask() {
+    @Input
+    val gitDirPath = property(default = ".git")
 
     @get:Internal
     abstract val hookContent: String
 
     init {
         outputs.upToDateWhen {
-            hookFileContent.contains(hookVersion)
+            getHookFile()?.readText()?.contains(hookVersion) ?: false
         }
     }
 
     @TaskAction
     fun run() {
+        val hookFile = getHookFile(true) ?: return
+        val hookFileContent = hookFile.readText()
 
         if (hookFileContent.isEmpty()) {
             logger.info("creating hook file: $hookFile")
@@ -77,6 +76,23 @@ abstract class InstallHookTask(hookFileName: String) : DefaultTask() {
         }
 
         logger.quiet("Wrote hook to $hookFile")
+    }
+
+    private fun getHookFile(warn: Boolean = false): File? {
+        val gitDir = project.rootProject.file(gitDirPath.get())
+        if (!gitDir.isDirectory) {
+            if (warn) logger.warn("skipping hook creation because $gitDir is not a directory")
+            return null
+        }
+        return try {
+            val hooksDir = File(gitDir, "hooks").apply { mkdirs() }
+            File(hooksDir, hookFileName).apply {
+                createNewFile().and(setExecutable(true))
+            }
+        } catch (e: Exception) {
+            if (warn) logger.warn("skipping hook creation because could not create hook under $gitDir: ${e.message}")
+            null
+        }
     }
 
     private val gradleCommand: String by lazy {

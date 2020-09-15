@@ -104,6 +104,7 @@ abstract class InstallHookTaskTest(
 
     @Test
     fun `up-to-date when after hook installed`() {
+        File(testProjectDir.root, ".git").apply { mkdir() }
         lateinit var hookContent: String
         build(taskName).apply {
             assertEquals(SUCCESS, task(":$taskName")?.outcome)

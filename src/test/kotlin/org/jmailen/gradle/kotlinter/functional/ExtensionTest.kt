@@ -185,6 +185,15 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
                 """.trimIndent()
             appendText(script)
         }
+        // https://github.com/pinterest/ktlint/issues/997
+        projectRoot.resolve(".editorconfig") {
+            val config =
+                """
+                [*.{kt,kts}]
+                indent_size = 4
+                """.trimIndent()
+            appendText(config)
+        }
 
         buildAndFail("lintKotlin").apply {
             assertEquals(TaskOutcome.FAILED, task(":lintKotlinMain")?.outcome)

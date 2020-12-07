@@ -19,7 +19,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "3.2.0"
+    id("org.jmailen.kotlinter") version "3.3.0"
 }
 ```
 
@@ -30,7 +30,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "3.2.0"
+    id "org.jmailen.kotlinter" version "3.3.0"
 }
 ```
 
@@ -50,7 +50,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jmailen.gradle:kotlinter-gradle:3.2.0")
+        classpath("org.jmailen.gradle:kotlinter-gradle:3.3.0")
     }
 }
 ```
@@ -75,7 +75,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.jmailen.gradle:kotlinter-gradle:3.2.0"
+        classpath "org.jmailen.gradle:kotlinter-gradle:3.3.0"
     }
 }
 ```
@@ -90,8 +90,8 @@ apply plugin: "org.jmailen.kotlinter"
 
 ### Compatibility
 
-Kotlinter >= 3.0.0 is compatible with Kotlin Gradle plugins 1.4.0+ and Java 13/12/11/10/9/8.
-Kotlinter <= 2.4.1 is compatible with Kotlin Gradle plugins 1.3.30+ and Java 13/12/11/10/9/8.
+Kotlinter >= 3.0.0 is compatible with Kotlin Gradle plugins 1.4.0+.
+Kotlinter <= 2.4.1 is compatible with Kotlin Gradle plugins 1.3.30+ before 1.4.0.
 
 ### Features
 
@@ -298,13 +298,13 @@ buildscript {
     configurations.classpath {
         resolutionStrategy {
             force(
-                "com.pinterest.ktlint:ktlint-core:0.37.2",
-                "com.pinterest.ktlint:ktlint-reporter-checkstyle:0.37.2",
-                "com.pinterest.ktlint:ktlint-reporter-json:0.37.2",
-                "com.pinterest.ktlint:ktlint-reporter-html:0.37.2",
-                "com.pinterest.ktlint:ktlint-reporter-plain:0.37.2",
-                "com.pinterest.ktlint:ktlint-ruleset-experimental:0.37.2",
-                "com.pinterest.ktlint:ktlint-ruleset-standard:0.37.2"
+                "com.pinterest.ktlint:ktlint-core:0.39.0",
+                "com.pinterest.ktlint:ktlint-reporter-checkstyle:0.39.0",
+                "com.pinterest.ktlint:ktlint-reporter-json:0.39.0",
+                "com.pinterest.ktlint:ktlint-reporter-html:0.39.0",
+                "com.pinterest.ktlint:ktlint-reporter-plain:0.39.0",
+                "com.pinterest.ktlint:ktlint-ruleset-experimental:0.39.0",
+                "com.pinterest.ktlint:ktlint-ruleset-standard:0.39.0"
             )
         }
     }
@@ -321,13 +321,13 @@ buildscript {
     configurations.classpath {
         resolutionStrategy {
             force(
-                "com.pinterest.ktlint:ktlint-core:0.37.2",
-                "com.pinterest.ktlint:ktlint-reporter-checkstyle:0.37.2",
-                "com.pinterest.ktlint:ktlint-reporter-json:0.37.2",
-                "com.pinterest.ktlint:ktlint-reporter-html:0.37.2",
-                "com.pinterest.ktlint:ktlint-reporter-plain:0.37.2",
-                "com.pinterest.ktlint:ktlint-ruleset-experimental:0.37.2",
-                "com.pinterest.ktlint:ktlint-ruleset-standard:0.37.2"
+                "com.pinterest.ktlint:ktlint-core:0.39.0",
+                "com.pinterest.ktlint:ktlint-reporter-checkstyle:0.39.0",
+                "com.pinterest.ktlint:ktlint-reporter-json:0.39.0",
+                "com.pinterest.ktlint:ktlint-reporter-html:0.39.0",
+                "com.pinterest.ktlint:ktlint-reporter-plain:0.39.0",
+                "com.pinterest.ktlint:ktlint-ruleset-experimental:0.39.0",
+                "com.pinterest.ktlint:ktlint-ruleset-standard:0.39.0"
             )
         }
     }

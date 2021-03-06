@@ -24,6 +24,7 @@ class KotlinterPlugin : Plugin<Project> {
 
         if (this == rootProject) {
             registerPrePushHookTask()
+            registerPreCommitHookTask()
         }
 
         // for known kotlin plugins, register tasks by convention.

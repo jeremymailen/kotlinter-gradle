@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.10"
-    id("com.gradle.plugin-publish") version "0.12.0"
+    kotlin("jvm") version "1.4.31"
+    id("com.gradle.plugin-publish") version "0.13.0"
     `java-gradle-plugin`
     `maven-publish`
-    id("org.jmailen.kotlinter") version "3.2.0"
+    id("org.jmailen.kotlinter") version "3.3.0"
     idea
 }
 
@@ -24,10 +24,10 @@ group = "org.jmailen.gradle"
 description = projectDescription
 
 object Versions {
-    const val androidTools = "4.0.1"
-    const val jetbrainsAnnotations = "20.0.0"
+    const val androidTools = "4.1.2"
+    const val jetbrainsAnnotations = "20.1.0"
     const val junit = "4.13"
-    const val ktlint = "0.40.0"
+    const val ktlint = "0.41.0"
     const val mockitoKotlin = "2.2.0"
 }
 

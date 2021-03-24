@@ -1,13 +1,13 @@
 package org.jmailen.gradle.kotlinter.support
 
-import com.nhaarman.mockitokotlin2.inOrder
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.verify
 import com.pinterest.ktlint.core.LintError
 import com.pinterest.ktlint.core.Reporter
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mockito.verify
+import org.mockito.kotlin.inOrder
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 
 class SortedThreadSafeReporterWrapperTest {
 

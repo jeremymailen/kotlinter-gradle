@@ -29,7 +29,7 @@ object Versions {
     const val jetbrainsAnnotations = "20.1.0"
     const val junit = "4.13.2"
     const val ktlint = "0.41.0"
-    const val mockitoKotlin = "2.2.0"
+    const val mockitoKotlin = "2.2.11"
 }
 
 dependencies {
@@ -49,7 +49,7 @@ dependencies {
     }
 
     testImplementation("junit:junit:${Versions.junit}")
-    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockitoKotlin}")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.mockitoKotlin}")
     testImplementation("org.jetbrains:annotations:${Versions.jetbrainsAnnotations}")
 }
 

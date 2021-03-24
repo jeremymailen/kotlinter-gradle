@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.31"
+    kotlin("jvm") version "1.4.32"
     id("com.gradle.plugin-publish") version "0.13.0"
     `java-gradle-plugin`
     `maven-publish`
-    id("org.jmailen.kotlinter") version "3.3.0"
+    id("org.jmailen.kotlinter") version "3.4.0"
     idea
 }
 
@@ -25,9 +25,9 @@ group = "org.jmailen.gradle"
 description = projectDescription
 
 object Versions {
-    const val androidTools = "4.1.2"
+    const val androidTools = "4.1.3"
     const val jetbrainsAnnotations = "20.1.0"
-    const val junit = "4.13"
+    const val junit = "4.13.2"
     const val ktlint = "0.41.0"
     const val mockitoKotlin = "2.2.0"
 }
@@ -57,7 +57,7 @@ tasks {
     val generateVersionProperties = create("generateVersionProperties") {
         doLast {
             val resourcesDir = sourceSets.main.get().resources.sourceDirectories.asPath
-            File(mkdir(resourcesDir), "version.properties").writeText("version = ${version}")
+            File(mkdir(resourcesDir), "version.properties").writeText("version = $version")
         }
     }
 
@@ -67,9 +67,9 @@ tasks {
 
     withType<KotlinCompile>().configureEach {
         kotlinOptions {
-            apiVersion = "1.3"
-            languageVersion = "1.3"
-            jvmTarget = "1.8"
+            apiVersion = "1.4"
+            languageVersion = "1.4"
+            jvmTarget = JavaVersion.VERSION_1_8.toString()
         }
     }
 

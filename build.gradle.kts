@@ -10,8 +10,9 @@ plugins {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
     google()
+    jcenter() // remove after trove4j resolved https://youtrack.jetbrains.com/issue/KT-44730
 }
 
 val pluginId = "org.jmailen.kotlinter"
@@ -19,7 +20,7 @@ val githubUrl ="https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "3.3.0"
+version = "3.4.0"
 group = "org.jmailen.gradle"
 description = projectDescription
 

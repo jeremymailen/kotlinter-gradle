@@ -10,10 +10,7 @@ import java.io.File
 open class InstallPreCommitHookTask : InstallHookTask("pre-commit") {
     override val hookContent =
         """
-            ${'$'}GRADLEW formatKotlin
-
-            status=${'$'}?
-            if [ "${'$'}status" != 0 ] ; then
+            if ! ${'$'}GRADLEW formatKotlin ; then
                 echo 1>&2 "\nformatKotlin had non-zero exit status, aborting commit"
                 exit 1
             fi
@@ -23,10 +20,7 @@ open class InstallPreCommitHookTask : InstallHookTask("pre-commit") {
 open class InstallPrePushHookTask : InstallHookTask("pre-push") {
     override val hookContent =
         """
-            ${'$'}GRADLEW lintKotlin
-
-            status=${'$'}?
-            if [ "${'$'}status" != 0 ] ; then
+            if ! ${'$'}GRADLEW lintKotlin ; then
                 echo 1>&2 "\nlintKotlin found problems, running formatKotlin; commit the result and re-push"
                 ${'$'}GRADLEW formatKotlin
                 exit 1

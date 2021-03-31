@@ -2,6 +2,8 @@ package org.jmailen.gradle.kotlinter
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.tasks.TaskProvider
 import org.jmailen.gradle.kotlinter.pluginapplier.AndroidSourceSetApplier
 import org.jmailen.gradle.kotlinter.pluginapplier.KotlinJvmSourceSetApplier
 import org.jmailen.gradle.kotlinter.pluginapplier.KotlinMultiplatformSourceSetApplier
@@ -10,10 +12,11 @@ import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.InstallPreCommitHookTask
 import org.jmailen.gradle.kotlinter.tasks.InstallPrePushHookTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
+import java.io.File
 
 class KotlinterPlugin : Plugin<Project> {
 
-    val extendablePlugins = mapOf(
+    private val extendablePlugins = mapOf(
         "org.jetbrains.kotlin.jvm" to KotlinJvmSourceSetApplier,
         "org.jetbrains.kotlin.multiplatform" to KotlinMultiplatformSourceSetApplier,
         "kotlin-android" to AndroidSourceSetApplier
@@ -67,7 +70,7 @@ class KotlinterPlugin : Plugin<Project> {
         }
     }
 
-    private fun Project.registerParentLintTask() =
+    private fun Project.registerParentLintTask(): TaskProvider<Task> =
         tasks.register("lintKotlin") {
             it.group = "formatting"
             it.description = "Runs lint on the Kotlin source files."
@@ -75,26 +78,26 @@ class KotlinterPlugin : Plugin<Project> {
             tasks.named("check").configure { check -> check.dependsOn(lintKotlin) }
         }
 
-    private fun Project.registerParentFormatTask() =
+    private fun Project.registerParentFormatTask(): TaskProvider<Task> =
         tasks.register("formatKotlin") {
             it.group = "formatting"
             it.description = "Formats the Kotlin source files."
         }
 
-    private fun Project.registerPrePushHookTask() =
+    private fun Project.registerPrePushHookTask(): TaskProvider<InstallPrePushHookTask> =
         tasks.register("installKotlinterPrePushHook", InstallPrePushHookTask::class.java) {
             it.group = "build setup"
             it.description = "Installs Kotlinter Git pre-push hook"
         }
 
-    private fun Project.registerPreCommitHookTask() =
+    private fun Project.registerPreCommitHookTask(): TaskProvider<InstallPreCommitHookTask> =
         tasks.register("installKotlinterPreCommitHook", InstallPreCommitHookTask::class.java) {
             it.group = "build setup"
             it.description = "Installs Kotlinter Git pre-commit hook"
         }
 }
 
-internal val String.id
+internal val String.id: String
     get() = split(" ").first()
 
-internal fun Project.reportFile(name: String) = file("$buildDir/reports/ktlint/$name")
+internal fun Project.reportFile(name: String): File = file("$buildDir/reports/ktlint/$name")

@@ -9,6 +9,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.internal.logging.slf4j.DefaultContextAwareTaskLogger
 import org.gradle.workers.WorkAction
 import org.jmailen.gradle.kotlinter.support.KotlinterError
+import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
 import org.jmailen.gradle.kotlinter.support.resolveRuleSets
 import org.jmailen.gradle.kotlinter.support.userData
@@ -20,8 +21,8 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
     private val files: List<File> = parameters.files.toList()
     private val projectDirectory: File = parameters.projectDirectory.asFile.get()
     private val name: String = parameters.name.get()
-    private val ktLintParams = parameters.ktLintParams.get()
-    private val output = parameters.output.asFile.orNull
+    private val ktLintParams: KtLintParams = parameters.ktLintParams.get()
+    private val output: File? = parameters.output.asFile.orNull
 
     override fun execute() {
         val fixes = mutableListOf<String>()

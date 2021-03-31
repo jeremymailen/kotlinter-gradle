@@ -3,8 +3,6 @@ package org.jmailen.gradle.kotlinter.support
 import com.pinterest.ktlint.core.RuleSet
 import com.pinterest.ktlint.core.RuleSetProvider
 import com.pinterest.ktlint.ruleset.experimental.ExperimentalRuleSetProvider
-import java.util.ServiceLoader
-import kotlin.comparisons.compareBy
 
 fun resolveRuleSets(
     providers: Iterable<RuleSetProvider>,
@@ -24,5 +22,5 @@ fun resolveRuleSets(
 }
 
 // statically resolve providers from plugin classpath
-val defaultRuleSetProviders =
-    ServiceLoader.load(RuleSetProvider::class.java).map { it }
+val defaultRuleSetProviders: ServiceLoader<RuleSetProvider> =
+    ServiceLoader.load(RuleSetProvider::class.java)

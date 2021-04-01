@@ -7,5 +7,5 @@ class VersionProperties : Properties() {
         load(this.javaClass.getResourceAsStream("/version.properties"))
     }
 
-    fun version() = getProperty("version")
+    fun version(): String = getProperty("version")
 }

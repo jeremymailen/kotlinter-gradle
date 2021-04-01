@@ -24,5 +24,5 @@ fun resolveRuleSets(
 }
 
 // statically resolve providers from plugin classpath
-val defaultRuleSetProviders =
-    ServiceLoader.load(RuleSetProvider::class.java).map { it }
+val defaultRuleSetProviders: ServiceLoader<RuleSetProvider> =
+    ServiceLoader.load(RuleSetProvider::class.java)

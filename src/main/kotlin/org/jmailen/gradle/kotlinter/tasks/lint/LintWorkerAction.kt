@@ -2,12 +2,14 @@ package org.jmailen.gradle.kotlinter.tasks.lint
 
 import com.pinterest.ktlint.core.KtLint
 import com.pinterest.ktlint.core.LintError
+import com.pinterest.ktlint.core.Reporter
 import com.pinterest.ktlint.core.RuleSet
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.internal.logging.slf4j.DefaultContextAwareTaskLogger
 import org.gradle.workers.WorkAction
 import org.jmailen.gradle.kotlinter.support.KotlinterError
+import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.LintFailure
 import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
 import org.jmailen.gradle.kotlinter.support.reporterFor
@@ -18,13 +20,13 @@ import java.io.File
 
 abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
     private val logger: Logger = DefaultContextAwareTaskLogger(Logging.getLogger(LintTask::class.java))
-    private val reporters = parameters.reporters.get().map { (reporterName, outputPath) ->
+    private val reporters: List<Reporter> = parameters.reporters.get().map { (reporterName, outputPath) ->
         reporterFor(reporterName, outputPath)
     }
     private val files: List<File> = parameters.files.toList()
     private val projectDirectory: File = parameters.projectDirectory.asFile.get()
     private val name: String = parameters.name.get()
-    private val ktLintParams = parameters.ktLintParams.get()
+    private val ktLintParams: KtLintParams = parameters.ktLintParams.get()
 
     override fun execute() {
         var hasError = false

@@ -53,9 +53,7 @@ inline fun <reified T : Throwable> Throwable.workErrorCauses(): List<Throwable> 
         is MultiCauseException -> this.causes.map { it.cause }
         else -> listOf(this.cause)
     }.filter {
-        it?.let {
-            // class instance comparison doesn't work due to different classloaders
-            it.javaClass.canonicalName == T::class.java.canonicalName
-        } ?: false
+        // class instance comparison doesn't work due to different classloaders
+        it?.javaClass?.canonicalName == T::class.java.canonicalName
     }.filterNotNull()
 }

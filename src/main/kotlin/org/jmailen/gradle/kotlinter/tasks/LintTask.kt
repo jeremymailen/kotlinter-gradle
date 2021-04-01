@@ -4,7 +4,13 @@ import org.gradle.api.GradleException
 import org.gradle.api.file.FileTree
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.OutputFiles
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_IGNORE_FAILURES
@@ -20,7 +26,7 @@ open class LintTask @Inject constructor(
 ) : ConfigurableKtLintTask() {
 
     @OutputFiles
-    val reports: MapProperty<String, File> = mapProperty(default = emptyMap<String, File>())
+    val reports: MapProperty<String, File> = mapProperty(default = emptyMap())
 
     @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)

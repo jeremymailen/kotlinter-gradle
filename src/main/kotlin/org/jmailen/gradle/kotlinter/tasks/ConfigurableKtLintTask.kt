@@ -1,6 +1,9 @@
 package org.jmailen.gradle.kotlinter.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
@@ -14,32 +17,33 @@ abstract class ConfigurableKtLintTask : SourceTask() {
 
     @Input
     @Optional
-    val indentSize = property<Int?>(default = null)
+    val indentSize: Property<Int> = property()
 
     @Input
-    val experimentalRules = property(default = DEFAULT_EXPERIMENTAL_RULES)
+    val experimentalRules: Property<Boolean> = property(default = DEFAULT_EXPERIMENTAL_RULES)
+
     @Input
-    val disabledRules = listProperty(default = DEFAULT_DISABLED_RULES.toList())
+    val disabledRules: ListProperty<String> = listProperty(default = DEFAULT_DISABLED_RULES.toList())
 
     @Internal
-    protected fun getKtLintParams() = KtLintParams(
+    protected fun getKtLintParams(): KtLintParams = KtLintParams(
         indentSize = indentSize.orNull,
         experimentalRules = experimentalRules.get(),
         disabledRules = disabledRules.get()
     )
 }
 
-internal inline fun <reified T> DefaultTask.property(default: T? = null) =
+internal inline fun <reified T> DefaultTask.property(default: T? = null): Property<T> =
     project.objects.property(T::class.java).apply {
         set(default)
     }
 
-internal inline fun <reified T> DefaultTask.listProperty(default: Iterable<T> = emptyList()) =
+internal inline fun <reified T> DefaultTask.listProperty(default: Iterable<T> = emptyList()): ListProperty<T> =
     project.objects.listProperty(T::class.java).apply {
         set(default)
     }
 
-internal inline fun <reified K, reified V> DefaultTask.mapProperty(default: Map<K, V> = emptyMap()) =
+internal inline fun <reified K, reified V> DefaultTask.mapProperty(default: Map<K, V> = emptyMap()): MapProperty<K, V> =
     project.objects.mapProperty(K::class.java, V::class.java).apply {
         set(default)
     }

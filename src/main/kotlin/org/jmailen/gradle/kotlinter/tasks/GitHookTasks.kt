@@ -1,6 +1,7 @@
 package org.jmailen.gradle.kotlinter.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
@@ -33,7 +34,7 @@ open class InstallPrePushHookTask : InstallHookTask("pre-push") {
  */
 abstract class InstallHookTask(@get:Internal val hookFileName: String) : DefaultTask() {
     @Input
-    val gitDirPath = property(default = ".git")
+    val gitDirPath: Property<String> = property(default = ".git")
 
     @get:Internal
     abstract val hookContent: String
@@ -108,11 +109,11 @@ abstract class InstallHookTask(@get:Internal val hookFileName: String) : Default
     companion object {
         private val version = VersionProperties().version()
 
-        internal val startHook = "\n##### KOTLINTER HOOK START #####"
+        internal const val startHook = "\n##### KOTLINTER HOOK START #####"
 
         internal val hookVersion = "##### KOTLINTER $version #####"
 
-        internal val endHook = "##### KOTLINTER HOOK END #####\n"
+        internal const val endHook = "##### KOTLINTER HOOK END #####\n"
 
         internal val shebang =
             """

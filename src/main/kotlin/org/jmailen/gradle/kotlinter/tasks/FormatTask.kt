@@ -1,6 +1,7 @@
 package org.jmailen.gradle.kotlinter.tasks
 
 import org.gradle.api.GradleException
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -16,7 +17,7 @@ open class FormatTask @Inject constructor(
 
     @OutputFile
     @Optional
-    val report = project.objects.fileProperty()
+    val report: RegularFileProperty = project.objects.fileProperty()
 
     init {
         outputs.upToDateWhen { false }

@@ -1,6 +1,9 @@
 package org.jmailen.gradle.kotlinter.tasks
 
 import org.gradle.api.GradleException
+import org.gradle.api.file.FileTree
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
@@ -23,14 +26,14 @@ open class LintTask @Inject constructor(
 ) : ConfigurableKtLintTask() {
 
     @OutputFiles
-    val reports = mapProperty(default = emptyMap<String, File>())
+    val reports: MapProperty<String, File> = mapProperty(default = emptyMap())
 
     @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
-    override fun getSource() = super.getSource()
+    override fun getSource(): FileTree = super.getSource()
 
     @Input
-    val ignoreFailures = property(default = DEFAULT_IGNORE_FAILURES)
+    val ignoreFailures: Property<Boolean> = property(default = DEFAULT_IGNORE_FAILURES)
 
     @TaskAction
     fun run() {

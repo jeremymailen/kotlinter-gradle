@@ -140,7 +140,7 @@ tasks.check {
 <summary>Groovy</summary>
 
 ```groovy
-task check {
+check {
     dependsOn "installKotlinterPrePushHook"
 }
 ```

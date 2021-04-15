@@ -65,21 +65,15 @@ tasks {
         dependsOn(generateVersionProperties)
     }
 
-    withType<KotlinCompile>().configureEach {
+    withType<KotlinCompile> {
         kotlinOptions {
-            apiVersion = "1.4"
-            languageVersion = "1.4"
             jvmTarget = JavaVersion.VERSION_1_8.toString()
         }
     }
 
     // Required to put the Kotlin plugin on the classpath for the functional test suite
-    withType<PluginUnderTestMetadata>().configureEach {
+    withType<PluginUnderTestMetadata> {
         pluginClasspath.from(configurations.compileOnly)
-    }
-
-    wrapper {
-        gradleVersion = "7.0"
     }
 }
 

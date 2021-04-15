@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.4.32"
-    id("com.gradle.plugin-publish") version "0.13.0"
+    id("com.gradle.plugin-publish") version "0.14.0"
     `java-gradle-plugin`
     `maven-publish`
     id("org.jmailen.kotlinter") version "3.4.0"
@@ -12,7 +12,6 @@ plugins {
 repositories {
     mavenCentral()
     google()
-    jcenter() // remove after trove4j resolved https://youtrack.jetbrains.com/issue/KT-44730
 }
 
 val pluginId = "org.jmailen.kotlinter"
@@ -29,7 +28,7 @@ object Versions {
     const val jetbrainsAnnotations = "20.1.0"
     const val junit = "4.13.2"
     const val ktlint = "0.41.0"
-    const val mockitoKotlin = "2.2.11"
+    const val mockitoKotlin = "3.1.0"
 }
 
 dependencies {

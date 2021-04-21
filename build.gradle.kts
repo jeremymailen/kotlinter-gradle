@@ -16,7 +16,7 @@ repositories {
 }
 
 val pluginId = "org.jmailen.kotlinter"
-val githubUrl ="https://github.com/jeremymailen/kotlinter-gradle"
+val githubUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
@@ -65,14 +65,14 @@ tasks {
         dependsOn(generateVersionProperties)
     }
 
-    withType<KotlinCompile> {
+    withType<KotlinCompile>().configureEach {
         kotlinOptions {
             jvmTarget = JavaVersion.VERSION_1_8.toString()
         }
     }
 
     // Required to put the Kotlin plugin on the classpath for the functional test suite
-    withType<PluginUnderTestMetadata> {
+    withType<PluginUnderTestMetadata>().configureEach {
         pluginClasspath.from(configurations.compileOnly)
     }
 }
@@ -121,7 +121,7 @@ artifacts {
 }
 
 publishing {
-    publications.withType<MavenPublication> {
+    publications.withType<MavenPublication>().configureEach {
         artifact(sourcesJar.get())
 
         pom {

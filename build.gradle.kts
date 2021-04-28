@@ -19,7 +19,7 @@ val githubUrl ="https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "3.4.2"
+version = "3.4.3"
 group = "org.jmailen.gradle"
 description = projectDescription
 
@@ -54,7 +54,7 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
+        languageVersion.set(JavaLanguageVersion.of(8))
     }
 }
 
@@ -74,7 +74,7 @@ tasks {
         kotlinOptions {
             apiVersion = "1.4"
             languageVersion = "1.4"
-            jvmTarget = JavaVersion.VERSION_11.toString()
+            jvmTarget = JavaVersion.VERSION_1_8.toString()
         }
     }
 

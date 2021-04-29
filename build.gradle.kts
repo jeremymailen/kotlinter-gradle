@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.32"
+    kotlin("jvm") version "1.5.0"
     id("com.gradle.plugin-publish") version "0.14.0"
     `java-gradle-plugin`
     `maven-publish`
@@ -72,8 +72,8 @@ tasks {
 
     withType<KotlinCompile>().configureEach {
         kotlinOptions {
-            apiVersion = "1.4"
-            languageVersion = "1.4"
+            apiVersion = "1.5"
+            languageVersion = "1.5"
             jvmTarget = JavaVersion.VERSION_1_8.toString()
         }
     }

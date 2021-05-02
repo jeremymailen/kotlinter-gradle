@@ -59,7 +59,7 @@ java {
 }
 
 tasks {
-    val generateVersionProperties = create("generateVersionProperties") {
+    val generateVersionProperties = register("generateVersionProperties") {
         doLast {
             val resourcesDir = sourceSets.main.get().resources.sourceDirectories.asPath
             File(mkdir(resourcesDir), "version.properties").writeText("version = $version")

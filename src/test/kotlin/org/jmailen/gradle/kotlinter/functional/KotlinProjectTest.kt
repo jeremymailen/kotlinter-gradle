@@ -130,7 +130,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
             }
 
             repositories {
-                jcenter()
+                mavenCentral()
             }
             """.trimIndent()
         writeText(buildscript)

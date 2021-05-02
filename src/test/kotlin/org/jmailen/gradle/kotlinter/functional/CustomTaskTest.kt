@@ -1,12 +1,13 @@
 package org.jmailen.gradle.kotlinter.functional
 
-import groovy.util.GroovyTestCase.assertEquals
 import org.gradle.testkit.runner.TaskOutcome
 import org.intellij.lang.annotations.Language
 import org.jmailen.gradle.kotlinter.functional.utils.editorConfig
 import org.jmailen.gradle.kotlinter.functional.utils.kotlinClass
 import org.jmailen.gradle.kotlinter.functional.utils.resolve
 import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
+import org.junit.Assert.assertArrayEquals
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -187,12 +188,12 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
         buildAndFail("reportsEmpty").apply {
             assertEquals(TaskOutcome.FAILED, task(":reportsEmpty")?.outcome)
             assertTrue(output.contains("[final-newline] File must end with a newline (\\n)"))
-            assertEquals(emptyList<String>(), projectRoot.resolve("build/reports/ktlint").list().orEmpty())
+            assertArrayEquals(emptyArray<String>(), projectRoot.resolve("build/reports/ktlint").list().orEmpty())
         }
         buildAndFail("reportsNotConfigured").apply {
             assertEquals(TaskOutcome.FAILED, task(":reportsNotConfigured")?.outcome)
             assertTrue(output.contains("[final-newline] File must end with a newline (\\n)"))
-            assertEquals(emptyList<String>(), projectRoot.resolve("build/reports/ktlint").list().orEmpty())
+            assertArrayEquals(emptyArray<String>(), projectRoot.resolve("build/reports/ktlint").list().orEmpty())
         }
     }
 

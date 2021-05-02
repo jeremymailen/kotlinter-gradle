@@ -57,15 +57,8 @@ jobs:
           distribution: 'adopt'
           java-version: ${{ matrix.java }}
 
-      - name: Pre-compile plugin using gradle wrapper
-        uses: burrunan/gradle-cache-action@v1
-        with:
-          job-id: integration-test-${{ matrix.java }}-${{ matrix.gradle }}
-          gradle-distribution-sha-256-sum-warning: false
-          arguments: publishToMavenLocal -Pgroup=org.jmailen.gradle.local
-
       - uses: eskatos/gradle-command-action@v1
         with:
           build-root-directory: test-project
           gradle-version: ${{ matrix.gradle }}
-          arguments: formatKotlin lintKotlin -PuseMavenLocal
+          arguments: formatKotlin lintKotlin

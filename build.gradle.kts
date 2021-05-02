@@ -20,7 +20,7 @@ val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
 version = "3.4.4"
-group = "org.jmailen.gradle"
+group = project.property("group")?.toString()?.takeIf { it.isNotBlank() } ?: "org.jmailen.gradle"
 description = projectDescription
 
 object Versions {

@@ -46,9 +46,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: test-results-${{ matrix.os }}
-          path: |
-          "${{ github.workspace }}/**/build/reports/tests"
-          "${{ github.workspace }}\**\build\reports\tests"
+          path: "${{ github.workspace }}/**/build/reports/tests"
 
   integration-tests:
     runs-on: ${{ matrix.os }}

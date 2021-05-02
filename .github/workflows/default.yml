@@ -8,7 +8,12 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+    name: '[${{ matrix.os }}] Build plugin'
     steps:
       - uses: actions/checkout@v2
 
@@ -26,16 +31,24 @@ jobs:
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v1
 
-      - run: ./gradlew assemble
+      - name: ./gradlew assemble
+        uses: eskatos/gradle-command-action@v1
+        with:
+          arguments: assemble
 
-      - run: ./gradlew check
+      - name: ./gradlew check
+        uses: eskatos/gradle-command-action@v1
+        with:
+          arguments: check
 
       - name: Upload test results
         if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
-          name: test-results
-          path: "${{ github.workspace }}/**/build/reports/tests"
+          name: test-results-${{ matrix.os }}
+          path: |
+          "${{ github.workspace }}/**/build/reports/tests"
+          "${{ github.workspace }}\**\build\reports\tests"
 
   integration-tests:
     runs-on: ${{ matrix.os }}

@@ -23,6 +23,7 @@ fun resolveRuleSets(
         )
 }
 
-// statically resolve providers from plugin classpath
-val defaultRuleSetProviders: ServiceLoader<RuleSetProvider> =
-    ServiceLoader.load(RuleSetProvider::class.java)
+// statically resolve providers from plugin classpath. ServiceLoader#load alone resolves classes lazily which fails when run in parallel
+// https://github.com/jeremymailen/kotlinter-gradle/issues/101
+val defaultRuleSetProviders: List<RuleSetProvider> =
+    ServiceLoader.load(RuleSetProvider::class.java).toList()

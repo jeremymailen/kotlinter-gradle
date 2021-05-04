@@ -5,7 +5,7 @@ plugins {
     id("com.gradle.plugin-publish") version "0.14.0"
     `java-gradle-plugin`
     `maven-publish`
-    id("org.jmailen.kotlinter") version "3.4.0"
+    id("org.jmailen.kotlinter") version "3.4.3"
     idea
 }
 
@@ -19,7 +19,7 @@ val githubUrl ="https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "3.4.3"
+version = "3.4.4"
 group = "org.jmailen.gradle"
 description = projectDescription
 
@@ -96,14 +96,6 @@ val sourcesJar by tasks.registering(Jar::class) {
     from(sourceSets.main.get().allSource)
 }
 
-val javadocJar by tasks.registering(Jar::class) {
-    dependsOn(JavaPlugin.JAVADOC_TASK_NAME)
-    group = JavaBasePlugin.DOCUMENTATION_GROUP
-    description = "Assembles javaDoc JAR"
-    archiveClassifier.set("javadoc")
-    from(tasks["javadoc"])
-}
-
 gradlePlugin {
     plugins {
         create("kotlinterPlugin") {
@@ -128,7 +120,6 @@ pluginBundle {
 
 artifacts {
     add(configurations.archives.name, sourcesJar)
-    add(configurations.archives.name, javadocJar)
 }
 
 publishing {

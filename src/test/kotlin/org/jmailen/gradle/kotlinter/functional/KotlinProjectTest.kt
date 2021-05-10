@@ -2,6 +2,7 @@ package org.jmailen.gradle.kotlinter.functional
 
 import org.gradle.testkit.runner.TaskOutcome.FAILED
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.intellij.lang.annotations.Language
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -113,6 +114,64 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
 
         build("check").apply {
             assertEquals(SUCCESS, task(":lintKotlin")?.outcome)
+        }
+    }
+
+    @Test
+    fun `tasks up-to-date checks`() {
+        settingsFile()
+        buildFile()
+        kotlinSourceFile(
+            "CustomObject.kt",
+            """
+            object CustomObject
+            
+            """.trimIndent()
+        )
+
+        build("lintKotlin").apply {
+            assertEquals(SUCCESS, task(":lintKotlin")?.outcome)
+        }
+        build("lintKotlin").apply {
+            assertEquals(UP_TO_DATE, task(":lintKotlin")?.outcome)
+        }
+
+        build("formatKotlin").apply {
+            assertEquals(SUCCESS, task(":formatKotlin")?.outcome)
+        }
+        build("formatKotlin").apply {
+            assertEquals(SUCCESS, task(":formatKotlin")?.outcome)
+        }
+    }
+
+    @Test
+    fun `plugin is compatible with configuration cache`() {
+        settingsFile()
+        buildFile()
+        kotlinSourceFile(
+            "CustomObject.kt",
+            """
+            object CustomObject
+            
+            """.trimIndent()
+        )
+
+        build("lintKotlin", "--configuration-cache").apply {
+            assertEquals(SUCCESS, task(":lintKotlin")?.outcome)
+            assertTrue(output.contains("Configuration cache entry stored"))
+        }
+        build("lintKotlin", "--configuration-cache").apply {
+            assertEquals(UP_TO_DATE, task(":lintKotlin")?.outcome)
+            assertTrue(output.contains("Configuration cache entry reused."))
+        }
+
+        build("formatKotlin", "--configuration-cache").apply {
+            assertEquals(SUCCESS, task(":formatKotlin")?.outcome)
+            assertTrue(output.contains("Configuration cache entry stored"))
+        }
+        build("formatKotlin", "--configuration-cache").apply {
+            assertEquals(SUCCESS, task(":formatKotlin")?.outcome)
+            assertTrue(output.contains("Configuration cache entry reused."))
         }
     }
 

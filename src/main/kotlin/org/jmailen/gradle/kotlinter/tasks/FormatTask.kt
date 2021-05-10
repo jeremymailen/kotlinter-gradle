@@ -19,6 +19,8 @@ open class FormatTask @Inject constructor(
     @Optional
     val report: RegularFileProperty = project.objects.fileProperty()
 
+    private val projectDir = project.projectDir
+
     init {
         outputs.upToDateWhen { false }
     }
@@ -29,7 +31,7 @@ open class FormatTask @Inject constructor(
             submit(FormatWorkerAction::class.java) { p ->
                 p.name.set(name)
                 p.files.from(source)
-                p.projectDirectory.set(project.projectDir)
+                p.projectDirectory.set(projectDir)
                 p.ktLintParams.set(getKtLintParams())
                 p.output.set(report)
             }

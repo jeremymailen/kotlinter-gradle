@@ -35,13 +35,15 @@ open class LintTask @Inject constructor(
     @Input
     val ignoreFailures: Property<Boolean> = property(default = DEFAULT_IGNORE_FAILURES)
 
+    private val projectDir = project.projectDir
+
     @TaskAction
     fun run() {
         val result = with(workerExecutor.noIsolation()) {
             submit(LintWorkerAction::class.java) { p ->
                 p.name.set(name)
                 p.files.from(source)
-                p.projectDirectory.set(project.projectDir)
+                p.projectDirectory.set(projectDir)
                 p.reporters.putAll(reports)
                 p.ktLintParams.set(getKtLintParams())
             }

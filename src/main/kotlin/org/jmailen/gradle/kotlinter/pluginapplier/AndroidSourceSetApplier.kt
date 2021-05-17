@@ -1,3 +1,5 @@
+@file:Suppress("deprecation") // https://issuetracker.google.com/issues/170650362
+
 package org.jmailen.gradle.kotlinter.pluginapplier
 
 import com.android.build.gradle.BaseExtension

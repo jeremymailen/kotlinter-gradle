@@ -15,7 +15,7 @@ repositories {
 }
 
 val pluginId = "org.jmailen.kotlinter"
-val githubUrl ="https://github.com/jeremymailen/kotlinter-gradle"
+val githubUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
@@ -59,7 +59,7 @@ java {
 }
 
 tasks {
-    val generateVersionProperties = create("generateVersionProperties") {
+    val generateVersionProperties = register("generateVersionProperties") {
         doLast {
             val resourcesDir = sourceSets.main.get().resources.sourceDirectories.asPath
             File(mkdir(resourcesDir), "version.properties").writeText("version = $version")

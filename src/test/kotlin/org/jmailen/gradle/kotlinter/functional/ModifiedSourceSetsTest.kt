@@ -26,7 +26,7 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
                 subprojects {
                     repositories {
                         google()
-                        jcenter()
+                        mavenCentral()
                     }
                 }
                 

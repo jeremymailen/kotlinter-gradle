@@ -1,0 +1,75 @@
+name: Build Project
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+    name: '[${{ matrix.os }}] Build plugin'
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: set up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: 16
+
+      - name: Cache .gradle
+        uses: burrunan/gradle-cache-action@v1
+        with:
+          gradle-distribution-sha-256-sum-warning: false
+
+      - name: Gradle Wrapper Validation
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: ./gradlew assemble
+        uses: eskatos/gradle-command-action@v1
+        with:
+          arguments: assemble
+
+      - name: ./gradlew check
+        uses: eskatos/gradle-command-action@v1
+        with:
+          arguments: check
+
+      - name: Upload test results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results-${{ matrix.os }}
+          path: "${{ github.workspace }}/**/build/reports/tests"
+
+  integration-tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+        gradle: [ 6.8.3, current, rc ]
+        java: [ 8, 11, 15 ]
+    name: '[${{ matrix.os }}] Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}'
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: ${{ matrix.java }}
+
+      - uses: eskatos/gradle-command-action@v1
+        with:
+          build-root-directory: test-project
+          gradle-version: ${{ matrix.gradle }}
+          arguments: formatKotlin lintKotlin

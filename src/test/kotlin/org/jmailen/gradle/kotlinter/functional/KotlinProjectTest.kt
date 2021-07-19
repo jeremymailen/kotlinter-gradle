@@ -15,7 +15,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
     private lateinit var settingsFile: File
     private lateinit var buildFile: File
     private lateinit var sourceDir: File
-    private val pathPattern = "(/.*\\.kt):\\d+:\\d+".toRegex()
+    private val pathPattern = "(.*\\.kt):\\d+:\\d+".toRegex()
 
     @Before
     fun setup() {

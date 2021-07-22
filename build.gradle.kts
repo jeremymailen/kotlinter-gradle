@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -50,6 +51,15 @@ dependencies {
     testImplementation("junit:junit:${Versions.junit}")
     testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.mockitoKotlin}")
     testImplementation("org.jetbrains:annotations:${Versions.jetbrainsAnnotations}")
+}
+
+configurations.configureEach {
+    val appliedKotlinPluginVersion = plugins.getPlugin(KotlinPluginWrapper::class).kotlinPluginVersion
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains.kotlin" && requested.name.startsWith("kotlin")) {
+            useVersion(appliedKotlinPluginVersion)
+        }
+    }
 }
 
 java {

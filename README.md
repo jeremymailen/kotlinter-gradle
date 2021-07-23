@@ -214,7 +214,7 @@ import org.jmailen.gradle.kotlinter.tasks.LintTask
 
 tasks {
     "lintKotlinMain"(LintTask::class) {
-        exclude("**/*Generated.kt")
+        exclude("com/example/**/generated/*.kt")
     }
 }
 ```
@@ -226,11 +226,13 @@ tasks {
 
 ```groovy
 lintKotlinMain {
-    exclude '**/*Generated.kt'
+    exclude 'com/example/**/generated/*.kt'
 }
 ```
 
 </details>
+
+Note that exclude paths are relative to the package root.
 
 ### Custom Tasks
 

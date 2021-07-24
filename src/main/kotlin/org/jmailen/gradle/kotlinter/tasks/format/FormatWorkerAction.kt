@@ -61,10 +61,7 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
         }
 
         output?.writeText(
-            when (fixes.isEmpty()) {
-                true -> "ok"
-                false -> fixes.joinToString("\n")
-            }
+            if (fixes.isEmpty()) "ok" else fixes.joinToString("\n")
         )
     }
 

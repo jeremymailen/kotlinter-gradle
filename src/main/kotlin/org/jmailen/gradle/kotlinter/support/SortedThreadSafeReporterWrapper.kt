@@ -59,9 +59,9 @@ class SortedThreadSafeReporterWrapper(
         val lintError: LintError,
         val corrected: Boolean
     ) : Comparable<LintErrorReport> {
-        override fun compareTo(other: LintErrorReport) = when (lintError.line == other.lintError.line) {
-            true -> lintError.col.compareTo(other.lintError.col)
-            false -> lintError.line.compareTo(other.lintError.line)
-        }
+        override fun compareTo(other: LintErrorReport) = if (lintError.line == other.lintError.line)
+            lintError.col.compareTo(other.lintError.col)
+        else
+            lintError.line.compareTo(other.lintError.line)
     }
 }

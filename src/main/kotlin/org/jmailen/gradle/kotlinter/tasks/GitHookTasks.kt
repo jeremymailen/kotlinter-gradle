@@ -41,7 +41,7 @@ abstract class InstallHookTask(@get:Internal val hookFileName: String) : Default
 
     init {
         outputs.upToDateWhen {
-            getHookFile()?.readText()?.contains(hookVersion) ?: false
+            getHookFile()?.readText()?.contains(hookVersion) == true
         }
     }
 

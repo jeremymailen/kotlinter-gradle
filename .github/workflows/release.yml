@@ -1,0 +1,30 @@
+name: Release Plugin
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  publish-plugin:
+    name: Publish plugin
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: 16
+
+      - name: Gradle wrapper validation
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: ./gradlew publishPlugins
+        uses: eskatos/gradle-command-action@v1
+        env:
+          GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
+          GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
+        with:
+          arguments: publishPlugins

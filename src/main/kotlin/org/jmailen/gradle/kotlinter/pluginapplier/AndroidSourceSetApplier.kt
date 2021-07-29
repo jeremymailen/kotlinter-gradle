@@ -15,17 +15,17 @@ internal object AndroidSourceSetApplier : SourceSetApplier {
 
     override fun applyToAll(project: Project, action: SourceSetAction) {
         val android = project.extensions.findByName("android")
-        (android as? BaseExtension)?.let {
-            it.sourceSets.all { sourceSet ->
-                val id = sourceSet.name.id
-                action(id, project.provider { getKotlinFiles(project, sourceSet) })
-            }
+        (android as? BaseExtension)?.sourceSets?.all { sourceSet ->
+            val id = sourceSet.name.id
+            action(id, project.provider { getKotlinFiles(project, sourceSet) })
         }
     }
 
-    private fun getKotlinFiles(project: Project, sourceSet: AndroidSourceSet) = sourceSet.java.srcDirs.map { dir ->
-        project.fileTree(dir) { it.include("**/*.kt") }
-    }.reduce { merged: FileTree, tree: ConfigurableFileTree ->
-        merged + tree
+    private fun getKotlinFiles(project: Project, sourceSet: AndroidSourceSet): FileTree {
+        return sourceSet.java.srcDirs.map { dir ->
+            project.fileTree(dir) { it.include("**/*.kt") }
+        }.reduce { merged: FileTree, tree: ConfigurableFileTree ->
+            merged + tree
+        }
     }
 }

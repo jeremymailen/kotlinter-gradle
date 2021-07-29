@@ -42,10 +42,8 @@ class SortedThreadSafeReporterWrapper(
                 if (callsToBefore.contains(fileName)) {
                     wrapped.before(fileName)
                 }
-                lintErrorReports[fileName]?.let { lintErrorReports ->
-                    lintErrorReports.forEach {
-                        wrapped.onLintError(fileName, it.lintError, it.corrected)
-                    }
+                lintErrorReports[fileName]?.forEach {
+                    wrapped.onLintError(fileName, it.lintError, it.corrected)
                 }
                 if (callsToAfter.contains(fileName)) {
                     wrapped.after(fileName)

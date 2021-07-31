@@ -27,7 +27,7 @@ object Versions {
     const val androidTools = "4.1.3"
     const val jetbrainsAnnotations = "20.1.0"
     const val junit = "4.13.2"
-    const val ktlint = "0.41.0"
+    const val ktlint = "0.42.0"
     const val mockitoKotlin = "3.1.0"
 }
 

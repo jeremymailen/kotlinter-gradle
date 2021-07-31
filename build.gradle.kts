@@ -36,7 +36,7 @@ dependencies {
     listOf(
         "kotlin-compiler-embeddable",
         "kotlin-stdlib",
-        "kotlin-stdlib-jdk8",
+        "kotlin-stdlib-jdk8"
     ).forEach { module ->
         api("org.jetbrains.kotlin:$module") {
             version {

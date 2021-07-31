@@ -32,6 +32,20 @@ object Versions {
 }
 
 dependencies {
+
+    listOf(
+        "kotlin-compiler-embeddable",
+        "kotlin-stdlib",
+        "kotlin-stdlib-jdk8",
+    ).forEach { module ->
+        api("org.jetbrains.kotlin:$module") {
+            version {
+                strictly("[1.4.0, 1.5.0[")
+                prefer("1.4.32")
+            }
+        }
+    }
+
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin")
     compileOnly("com.android.tools.build:gradle:${Versions.androidTools}")
 

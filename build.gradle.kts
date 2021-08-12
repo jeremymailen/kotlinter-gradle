@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.32"
-    id("com.gradle.plugin-publish") version "0.14.0"
+    kotlin("jvm") version "1.5.20"
+    id("com.gradle.plugin-publish") version "0.15.0"
     `java-gradle-plugin`
     `maven-publish`
-    id("org.jmailen.kotlinter") version "3.4.4"
+    id("org.jmailen.kotlinter") version "3.4.5"
     idea
 }
 
@@ -19,15 +19,15 @@ val githubUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "3.4.5"
+version = "3.5.0"
 group = "org.jmailen.gradle"
 description = projectDescription
 
 object Versions {
-    const val androidTools = "4.1.3"
+    const val androidTools = "4.2.2"
     const val jetbrainsAnnotations = "20.1.0"
     const val junit = "4.13.2"
-    const val ktlint = "0.41.0"
+    const val ktlint = "0.42.1"
     const val mockitoKotlin = "3.1.0"
 }
 
@@ -84,7 +84,7 @@ tasks {
     }
 
     wrapper {
-        gradleVersion = "7.0.2"
+        gradleVersion = "7.1.1"
     }
 }
 

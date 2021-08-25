@@ -99,8 +99,8 @@ abstract class InstallHookTask(@get:Internal val hookFileName: String) : Default
 
         val gradlew = File(project.rootDir, gradlewFilename)
         if (gradlew.exists() && gradlew.isFile && gradlew.canExecute()) {
-            logger.info("Using gradlew wrapper at ${gradlew.path}")
-            gradlew.path
+            logger.info("Using gradlew wrapper at ${gradlew.invariantSeparatorsPath}")
+            gradlew.invariantSeparatorsPath
         } else {
             "gradle"
         }

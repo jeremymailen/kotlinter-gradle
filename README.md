@@ -19,7 +19,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "3.5.1"
+    id("org.jmailen.kotlinter") version "3.6.0"
 }
 ```
 
@@ -30,7 +30,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "3.5.1"
+    id "org.jmailen.kotlinter" version "3.6.0"
 }
 ```
 
@@ -50,7 +50,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jmailen.gradle:kotlinter-gradle:3.5.1")
+        classpath("org.jmailen.gradle:kotlinter-gradle:3.6.0")
     }
 }
 ```
@@ -75,7 +75,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.jmailen.gradle:kotlinter-gradle:3.5.1"
+        classpath "org.jmailen.gradle:kotlinter-gradle:3.6.0"
     }
 }
 ```
@@ -184,7 +184,7 @@ kotlinter {
 
 </details>
 
-Options for `reporters`: `checkstyle`, `html`, `json`, `plain`
+Options for `reporters`: `checkstyle`, `html`, `json`, `plain`, `sarif`
 
 Reporters behave as described at: https://github.com/pinterest/ktlint
 
@@ -330,7 +330,8 @@ buildscript {
                 "com.pinterest.ktlint:ktlint-reporter-checkstyle:0.39.0",
                 "com.pinterest.ktlint:ktlint-reporter-json:0.39.0",
                 "com.pinterest.ktlint:ktlint-reporter-html:0.39.0",
-                "com.pinterest.ktlint:ktlint-reporter-plain:0.39.0",
+                "com.pinterest.ktlint:ktlint-reporter-plain:0.39.0", 
+                "com.pinterest.ktlint:ktlint-reporter-sarif:0.39.0",
                 "com.pinterest.ktlint:ktlint-ruleset-experimental:0.39.0",
                 "com.pinterest.ktlint:ktlint-ruleset-standard:0.39.0"
             )

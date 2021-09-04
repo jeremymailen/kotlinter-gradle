@@ -55,6 +55,8 @@ class SortedThreadSafeReporterWrapper(
         wrapped.afterAll()
     }
 
+    fun unwrap() = wrapped
+
     private data class LintErrorReport(
         val lintError: LintError,
         val corrected: Boolean

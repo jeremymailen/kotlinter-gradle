@@ -13,6 +13,7 @@ import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.LintFailure
 import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
 import org.jmailen.gradle.kotlinter.support.reporterFor
+import org.jmailen.gradle.kotlinter.support.reporterPathFor
 import org.jmailen.gradle.kotlinter.support.resolveRuleSets
 import org.jmailen.gradle.kotlinter.support.userData
 import org.jmailen.gradle.kotlinter.tasks.LintTask
@@ -48,7 +49,11 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
                 }
                 lintFunc?.invoke(file, ruleSets) { error ->
                     hasError = true
-                    reporters.onEach { it.onLintError(relativePath, error, false) }
+                    reporters.onEach { reporter ->
+                        // some reporters want relative paths, some want absolute
+                        val filePath = reporterPathFor(reporter, file, projectDirectory)
+                        reporter.onLintError(filePath, error, false)
+                    }
                     logger.quiet("${file.path}:${error.line}:${error.col}: Lint error > [${error.ruleId}] ${error.detail}")
                 }
                 reporters.onEach { it.after(relativePath) }

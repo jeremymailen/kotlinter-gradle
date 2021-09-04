@@ -308,6 +308,7 @@ buildscript {
                 "com.pinterest.ktlint:ktlint-reporter-json:0.39.0",
                 "com.pinterest.ktlint:ktlint-reporter-html:0.39.0",
                 "com.pinterest.ktlint:ktlint-reporter-plain:0.39.0",
+                "com.pinterest.ktlint:ktlint-reporter-sarif:0.39.0",
                 "com.pinterest.ktlint:ktlint-ruleset-experimental:0.39.0",
                 "com.pinterest.ktlint:ktlint-ruleset-standard:0.39.0"
             )

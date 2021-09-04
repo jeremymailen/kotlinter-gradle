@@ -5,7 +5,7 @@ plugins {
     id("com.gradle.plugin-publish") version "0.15.0"
     `java-gradle-plugin`
     `maven-publish`
-    id("org.jmailen.kotlinter") version "3.4.5"
+    id("org.jmailen.kotlinter") version "3.5.1"
     idea
 }
 
@@ -19,7 +19,7 @@ val githubUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "3.5.1"
+version = "3.6.0"
 group = "org.jmailen.gradle"
 description = projectDescription
 
@@ -41,6 +41,7 @@ dependencies {
         "ktlint-reporter-json",
         "ktlint-reporter-html",
         "ktlint-reporter-plain",
+        "ktlint-reporter-sarif",
         "ktlint-ruleset-experimental",
         "ktlint-ruleset-standard"
     ).forEach { module ->
@@ -84,7 +85,7 @@ tasks {
     }
 
     wrapper {
-        gradleVersion = "7.1.1"
+        gradleVersion = "7.2"
     }
 }
 

@@ -5,6 +5,7 @@ import com.pinterest.ktlint.reporter.checkstyle.CheckStyleReporter
 import com.pinterest.ktlint.reporter.html.HtmlReporter
 import com.pinterest.ktlint.reporter.json.JsonReporter
 import com.pinterest.ktlint.reporter.plain.PlainReporter
+import com.pinterest.ktlint.reporter.sarif.SarifReporter
 import java.io.File
 import java.io.PrintStream
 
@@ -12,7 +13,8 @@ enum class ReporterType(val fileExtension: String) {
     checkstyle("xml"),
     html("html"),
     json("json"),
-    plain("txt")
+    plain("txt"),
+    sarif("sarif.json")
 }
 
 fun reporterFor(reporterName: String, output: File): Reporter {
@@ -23,8 +25,17 @@ fun reporterFor(reporterName: String, output: File): Reporter {
             ReporterType.html -> HtmlReporter(out)
             ReporterType.json -> JsonReporter(out)
             ReporterType.plain -> PlainReporter(out)
+            ReporterType.sarif -> SarifReporter(out)
         }
     )
+}
+
+fun reporterPathFor(reporter: Reporter, output: File, projectDir: File): String {
+    val unwrappedReporter = (reporter as? SortedThreadSafeReporterWrapper)?.unwrap() ?: reporter
+    return when (unwrappedReporter) {
+        is SarifReporter -> output.absolutePath
+        else -> output.toRelativeString(projectDir)
+    }
 }
 
 fun reporterFileExtension(reporterName: String) = ReporterType.valueOf(reporterName).fileExtension

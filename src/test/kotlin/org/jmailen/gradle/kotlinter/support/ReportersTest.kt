@@ -25,24 +25,26 @@ class ReportersTest {
         val projectDir = File("/tmp")
         val output = File("/tmp/src/My.kt")
         val reportFile = File.createTempFile("report", "out")
+        val relativePath = output.toRelativeString(projectDir)
+        val absolutePath = output.absolutePath
 
         assertEquals(
-            "/tmp/src/My.kt",
+            absolutePath,
             reporterPathFor(reporterFor("sarif", reportFile), output, projectDir)
         )
 
         assertEquals(
-            "src/My.kt",
+            relativePath,
             reporterPathFor(reporterFor("checkstyle", reportFile), output, projectDir)
         )
 
         assertEquals(
-            "src/My.kt",
+            relativePath,
             reporterPathFor(reporterFor("json", reportFile), output, projectDir)
         )
 
         assertEquals(
-            "src/My.kt",
+            relativePath,
             reporterPathFor(reporterFor("html", reportFile), output, projectDir)
         )
     }

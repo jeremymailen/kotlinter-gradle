@@ -23,21 +23,16 @@ jobs:
           distribution: 'adopt'
           java-version: 16
 
-      - name: Cache .gradle
-        uses: burrunan/gradle-cache-action@v1
-        with:
-          gradle-distribution-sha-256-sum-warning: false
-
       - name: Gradle wrapper validation
         uses: gradle/wrapper-validation-action@v1
 
       - name: ./gradlew assemble
-        uses: gradle/gradle-build-action@v1
+        uses: gradle/gradle-build-action@v2
         with:
           arguments: assemble
 
       - name: ./gradlew check
-        uses: gradle/gradle-build-action@v1
+        uses: gradle/gradle-build-action@v2
         with:
           arguments: check
 
@@ -68,7 +63,7 @@ jobs:
           distribution: 'adopt'
           java-version: ${{ matrix.java }}
 
-      - uses: gradle/gradle-build-action@v1
+      - uses: gradle/gradle-build-action@v2
         with:
           build-root-directory: test-project
           gradle-version: ${{ matrix.gradle }}

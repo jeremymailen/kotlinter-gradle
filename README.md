@@ -19,7 +19,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "3.6.0"
+    id("org.jmailen.kotlinter") version "3.7.0"
 }
 ```
 
@@ -30,7 +30,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "3.6.0"
+    id "org.jmailen.kotlinter" version "3.7.0"
 }
 ```
 
@@ -50,7 +50,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jmailen.gradle:kotlinter-gradle:3.6.0")
+        classpath("org.jmailen.gradle:kotlinter-gradle:3.7.0")
     }
 }
 ```
@@ -75,7 +75,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.jmailen.gradle:kotlinter-gradle:3.6.0"
+        classpath "org.jmailen.gradle:kotlinter-gradle:3.7.0"
     }
 }
 ```
@@ -90,8 +90,9 @@ apply plugin: "org.jmailen.kotlinter"
 
 ### Compatibility
 
-| kotlinter versions | min kotlin version | max kotlin version | min gradle version |
+| kotlinter version  | min kotlin version | max kotlin version | min gradle version |
 |--------------------|--------------------|--------------------|--------------------|
+| 3.7.0+             | 1.5.31             | -                  | 6.8                |
 | 3.5.0+             | 1.5.0              | -                  | 6.8                |
 | 3.0.0+             | 1.4.0              | 1.4.30             | 6.8                |
 | 2.0.0+             | 1.3.0              | 1.3.30             | -                  |

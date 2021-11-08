@@ -49,7 +49,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, windows-latest ]
-        gradle: [ 7.0, current, rc ]
+        gradle: [ 7.0.1, current, rc ]
         java: [ 8, 11, 16 ]
     name: '[${{ matrix.os }}] Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}'
     steps:

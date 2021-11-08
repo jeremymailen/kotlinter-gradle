@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: 16
+          java-version: 17
 
       - name: Gradle wrapper validation
         uses: gradle/wrapper-validation-action@v1
@@ -49,8 +49,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, windows-latest ]
-        gradle: [ 6.8.3, current, rc ]
-        java: [ 8, 11, 15 ]
+        gradle: [ 7.0.1, current, rc ]
+        java: [ 8, 11, 16 ]
     name: '[${{ matrix.os }}] Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}'
     steps:
       - uses: actions/checkout@v2

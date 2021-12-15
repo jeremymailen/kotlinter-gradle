@@ -25,7 +25,6 @@ description = projectDescription
 
 object Versions {
     const val androidTools = "4.2.2"
-    const val jetbrainsAnnotations = "22.0.0"
     const val junit = "4.13.2"
     const val ktlint = "0.43.0"
     const val mockitoKotlin = "4.0.0"
@@ -50,7 +49,6 @@ dependencies {
 
     testImplementation("junit:junit:${Versions.junit}")
     testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.mockitoKotlin}")
-    testImplementation("org.jetbrains:annotations:${Versions.jetbrainsAnnotations}")
 }
 
 java {

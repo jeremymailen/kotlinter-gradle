@@ -1,7 +1,6 @@
 package org.jmailen.gradle.kotlinter.functional
 
 import org.gradle.testkit.runner.TaskOutcome
-import org.intellij.lang.annotations.Language
 import org.jmailen.gradle.kotlinter.functional.utils.androidManifest
 import org.jmailen.gradle.kotlinter.functional.utils.kotlinClass
 import org.jmailen.gradle.kotlinter.functional.utils.resolve
@@ -20,7 +19,7 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
         testProjectDir.root.apply {
             resolve("settings.gradle") { writeText(settingsFile) }
             resolve("build.gradle") {
-                @Language("groovy")
+                // language=groovy
                 val buildScript =
                     """
                 subprojects {
@@ -35,7 +34,7 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
             }
             androidModuleRoot = resolve("androidproject") {
                 resolve("build.gradle") {
-                    @Language("groovy")
+                    // language=groovy
                     val androidBuildScript =
                         """
                         plugins {
@@ -88,7 +87,7 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
             }
             kotlinModuleRoot = resolve("kotlinproject") {
                 resolve("build.gradle") {
-                    @Language("groovy")
+                    // language=groovy
                     val kotlinBuildScript =
                         """
                         plugins {
@@ -148,7 +147,7 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
         }
     }
 
-    @Language("groovy")
+    // language=groovy
     private val settingsFile =
         """
         rootProject.name = 'kotlinter'

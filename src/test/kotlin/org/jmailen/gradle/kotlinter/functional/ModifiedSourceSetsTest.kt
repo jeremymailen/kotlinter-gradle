@@ -44,7 +44,7 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
                         }
                         
                         android {
-                            compileSdkVersion 29
+                            compileSdkVersion 31
                             defaultConfig {
                                 minSdkVersion 23
                             }

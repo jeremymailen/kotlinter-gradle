@@ -183,7 +183,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
         val buildscript =
             """
             plugins {
-                id 'org.jetbrains.kotlin.jvm' version '1.4.32'
+                id 'org.jetbrains.kotlin.jvm'
                 id 'org.jmailen.kotlinter'
             }
 

@@ -11,7 +11,7 @@ import org.jmailen.gradle.kotlinter.id
 internal object KotlinJvmSourceSetApplier : SourceSetApplier {
 
     override fun applyToAll(project: Project, action: SourceSetAction) {
-        getSourceSets(project).all { sourceSet ->
+        getSourceSets(project).configureEach { sourceSet ->
             sourceSet.kotlin.let { directorySet ->
                 action(directorySet.name.id, project.provider { directorySet })
             }

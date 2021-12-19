@@ -23,7 +23,9 @@ internal object AndroidSourceSetApplier : SourceSetApplier {
 
     private fun getKotlinFiles(project: Project, sourceSet: AndroidSourceSet): FileTree? {
         val javaSources = sourceSet.java.srcDirs
-        val kotlinSources = (sourceSet.kotlin as? com.android.build.gradle.api.AndroidSourceDirectorySet)?.srcDirs.orEmpty()
+        val kotlinSources = runCatching { (sourceSet.kotlin as? com.android.build.gradle.api.AndroidSourceDirectorySet)?.srcDirs }
+            .getOrNull()
+            .orEmpty()
 
         return (javaSources + kotlinSources)
             .map { dir -> project.fileTree(dir) { it.include("**/*.kt") } }

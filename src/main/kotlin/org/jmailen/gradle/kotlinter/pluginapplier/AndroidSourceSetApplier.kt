@@ -23,6 +23,7 @@ internal object AndroidSourceSetApplier : SourceSetApplier {
 
     private fun getKotlinFiles(project: Project, sourceSet: AndroidSourceSet): FileTree? {
         val javaSources = sourceSet.java.srcDirs
+        // detect Kotlin source paths supported by AGP 7 and later
         val kotlinSources = runCatching { (sourceSet.kotlin as? com.android.build.gradle.api.AndroidSourceDirectorySet)?.srcDirs }
             .getOrNull()
             .orEmpty()

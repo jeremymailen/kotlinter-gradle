@@ -5,8 +5,10 @@ pluginManagement {
         google()
     }
     val agpVersion: String by settings
-    plugins {
-        id("com.android.library") version agpVersion
+    resolutionStrategy.eachPlugin {
+        if (requested.id.id == "com.android.library") {
+            useModule("com.android.tools.build:gradle:$agpVersion")
+        }
     }
 }
 dependencyResolutionManagement {

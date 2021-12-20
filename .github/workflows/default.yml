@@ -107,6 +107,6 @@ jobs:
 
       - uses: gradle/gradle-build-action@v2
         with:
-          build-root-directory: test-project
+          build-root-directory: test-project-android
           gradle-version: ${{ matrix.gradle }}
           arguments: formatKotlin lintKotlin -PagpVersion=${{ matrix.agp }}

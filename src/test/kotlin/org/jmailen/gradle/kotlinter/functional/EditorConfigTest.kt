@@ -1,7 +1,6 @@
 package org.jmailen.gradle.kotlinter.functional
 
 import org.gradle.testkit.runner.TaskOutcome
-import org.intellij.lang.annotations.Language
 import org.jmailen.gradle.kotlinter.functional.utils.kotlinClass
 import org.jmailen.gradle.kotlinter.functional.utils.resolve
 import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
@@ -20,7 +19,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
         projectRoot = testProjectDir.root.apply {
             resolve("settings.gradle") { writeText(settingsFile) }
             resolve("build.gradle") {
-                @Language("groovy")
+                // language=groovy
                 val buildScript =
                     """
                 plugins {
@@ -120,7 +119,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
             )
         }
         projectRoot.resolve("src/main/kotlin/FileName.kt") {
-            @Language("kotlin")
+            // language=kotlin
             val content =
                 """
                 class WrongFileName {

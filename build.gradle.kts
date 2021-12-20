@@ -1,11 +1,12 @@
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.5.31"
-    id("com.gradle.plugin-publish") version "0.15.0"
+    kotlin("jvm") version "1.6.10"
+    id("com.gradle.plugin-publish") version "0.18.0"
     `java-gradle-plugin`
     `maven-publish`
-    id("org.jmailen.kotlinter") version "3.6.0"
+    id("org.jmailen.kotlinter") version "3.7.0"
     idea
 }
 
@@ -24,11 +25,23 @@ group = "org.jmailen.gradle"
 description = projectDescription
 
 object Versions {
-    const val androidTools = "4.2.2"
-    const val jetbrainsAnnotations = "22.0.0"
+    const val androidTools = "7.0.4"
     const val junit = "4.13.2"
-    const val ktlint = "0.43.0"
+    const val ktlint = "0.43.2"
     const val mockitoKotlin = "4.0.0"
+}
+
+configurations {
+    register("testRuntimeDependencies") {
+        extendsFrom(compileOnly.get())
+    }
+    configureEach {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.jetbrains.kotlin" && requested.name.startsWith("kotlin")) {
+                useVersion(getKotlinPluginVersion())
+            }
+        }
+    }
 }
 
 dependencies {
@@ -50,12 +63,11 @@ dependencies {
 
     testImplementation("junit:junit:${Versions.junit}")
     testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.mockitoKotlin}")
-    testImplementation("org.jetbrains:annotations:${Versions.jetbrainsAnnotations}")
 }
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
+        languageVersion.set(JavaLanguageVersion.of(JavaVersion.VERSION_17.majorVersion))
     }
 }
 
@@ -71,21 +83,25 @@ tasks {
         dependsOn(generateVersionProperties)
     }
 
+    val targetJavaVersion = JavaVersion.VERSION_1_8
+    withType<JavaCompile>().configureEach {
+        options.release.set(targetJavaVersion.majorVersion.toInt())
+    }
     withType<KotlinCompile>().configureEach {
         kotlinOptions {
             apiVersion = "1.4"
             languageVersion = "1.4"
-            jvmTarget = JavaVersion.VERSION_1_8.toString()
+            jvmTarget = targetJavaVersion.toString()
         }
     }
 
     // Required to put the Kotlin plugin on the classpath for the functional test suite
     withType<PluginUnderTestMetadata>().configureEach {
-        pluginClasspath.from(configurations.compileOnly)
+        pluginClasspath.from(configurations.getByName("testRuntimeDependencies"))
     }
 
     wrapper {
-        gradleVersion = "7.2"
+        gradleVersion = "7.3.2"
     }
 }
 

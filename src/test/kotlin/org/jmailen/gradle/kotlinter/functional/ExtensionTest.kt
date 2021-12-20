@@ -1,7 +1,6 @@
 package org.jmailen.gradle.kotlinter.functional
 
 import org.gradle.testkit.runner.TaskOutcome
-import org.intellij.lang.annotations.Language
 import org.jmailen.gradle.kotlinter.functional.utils.kotlinClass
 import org.jmailen.gradle.kotlinter.functional.utils.resolve
 import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
@@ -20,7 +19,7 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
         projectRoot = testProjectDir.root.apply {
             resolve("settings.gradle") { writeText(settingsFile) }
             resolve("build.gradle") {
-                @Language("groovy")
+                // language=groovy
                 val buildScript =
                     """
                 plugins {
@@ -37,7 +36,7 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
     @Test
     fun `extension configures ignoreFailures`() {
         projectRoot.resolve("build.gradle") {
-            @Language("groovy")
+            // language=groovy
             val script =
                 """
                 kotlinter {
@@ -58,7 +57,7 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
     @Test
     fun `extension configures indentSize`() {
         projectRoot.resolve("build.gradle") {
-            @Language("groovy")
+            // language=groovy
             val script =
                 """
                 kotlinter {
@@ -86,7 +85,7 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
     @Test
     fun `extension configures reporters`() {
         projectRoot.resolve("build.gradle") {
-            @Language("groovy")
+            // language=groovy
             val script =
                 """
                 kotlinter {
@@ -109,7 +108,7 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
     @Test
     fun `extension configures disabledRules`() {
         projectRoot.resolve("build.gradle") {
-            @Language("groovy")
+            // language=groovy
             val script =
                 """
                 kotlinter {
@@ -130,7 +129,7 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
     @Test
     fun `extension properties are evaluated only during task execution`() {
         projectRoot.resolve("build.gradle") {
-            @Language("groovy")
+            // language=groovy
             val buildScript =
                 """
                 plugins {
@@ -161,7 +160,7 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
     @Test
     fun `user customized values take precedence over extension values`() {
         projectRoot.resolve("src/main/kotlin/FileName.kt") {
-            @Language("kotlin")
+            // language=kotlin
             val kotlinClass =
                 """
                 class Precedence {
@@ -171,7 +170,7 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
             writeText(kotlinClass)
         }
         projectRoot.resolve("build.gradle") {
-            @Language("groovy")
+            // language=groovy
             val script =
                 """
                 kotlinter {

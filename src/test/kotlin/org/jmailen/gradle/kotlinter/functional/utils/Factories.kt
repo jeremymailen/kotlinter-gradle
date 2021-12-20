@@ -1,22 +1,20 @@
 package org.jmailen.gradle.kotlinter.functional.utils
 
-import org.intellij.lang.annotations.Language
-
-@Language("kotlin")
+// language=kotlin
 internal fun kotlinClass(className: String) =
     """
     object $className
     
     """.trimIndent()
 
-@Language("groovy")
+// language=groovy
 internal val settingsFile =
     """
     rootProject.name = 'kotlinter'
     
     """.trimIndent()
 
-@Language("xml")
+// language=xml
 internal val androidManifest =
     """
      <manifest package="com.example" />

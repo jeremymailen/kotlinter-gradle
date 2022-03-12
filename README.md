@@ -1,6 +1,7 @@
 # Kotlinter Gradle
 
-[![Build Status](https://api.travis-ci.org/jeremymailen/kotlinter-gradle.svg?branch=master)](https://travis-ci.org/jeremymailen/kotlinter-gradle)
+[![Build Status](https://github.com/jeremymailen/kotlinter-gradle/workflows/Build%20Project/badge.svg)](https://github.com/jeremymailen/kotlinter-gradle/actions)
+[![Latest Version](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/org/jmailen/gradle/kotlinter-gradle/maven-metadata.xml?label=gradle)](https://plugins.gradle.org/plugin/org.jmailen.kotlinter)
 
 Painless Gradle plugin for linting and formatting Kotlin source files using the awesome [ktlint](https://ktlint.github.io) engine.
 
@@ -43,22 +44,17 @@ plugins {
 Root `build.gradle.kts`
 
 ```kotlin
-buildscript {
-    repositories {
-        maven {
-            url = uri("https://plugins.gradle.org/m2/")
-        }
-    }
-    dependencies {
-        classpath("org.jmailen.gradle:kotlinter-gradle:3.9.0")
-    }
+plugins {
+    id("org.jmailen.kotlinter") version "3.9.0" apply false
 }
 ```
 
 Each module `build.gradle.kts` with Kotlin source
 
 ```kotlin
-apply(plugin = "org.jmailen.kotlinter")
+plugins {
+    id("org.jmailen.kotlinter")
+}
 ```
 
 </details>
@@ -68,22 +64,17 @@ apply(plugin = "org.jmailen.kotlinter")
 Root `build.gradle`
 
 ```groovy
-buildscript {
-    repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath "org.jmailen.gradle:kotlinter-gradle:3.9.0"
-    }
+plugins {
+    id 'org.jmailen.kotlinter' version "3.9.0" apply false
 }
 ```
 
 Each module `build.gradle` with Kotlin source
 
 ```groovy
-apply plugin: "org.jmailen.kotlinter"
+plugins {
+    id 'org.jmailen.kotlinter'
+}
 ```
 
 </details>
@@ -144,8 +135,8 @@ tasks.check {
 <summary>Groovy</summary>
 
 ```groovy
-check {
-    dependsOn "installKotlinterPrePushHook"
+tasks.named('check') {
+    dependsOn 'installKotlinterPrePushHook'
 }
 ```
 
@@ -164,7 +155,7 @@ kotlinter {
     indentSize = 4
     reporters = arrayOf("checkstyle", "plain")
     experimentalRules = false
-    disabledRules = emptyArray<String>()
+    disabledRules = emptyArray()
 }
 ```
 
@@ -214,12 +205,8 @@ so you can customize includes, excludes, and source.
 <summary>Kotlin</summary>
 
 ```kotlin
-import org.jmailen.gradle.kotlinter.tasks.LintTask
-
-tasks {
-    "lintKotlinMain"(LintTask::class) {
-        exclude("com/example/**/generated/*.kt")
-    }
+tasks.lintKotlinMain {
+  exclude("com/example/**/generated/*.kt")
 }
 ```
 
@@ -229,7 +216,7 @@ tasks {
 <summary>Groovy</summary>
 
 ```groovy
-lintKotlinMain {
+tasks.named('lintKotlinMain') {
     exclude 'com/example/**/generated/*.kt'
 }
 ```
@@ -249,19 +236,21 @@ If you aren't using autoconfiguration from a supported plugin or otherwise need 
 import org.jmailen.gradle.kotlinter.tasks.LintTask
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 
-tasks.create<LintTask>("ktLint") {
+tasks.register<LintTask>("ktLint") {
     group = "verification"
     source(files("src"))
-    reports = mapOf(
-        "plain" to file("build/lint-report.txt"),
-        "json" to file("build/lint-report.json")
+    reports.set(
+        mapOf(
+            "plain" to file("build/lint-report.txt"),
+            "json" to file("build/lint-report.json")
+        )
     )
 }
 
-tasks.create<FormatTask>("ktFormat") {
+tasks.register<FormatTask>("ktFormat") {
     group = "formatting"
     source(files("src"))
-    report = file("build/format-report.txt")
+    report.set(file("build/format-report.txt"))
 }
 ```
 
@@ -274,19 +263,22 @@ tasks.create<FormatTask>("ktFormat") {
 import org.jmailen.gradle.kotlinter.tasks.LintTask
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 
-task ktLint(type: LintTask, group: 'verification') {
+tasks.register('ktLint', LintTask) {
+    group 'verification'
     source files('src')
     reports = [
             'plain': file('build/lint-report.txt'),
-            'json': file('build/lint-report.json')
+            'json' : file('build/lint-report.json')
     ]
-    disabledRules = ["import-ordering"]
+    disabledRules = ['import-ordering']
 }
 
-task ktFormat(type: FormatTask, group: 'formatting') {
-    source files('src')
-    report = file('build/format-report.txt')
-    disabledRules = ["import-ordering"]
+
+tasks.register('ktFormat', FormatTask) {
+  group 'formatting'
+  source files('src/test')
+  report = file('build/format-report.txt')
+  disabledRules = ['import-ordering']
 }
 ```
 

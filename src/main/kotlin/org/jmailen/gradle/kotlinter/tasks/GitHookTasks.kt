@@ -136,6 +136,6 @@ abstract class InstallHookTask(@get:Internal val hookFileName: String) : Default
                 |GRADLEW=$gradlew
                 |$hookContent
                 |${if (includeEndHook) endHook else ""}
-                """.trimMargin()
+            """.trimMargin()
     }
 }

@@ -25,4 +25,4 @@ internal val editorConfig =
     """
     [*.kt]
     
-"""
+    """

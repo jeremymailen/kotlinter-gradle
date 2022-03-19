@@ -69,7 +69,7 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                     disabledRules = ["final-newline"]
                 }
                 
-            """
+                """
             appendText(buildScript)
         }
 
@@ -180,7 +180,7 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                     reports = [:]
                 }
                 
-            """
+                """
             appendText(buildScript)
         }
 
@@ -213,7 +213,7 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                     reports = [:]
                 }
                 
-            """
+                """
             appendText(buildScript)
         }
 
@@ -244,7 +244,7 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                     reports = reports = ['plain': file('build/lint-report.txt')]
                 }
                 
-            """
+                """
             appendText(buildScript)
         }
 

@@ -101,7 +101,7 @@ tasks {
     }
 
     wrapper {
-        gradleVersion = "7.3.2"
+        gradleVersion = "7.4.1"
     }
 }
 

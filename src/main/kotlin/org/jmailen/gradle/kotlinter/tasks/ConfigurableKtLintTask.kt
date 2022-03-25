@@ -6,7 +6,6 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.SourceTask
 import org.gradle.internal.exceptions.MultiCauseException
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_DISABLED_RULES
@@ -16,10 +15,6 @@ import org.jmailen.gradle.kotlinter.support.KtLintParams
 abstract class ConfigurableKtLintTask : SourceTask() {
 
     @Input
-    @Optional
-    val indentSize: Property<Int> = property()
-
-    @Input
     val experimentalRules: Property<Boolean> = property(default = DEFAULT_EXPERIMENTAL_RULES)
 
     @Input
@@ -27,7 +22,6 @@ abstract class ConfigurableKtLintTask : SourceTask() {
 
     @Internal
     protected fun getKtLintParams(): KtLintParams = KtLintParams(
-        indentSize = indentSize.orNull,
         experimentalRules = experimentalRules.get(),
         disabledRules = disabledRules.get()
     )

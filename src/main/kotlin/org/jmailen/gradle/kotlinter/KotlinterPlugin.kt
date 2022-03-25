@@ -47,7 +47,6 @@ class KotlinterPlugin : Plugin<Project> {
                                 }
                             }
                         )
-                        lintTask.indentSize.set(provider { kotlinterExtension.indentSize })
                         lintTask.experimentalRules.set(provider { kotlinterExtension.experimentalRules })
                         lintTask.disabledRules.set(provider { kotlinterExtension.disabledRules.toList() })
                     }
@@ -58,7 +57,6 @@ class KotlinterPlugin : Plugin<Project> {
                     val formatKotlinPerSourceSet = tasks.register("formatKotlin${id.capitalize()}", FormatTask::class.java) { formatTask ->
                         formatTask.source(resolvedSources)
                         formatTask.report.set(reportFile("$id-format.txt"))
-                        formatTask.indentSize.set(provider { kotlinterExtension.indentSize })
                         formatTask.experimentalRules.set(provider { kotlinterExtension.experimentalRules })
                         formatTask.disabledRules.set(provider { kotlinterExtension.disabledRules.toList() })
                     }

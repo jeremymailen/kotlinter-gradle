@@ -55,34 +55,6 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `extension configures indentSize`() {
-        projectRoot.resolve("build.gradle") {
-            // language=groovy
-            val script =
-                """
-                kotlinter {
-                    indentSize = 2
-                }
-                """.trimIndent()
-            appendText(script)
-        }
-        projectRoot.resolve("src/main/kotlin/TwoSpaces.kt") {
-            writeText(
-                """ |
-                    |object TwoSpaces {
-                    |  val text: String
-                    |}
-                    |
-                """.trimMargin()
-            )
-        }
-
-        build("lintKotlin").apply {
-            assertEquals(TaskOutcome.SUCCESS, task(":lintKotlinMain")?.outcome)
-        }
-    }
-
-    @Test
     fun `extension configures reporters`() {
         projectRoot.resolve("build.gradle") {
             // language=groovy
@@ -154,49 +126,6 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
 
         build("lintKotlin").apply {
             assertEquals(TaskOutcome.SUCCESS, task(":lintKotlinMain")?.outcome)
-        }
-    }
-
-    @Test
-    fun `user customized values take precedence over extension values`() {
-        projectRoot.resolve("src/main/kotlin/FileName.kt") {
-            // language=kotlin
-            val kotlinClass =
-                """
-                class Precedence {
-                    fun hi() = Unit
-                }
-                """.trimIndent()
-            writeText(kotlinClass)
-        }
-        projectRoot.resolve("build.gradle") {
-            // language=groovy
-            val script =
-                """
-                kotlinter {
-                    disabledRules = ['filename']
-                }
-                
-                lintKotlinMain {
-                    disabledRules = ['final-newline']
-                }
-                
-                """.trimIndent()
-            appendText(script)
-        }
-        // https://github.com/pinterest/ktlint/issues/997
-        projectRoot.resolve(".editorconfig") {
-            val config =
-                """
-                [*.{kt,kts}]
-                indent_size = 4
-                """.trimIndent()
-            appendText(config)
-        }
-
-        buildAndFail("lintKotlin").apply {
-            assertEquals(TaskOutcome.FAILED, task(":lintKotlinMain")?.outcome)
-            assertTrue(output.contains("[filename] class Precedence should be declared in a file named Precedence.kt"))
         }
     }
 }

@@ -6,7 +6,7 @@ plugins {
     id("com.gradle.plugin-publish") version "0.18.0"
     `java-gradle-plugin`
     `maven-publish`
-    id("org.jmailen.kotlinter") version "3.8.0"
+    id("org.jmailen.kotlinter") version "3.9.0"
     idea
 }
 
@@ -73,9 +73,13 @@ java {
 
 tasks {
     val generateVersionProperties = register("generateVersionProperties") {
+        val projectVersion = version
+        val propertiesFile = File(sourceSets.main.get().output.resourcesDir, "version.properties")
+        inputs.property("projectVersion", projectVersion)
+        outputs.file(propertiesFile)
+
         doLast {
-            val resourcesDir = sourceSets.main.get().resources.sourceDirectories.asPath
-            File(mkdir(resourcesDir), "version.properties").writeText("version = $version")
+            propertiesFile.writeText("version = $projectVersion")
         }
     }
 
@@ -101,7 +105,7 @@ tasks {
     }
 
     wrapper {
-        gradleVersion = "7.3.2"
+        gradleVersion = "7.4.1"
     }
 }
 

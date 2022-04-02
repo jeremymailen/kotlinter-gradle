@@ -1,12 +1,16 @@
 package org.jmailen.gradle.kotlinter.tasks
 
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SourceTask
 import org.gradle.internal.exceptions.MultiCauseException
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_DISABLED_RULES
@@ -23,6 +27,12 @@ abstract class ConfigurableKtLintTask(
 
     @Input
     val disabledRules: ListProperty<String> = objectFactory.listProperty(default = DEFAULT_DISABLED_RULES.toList())
+
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    internal val editorconfigFiles: FileCollection = objectFactory.fileCollection().apply {
+        from(projectLayout.findApplicableEditorConfigFiles().toList())
+    }
 
     @Internal
     protected fun getKtLintParams(): KtLintParams = KtLintParams(

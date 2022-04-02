@@ -3,6 +3,7 @@ package org.jmailen.gradle.kotlinter.functional
 import org.gradle.testkit.runner.TaskOutcome.FAILED
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
+import org.jmailen.gradle.kotlinter.functional.utils.editorConfig
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -14,6 +15,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
     private lateinit var settingsFile: File
     private lateinit var buildFile: File
     private lateinit var sourceDir: File
+    private lateinit var editorconfigFile: File
     private val pathPattern = "(.*\\.kt):\\d+:\\d+".toRegex()
 
     @Before
@@ -21,6 +23,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
         settingsFile = testProjectDir.newFile("settings.gradle")
         buildFile = testProjectDir.newFile("build.gradle")
         sourceDir = testProjectDir.newFolder("src", "main", "kotlin")
+        editorconfigFile = testProjectDir.newFile(".editorconfig")
     }
 
     @Test
@@ -120,6 +123,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
     fun `tasks up-to-date checks`() {
         settingsFile()
         buildFile()
+        editorConfig()
         kotlinSourceFile(
             "CustomObject.kt",
             """
@@ -140,6 +144,14 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
         }
         build("formatKotlin").apply {
             assertEquals(SUCCESS, task(":formatKotlin")?.outcome)
+        }
+
+        editorconfigFile.appendText("content=updated")
+        build("lintKotlin").apply {
+            assertEquals(SUCCESS, task(":lintKotlin")?.outcome)
+        }
+        build("lintKotlin").apply {
+            assertEquals(UP_TO_DATE, task(":lintKotlin")?.outcome)
         }
     }
 
@@ -176,6 +188,10 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
 
     private fun settingsFile() = settingsFile.apply {
         writeText("rootProject.name = 'kotlinter'")
+    }
+
+    private fun editorConfig() = editorconfigFile.apply {
+        writeText(editorConfig)
     }
 
     private fun buildFile() = buildFile.apply {

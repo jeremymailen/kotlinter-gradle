@@ -1,6 +1,7 @@
 package org.jmailen.gradle.kotlinter.tasks
 
-import org.gradle.api.DefaultTask
+import org.gradle.api.file.ProjectLayout
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
@@ -12,13 +13,16 @@ import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_DISABLE
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_EXPERIMENTAL_RULES
 import org.jmailen.gradle.kotlinter.support.KtLintParams
 
-abstract class ConfigurableKtLintTask : SourceTask() {
+abstract class ConfigurableKtLintTask(
+    projectLayout: ProjectLayout,
+    objectFactory: ObjectFactory,
+) : SourceTask() {
 
     @Input
-    val experimentalRules: Property<Boolean> = property(default = DEFAULT_EXPERIMENTAL_RULES)
+    val experimentalRules: Property<Boolean> = objectFactory.property(default = DEFAULT_EXPERIMENTAL_RULES)
 
     @Input
-    val disabledRules: ListProperty<String> = listProperty(default = DEFAULT_DISABLED_RULES.toList())
+    val disabledRules: ListProperty<String> = objectFactory.listProperty(default = DEFAULT_DISABLED_RULES.toList())
 
     @Internal
     protected fun getKtLintParams(): KtLintParams = KtLintParams(
@@ -27,18 +31,18 @@ abstract class ConfigurableKtLintTask : SourceTask() {
     )
 }
 
-internal inline fun <reified T> DefaultTask.property(default: T? = null): Property<T> =
-    project.objects.property(T::class.java).apply {
+internal inline fun <reified T> ObjectFactory.property(default: T? = null): Property<T> =
+    property(T::class.java).apply {
         set(default)
     }
 
-internal inline fun <reified T> DefaultTask.listProperty(default: Iterable<T> = emptyList()): ListProperty<T> =
-    project.objects.listProperty(T::class.java).apply {
+internal inline fun <reified T> ObjectFactory.listProperty(default: Iterable<T> = emptyList()): ListProperty<T> =
+    listProperty(T::class.java).apply {
         set(default)
     }
 
-internal inline fun <reified K, reified V> DefaultTask.mapProperty(default: Map<K, V> = emptyMap()): MapProperty<K, V> =
-    project.objects.mapProperty(K::class.java, V::class.java).apply {
+internal inline fun <reified K, reified V> ObjectFactory.mapProperty(default: Map<K, V> = emptyMap()): MapProperty<K, V> =
+    mapProperty(K::class.java, V::class.java).apply {
         set(default)
     }
 

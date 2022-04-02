@@ -34,7 +34,7 @@ open class InstallPrePushHookTask : InstallHookTask("pre-push") {
  */
 abstract class InstallHookTask(@get:Internal val hookFileName: String) : DefaultTask() {
     @Input
-    val gitDirPath: Property<String> = property(default = ".git")
+    val gitDirPath: Property<String> = project.objects.property(default = ".git")
 
     @get:Internal
     abstract val hookContent: String

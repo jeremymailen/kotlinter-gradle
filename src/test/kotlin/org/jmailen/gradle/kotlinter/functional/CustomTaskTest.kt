@@ -48,9 +48,9 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
             val validClass =
                 """
                 class CustomClass {
-                     private fun go() {
-                          println("go")
-                     }
+                    private fun go() {
+                        println("go")
+                    }
                 }
                 """.trimIndent()
             writeText(validClass)
@@ -64,7 +64,6 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                 task ktLint(type: LintTask) {
                     source files('src')
                     reports = ['plain': file('build/lint-report.txt')]
-                    indentSize = 5
                     experimentalRules = true
                     disabledRules = ["final-newline"]
                 }
@@ -113,7 +112,6 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                 task customizedLintTask(type: LintTask) {
                     source files('src')
                     reports = ['plain': file('build/lint-report.txt')]
-                    indentSize = 123
                     experimentalRules = true
                     disabledRules = ["final-newline"]
                     ignoreFailures = true
@@ -141,7 +139,6 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
     
                 task customizedFormatTask(type: FormatTask) {
                     source files('src')
-                    indentSize = 123
                     experimentalRules = true
                     disabledRules = ["final-newline"]
                 }

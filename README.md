@@ -152,7 +152,6 @@ Options are configured in the `kotlinter` extension. Defaults shown (you may omi
 ```kotlin
 kotlinter {
     ignoreFailures = false
-    indentSize = 4
     reporters = arrayOf("checkstyle", "plain")
     experimentalRules = false
     disabledRules = emptyArray()
@@ -167,7 +166,6 @@ kotlinter {
 ```groovy
 kotlinter {
     ignoreFailures = false
-    indentSize = 4
     reporters = ['checkstyle', 'plain']
     experimentalRules = false
     disabledRules = []

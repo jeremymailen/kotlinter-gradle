@@ -52,32 +52,6 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `plugin respects indentSize set in editorconfig`() {
-        projectRoot.resolve(".editorconfig") {
-            appendText(
-                """
-                    [*.{kt,kts}]
-                    indent_size = 2
-                """.trimIndent()
-            )
-        }
-        projectRoot.resolve("src/main/kotlin/TwoSpaces.kt") {
-            writeText(
-                """ |
-                    |object TwoSpaces {
-                    |  val text: String
-                    |}
-                    |
-                """.trimMargin()
-            )
-        }
-
-        build("lintKotlin").apply {
-            assertEquals(TaskOutcome.SUCCESS, task(":lintKotlinMain")?.outcome)
-        }
-    }
-
-    @Test
     fun `plugin respects disabled_rules set in editorconfig`() {
         projectRoot.resolve(".editorconfig") {
             appendText(
@@ -97,24 +71,12 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `plugin extension properties take precedence over editorconfig values`() {
+    fun `plugin respects 'indent_size' set  in editorconfig`() {
         projectRoot.resolve(".editorconfig") {
             appendText(
                 """
                     [*.{kt,kts}]
-                    disabled_rules=filename
-                    indent_size = 2
-                """.trimIndent()
-            )
-        }
-        projectRoot.resolve("build.gradle") {
-            appendText(
-                """
-                    kotlinter {
-                        disabledRules = ['paren-spacing']  
-                        indentSize = 6
-                    }
-                
+                    indent_size = 6
                 """.trimIndent()
             )
         }
@@ -134,7 +96,6 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
 
         buildAndFail("lintKotlin").apply {
             assertEquals(TaskOutcome.FAILED, task(":lintKotlinMain")?.outcome)
-            assertTrue(output.contains("[filename] class WrongFileName should be declared in a file named WrongFileName.kt"))
             assertTrue(output.contains("[indent] Unexpected indentation (2) (should be 6)"))
         }
     }

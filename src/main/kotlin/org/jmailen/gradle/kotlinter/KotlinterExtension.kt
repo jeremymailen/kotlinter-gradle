@@ -12,8 +12,6 @@ open class KotlinterExtension {
 
     var ignoreFailures = DEFAULT_IGNORE_FAILURES
 
-    var indentSize: Int? = null
-
     var reporters = arrayOf(DEFAULT_REPORTER)
 
     var experimentalRules = DEFAULT_EXPERIMENTAL_RULES

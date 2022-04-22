@@ -17,3 +17,5 @@ dependencyResolutionManagement {
         google()
     }
 }
+include("test-custom-rules")
+project(":test-custom-rules").projectDir = file("../test-custom-rules")

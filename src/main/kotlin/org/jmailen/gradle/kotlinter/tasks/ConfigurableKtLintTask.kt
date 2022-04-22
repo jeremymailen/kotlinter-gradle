@@ -40,6 +40,9 @@ abstract class ConfigurableKtLintTask(
     }
 
     @Internal
+    val workerMaxHeapSize = objectFactory.property(default = "256m")
+
+    @Internal
     protected fun getKtLintParams(): KtLintParams = KtLintParams(
         experimentalRules = experimentalRules.get(),
         disabledRules = disabledRules.get(),

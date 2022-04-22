@@ -1,9 +1,11 @@
 package org.jmailen.gradle.kotlinter.tasks
 
 import org.gradle.api.GradleException
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -27,27 +29,41 @@ open class FormatTask @Inject constructor(
     @Optional
     val report: RegularFileProperty = objectFactory.fileProperty()
 
+    @Classpath
+    val ktlintClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
+
+    @Classpath
+    val ruleSetsClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
+
     init {
         outputs.upToDateWhen { false }
     }
 
     @TaskAction
     fun run(inputChanges: InputChanges) {
-        val result = with(workerExecutor.noIsolation()) {
-            submit(FormatWorkerAction::class.java) { p ->
-                p.name.set(name)
-                p.files.from(source)
-                p.projectDirectory.set(projectLayout.projectDirectory.asFile)
-                p.ktLintParams.set(getKtLintParams())
-                p.output.set(report)
-                p.changedEditorConfigFiles.from(getChangedEditorconfigFiles(inputChanges))
+        val workQueue = workerExecutor.processIsolation { spec ->
+            spec.classpath.setFrom(ktlintClasspath, ruleSetsClasspath)
+            spec.forkOptions { options ->
+                options.maxHeapSize = workerMaxHeapSize.get()
             }
-            runCatching { await() }
         }
 
-        result.exceptionOrNull()?.workErrorCauses<KotlinterError>()?.ifNotEmpty {
-            forEach { logger.error(it.message, it.cause) }
-            throw GradleException("error formatting sources for $name")
+        workQueue.submit(FormatWorkerAction::class.java) { p ->
+            p.name.set(name)
+            p.files.from(source)
+            p.projectDirectory.set(projectLayout.projectDirectory.asFile)
+            p.ktLintParams.set(getKtLintParams())
+            p.output.set(report)
+            p.changedEditorConfigFiles.from(getChangedEditorconfigFiles(inputChanges))
+        }
+
+        try {
+            workQueue.await()
+        } catch (e: Throwable) {
+            e.workErrorCauses<KotlinterError>().ifNotEmpty {
+                forEach { logger.error(it.message, it.cause) }
+                throw GradleException("error formatting sources for $name")
+            }
         }
     }
 }

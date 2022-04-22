@@ -3,6 +3,7 @@ package org.jmailen.gradle.kotlinter
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.TaskProvider
 import org.jmailen.gradle.kotlinter.pluginapplier.AndroidSourceSetApplier
 import org.jmailen.gradle.kotlinter.pluginapplier.KotlinSourceSetApplier
@@ -14,6 +15,15 @@ import org.jmailen.gradle.kotlinter.tasks.LintTask
 import java.io.File
 
 class KotlinterPlugin : Plugin<Project> {
+
+    private object Versions {
+        const val ktlint = "0.45.2"
+    }
+
+    companion object {
+        private const val KTLINT_CONFIGURATION_NAME = "ktlint"
+        private const val RULE_SET_CONFIGURATION_NAME = "ktlintRuleSet"
+    }
 
     private val extendablePlugins = mapOf(
         "org.jetbrains.kotlin.jvm" to KotlinSourceSetApplier,
@@ -35,6 +45,9 @@ class KotlinterPlugin : Plugin<Project> {
                 val lintKotlin = registerParentLintTask()
                 val formatKotlin = registerParentFormatTask()
 
+                val ktlintConfiguration = createKtlintConfiguration()
+                val ruleSetConfiguration = createRuleSetConfiguration(ktlintConfiguration)
+
                 sourceResolver.applyToAll(this) { id, resolvedSources ->
                     val lintTaskPerSourceSet = tasks.register("lintKotlin${id.capitalize()}", LintTask::class.java) { lintTask ->
                         lintTask.source(resolvedSources)
@@ -48,6 +61,8 @@ class KotlinterPlugin : Plugin<Project> {
                         )
                         lintTask.experimentalRules.set(provider { kotlinterExtension.experimentalRules })
                         lintTask.disabledRules.set(provider { kotlinterExtension.disabledRules.toList() })
+                        lintTask.ktlintClasspath.setFrom(ktlintConfiguration)
+                        lintTask.ruleSetsClasspath.setFrom(ruleSetConfiguration)
                     }
                     lintKotlin.configure { lintTask ->
                         lintTask.dependsOn(lintTaskPerSourceSet)
@@ -58,6 +73,8 @@ class KotlinterPlugin : Plugin<Project> {
                         formatTask.report.set(reportFile("$id-format.txt"))
                         formatTask.experimentalRules.set(provider { kotlinterExtension.experimentalRules })
                         formatTask.disabledRules.set(provider { kotlinterExtension.disabledRules.toList() })
+                        formatTask.ktlintClasspath.setFrom(ktlintConfiguration)
+                        formatTask.ruleSetsClasspath.setFrom(ruleSetConfiguration)
                     }
                     formatKotlin.configure { formatTask ->
                         formatTask.dependsOn(formatKotlinPerSourceSet)
@@ -92,6 +109,31 @@ class KotlinterPlugin : Plugin<Project> {
             it.group = "build setup"
             it.description = "Installs Kotlinter Git pre-commit hook"
         }
+
+    private fun Project.createKtlintConfiguration(): Configuration = configurations.maybeCreate(KTLINT_CONFIGURATION_NAME).apply {
+        isCanBeResolved = true
+        isCanBeConsumed = false
+        isVisible = false
+
+        val dependencyProvider = provider {
+            this@createKtlintConfiguration.dependencies.create(
+                "com.pinterest:ktlint:${Versions.ktlint}",
+            )
+        }
+
+        dependencies.addLater(dependencyProvider)
+    }
+
+    @Suppress("UnstableApiUsage")
+    private fun Project.createRuleSetConfiguration(
+        ktlintConfiguration: Configuration,
+    ): Configuration = configurations.maybeCreate(RULE_SET_CONFIGURATION_NAME).apply {
+        isCanBeResolved = true
+        isCanBeConsumed = false
+        isVisible = false
+
+        shouldResolveConsistentlyWith(ktlintConfiguration)
+    }
 }
 
 internal val String.id: String

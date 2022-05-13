@@ -29,6 +29,7 @@ object Versions {
     const val junit = "4.13.2"
     const val ktlint = "0.45.2"
     const val mockitoKotlin = "4.0.0"
+    const val jGit = "6.1.0.202203080745-r"
 }
 
 configurations {
@@ -47,6 +48,7 @@ configurations {
 dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin")
     compileOnly("com.android.tools.build:gradle:${Versions.androidTools}")
+    implementation("org.eclipse.jgit:org.eclipse.jgit:${Versions.jGit}")
 
     listOf(
         "ktlint-core",

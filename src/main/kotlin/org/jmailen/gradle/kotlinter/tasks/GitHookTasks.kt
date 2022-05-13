@@ -1,8 +1,10 @@
 package org.jmailen.gradle.kotlinter.tasks
 
+import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.lib.RepositoryBuilder
 import org.gradle.api.DefaultTask
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.jmailen.gradle.kotlinter.support.VersionProperties
@@ -33,8 +35,14 @@ open class InstallPrePushHookTask : InstallHookTask("pre-push") {
  * Install or update a kotlinter-gradle hook.
  */
 abstract class InstallHookTask(@get:Internal val hookFileName: String) : DefaultTask() {
-    @Input
-    val gitDirPath: Property<String> = project.objects.property(default = ".git")
+
+    @get:InputDirectory
+    internal val projectDir: DirectoryProperty = project.objects.directoryProperty().apply {
+        set(project.layout.projectDirectory)
+    }
+
+    private val gitRepo: Repository =
+        RepositoryBuilder().findGitDir(projectDir.get().asFile).setMustExist(false).build()
 
     @get:Internal
     abstract val hookContent: String
@@ -74,7 +82,7 @@ abstract class InstallHookTask(@get:Internal val hookFileName: String) : Default
     }
 
     private fun getHookFile(warn: Boolean = false): File? {
-        val gitDir = project.rootProject.file(gitDirPath.get())
+        val gitDir = gitRepo.directory
         if (!gitDir.isDirectory) {
             if (warn) logger.warn("skipping hook creation because $gitDir is not a directory")
             return null

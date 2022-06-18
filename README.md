@@ -115,7 +115,8 @@ Granular tasks are added for each source set in the project: `formatKotlin`*`Sou
 
 ### Git Hooks
 
-Kotlinter can install a hook to run pre-push (`installKotlinterPrePushHook`). The hook runs `lintKotlin` and, if there are errors, `formatKotlin` and exits non-zero leaving changed files to be committed.
+* Kotlinter can install a hook to run pre-push (`installKotlinterPrePushHook`). The hook runs `lintKotlin` and, if there are errors, `formatKotlin` and exits non-zero leaving changed files to be committed.
+* Kotlinter can install a hook to run pre-commit (`installKotlinterPreCommitHook`). The hook runs `formatKotlin` and exits non-zero, if auto-formatting failed.
 
 You *must* apply the kotlinter plugin to your root project to make this task available. If using `git worktree` you must install the hook from the parent git directory.
 
@@ -127,6 +128,8 @@ To install the hook automatically when someone runs the build, add this to your 
 ```kotlin
 tasks.check {
     dependsOn("installKotlinterPrePushHook")
+    // or
+    dependsOn("installKotlinterPreCommitHook")
 }
 ```
 
@@ -138,6 +141,8 @@ tasks.check {
 ```groovy
 tasks.named('check') {
     dependsOn 'installKotlinterPrePushHook'
+    // or
+    dependsOn 'installKotlinterPreCommitHook'
 }
 ```
 

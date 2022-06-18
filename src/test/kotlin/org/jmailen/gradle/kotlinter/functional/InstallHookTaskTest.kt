@@ -130,3 +130,4 @@ abstract class InstallHookTaskTest(
 }
 
 class InstallPrePushHookTaskTest : InstallHookTaskTest("installKotlinterPrePushHook", "pre-push")
+class InstallPreCommitHookTaskTest : InstallHookTaskTest("installKotlinterPreCommitHook", "pre-commit")

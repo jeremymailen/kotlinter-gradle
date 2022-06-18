@@ -26,6 +26,7 @@ class KotlinterPlugin : Plugin<Project> {
         val kotlinterExtension = extensions.create("kotlinter", KotlinterExtension::class.java)
 
         if (this == rootProject) {
+            registerPreCommitHookTask()
             registerPrePushHookTask()
         }
 

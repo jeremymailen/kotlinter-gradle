@@ -6,7 +6,7 @@ plugins {
     id("com.gradle.plugin-publish") version "0.18.0"
     `java-gradle-plugin`
     `maven-publish`
-    id("org.jmailen.kotlinter") version "3.9.0"
+    id("org.jmailen.kotlinter") version "3.10.0"
     idea
 }
 
@@ -27,7 +27,7 @@ description = projectDescription
 object Versions {
     const val androidTools = "7.0.4"
     const val junit = "4.13.2"
-    const val ktlint = "0.45.2"
+    const val ktlint = "0.46.1"
     const val mockitoKotlin = "4.0.0"
 }
 

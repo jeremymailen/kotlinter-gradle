@@ -11,8 +11,8 @@ import org.gradle.workers.WorkAction
 import org.jmailen.gradle.kotlinter.support.KotlinterError
 import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
+import org.jmailen.gradle.kotlinter.support.editorConfigOverride
 import org.jmailen.gradle.kotlinter.support.resolveRuleSets
-import org.jmailen.gradle.kotlinter.support.userData
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import java.io.File
 
@@ -76,12 +76,12 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
 
     private fun format(file: File, ruleSets: List<RuleSet>, onError: ErrorHandler, script: Boolean): String {
         return KtLint.format(
-            KtLint.Params(
+            KtLint.ExperimentalParams(
                 fileName = file.path,
                 text = file.readText(),
                 ruleSets = ruleSets,
                 script = script,
-                userData = userData(ktLintParams),
+                editorConfigOverride = editorConfigOverride(ktLintParams),
                 cb = { error, corrected ->
                     onError(error, corrected)
                 }

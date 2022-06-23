@@ -41,9 +41,9 @@ class RuleSetsTest {
     @Test
     fun `test compatibility`() {
         KtLint.lint(
-            KtLint.Params(
-                "/tmp/src/test/KotlinClass.kt",
-                """
+            KtLint.ExperimentalParams(
+                fileName = "/tmp/src/test/KotlinClass.kt",
+                text = """
                     package test
 
                     class KotlinClass {
@@ -53,7 +53,7 @@ class RuleSetsTest {
                     }
 
                 """.trimIndent(),
-                resolveRuleSets(defaultRuleSetProviders),
+                ruleSets = resolveRuleSets(defaultRuleSetProviders),
                 cb = { _, _ -> }
             )
         )
@@ -69,5 +69,5 @@ class TestRule(id: String) : Rule(id) {
         node: ASTNode,
         autoCorrect: Boolean,
         emit: (offset: Int, errorMessage: String, canBeAutoCorrected: Boolean) -> Unit
-    ) {}
+    ) = Unit
 }

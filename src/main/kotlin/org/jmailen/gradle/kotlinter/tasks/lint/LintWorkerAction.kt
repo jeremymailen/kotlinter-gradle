@@ -12,10 +12,10 @@ import org.jmailen.gradle.kotlinter.support.KotlinterError
 import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.LintFailure
 import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
+import org.jmailen.gradle.kotlinter.support.editorConfigOverride
 import org.jmailen.gradle.kotlinter.support.reporterFor
 import org.jmailen.gradle.kotlinter.support.reporterPathFor
 import org.jmailen.gradle.kotlinter.support.resolveRuleSets
-import org.jmailen.gradle.kotlinter.support.userData
 import org.jmailen.gradle.kotlinter.tasks.LintTask
 import java.io.File
 
@@ -76,12 +76,12 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
 
     private fun lint(file: File, ruleSets: List<RuleSet>, onError: ErrorHandler, script: Boolean) =
         KtLint.lint(
-            KtLint.Params(
+            KtLint.ExperimentalParams(
                 fileName = file.path,
                 text = file.readText(),
                 ruleSets = ruleSets,
                 script = script,
-                userData = userData(ktLintParams),
+                editorConfigOverride = editorConfigOverride(ktLintParams),
                 cb = { error, _ -> onError(error) }
             )
         )

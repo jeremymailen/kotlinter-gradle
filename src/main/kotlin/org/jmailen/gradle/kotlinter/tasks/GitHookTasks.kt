@@ -4,6 +4,7 @@ import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.lib.RepositoryBuilder
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
@@ -36,13 +37,17 @@ open class InstallPrePushHookTask : InstallHookTask("pre-push") {
  */
 abstract class InstallHookTask(@get:Internal val hookFileName: String) : DefaultTask() {
 
+    @Input
+    val gitDirPath = project.objects.property(default = ".git")
+
     @get:InputDirectory
     internal val projectDir: DirectoryProperty = project.objects.directoryProperty().apply {
         set(project.layout.projectDirectory)
     }
 
     private val gitRepo: Repository =
-        RepositoryBuilder().findGitDir(projectDir.get().asFile).setMustExist(false).build()
+        RepositoryBuilder().findGitDir(projectDir.get().asFile)
+            .setMustExist(false).setGitDir(project.rootProject.file(gitDirPath.get())).build()
 
     @get:Internal
     abstract val hookContent: String

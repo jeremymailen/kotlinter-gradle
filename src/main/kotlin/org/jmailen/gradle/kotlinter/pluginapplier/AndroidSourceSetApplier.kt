@@ -5,7 +5,6 @@ package org.jmailen.gradle.kotlinter.pluginapplier
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
 import org.gradle.api.Project
-import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.FileTree
 import org.jmailen.gradle.kotlinter.SourceSetAction
 import org.jmailen.gradle.kotlinter.SourceSetApplier
@@ -28,8 +27,10 @@ internal object AndroidSourceSetApplier : SourceSetApplier {
             .getOrNull()
             .orEmpty()
 
+        val emptyFileTree = project.files().asFileTree
+
         return (javaSources + kotlinSources)
             .map { dir -> project.fileTree(dir) { it.include("**/*.kt") } }
-            .reduce { merged: FileTree, tree: ConfigurableFileTree -> merged + tree }
+            .fold(emptyFileTree) { merged, tree -> merged + tree }
     }
 }

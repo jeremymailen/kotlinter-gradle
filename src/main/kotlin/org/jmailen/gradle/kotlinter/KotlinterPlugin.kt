@@ -42,8 +42,8 @@ class KotlinterPlugin : Plugin<Project> {
                         lintTask.ignoreFailures.set(provider { kotlinterExtension.ignoreFailures })
                         lintTask.reports.set(
                             provider {
-                                kotlinterExtension.reporters.associate { reporter ->
-                                    reporter to reportFile("$id-lint.${reporterFileExtension(reporter)}")
+                                kotlinterExtension.reporters.associateWith { reporter ->
+                                    reportFile("$id-lint.${reporterFileExtension(reporter)}")
                                 }
                             }
                         )

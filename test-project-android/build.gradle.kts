@@ -1,5 +1,5 @@
 plugins {
-    kotlin("android") version "1.6.10"
+    kotlin("android") version "1.7.0"
     id("com.android.library")
     id("org.jmailen.kotlinter")
 }

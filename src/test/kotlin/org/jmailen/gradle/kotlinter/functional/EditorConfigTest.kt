@@ -1,6 +1,7 @@
 package org.jmailen.gradle.kotlinter.functional
 
 import org.gradle.testkit.runner.TaskOutcome
+import org.jmailen.gradle.kotlinter.functional.utils.editorConfig
 import org.jmailen.gradle.kotlinter.functional.utils.kotlinClass
 import org.jmailen.gradle.kotlinter.functional.utils.resolve
 import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
@@ -71,7 +72,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `plugin respects 'indent_size' set  in editorconfig`() {
+    fun `plugin respects 'indent_size' set in editorconfig`() {
         projectRoot.resolve(".editorconfig") {
             appendText(
                 """
@@ -97,6 +98,32 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
         buildAndFail("lintKotlin").apply {
             assertEquals(TaskOutcome.FAILED, task(":lintKotlinMain")?.outcome)
             assertTrue(output.contains("[indent] Unexpected indentation (2) (should be 6)"))
+        }
+    }
+    @Test
+    fun `editorconfig changes are taken into account on task re-runs`() {
+        projectRoot.resolve(".editorconfig") {
+            writeText(editorConfig)
+        }
+
+        projectRoot.resolve("src/main/kotlin/FileName.kt") {
+            writeText(kotlinClass("DifferentClassName"))
+        }
+        buildAndFail("lintKotlin").apply {
+            assertEquals(TaskOutcome.FAILED, task(":lintKotlinMain")?.outcome)
+            assertTrue(output.contains("[filename] File 'FileName.kt' contains a single top level declaration"))
+        }
+
+        projectRoot.resolve(".editorconfig") {
+            writeText(
+                """
+                    [*.{kt,kts}]
+                    disabled_rules=filename
+                """.trimIndent(),
+            )
+        }
+        build("lintKotlin").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":lintKotlinMain")?.outcome)
         }
     }
 }

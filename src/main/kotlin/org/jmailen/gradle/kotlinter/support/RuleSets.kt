@@ -8,7 +8,7 @@ import kotlin.comparisons.compareBy
 
 fun resolveRuleSets(
     providers: Iterable<RuleSetProvider>,
-    includeExperimentalRules: Boolean = false
+    includeExperimentalRules: Boolean = false,
 ): List<RuleSet> {
     return providers
         .filter { includeExperimentalRules || it !is ExperimentalRuleSetProvider }
@@ -19,7 +19,7 @@ fun resolveRuleSets(
                     "standard" -> 0
                     else -> 1
                 }
-            }
+            },
         )
 }
 

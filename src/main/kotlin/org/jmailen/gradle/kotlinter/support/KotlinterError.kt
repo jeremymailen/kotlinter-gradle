@@ -4,5 +4,5 @@ import org.gradle.api.GradleException
 
 class KotlinterError(
     message: String,
-    error: Throwable
+    error: Throwable,
 ) : GradleException(message, error)

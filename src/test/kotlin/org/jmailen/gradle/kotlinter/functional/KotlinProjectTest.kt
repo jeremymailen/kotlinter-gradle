@@ -41,7 +41,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
                 }
             }
 
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         buildAndFail("lintKotlinMain").apply {
@@ -68,7 +68,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
                 }
             }
 
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         build("lintKotlinMain").apply {
@@ -111,7 +111,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
             """
             object CustomObject
             
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         build("check").apply {
@@ -129,7 +129,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
             """
             object CustomObject
             
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         build("lintKotlin").apply {
@@ -164,7 +164,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
             """
             object CustomObject
             
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         build("lintKotlin", "--configuration-cache").apply {

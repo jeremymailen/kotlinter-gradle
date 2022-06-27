@@ -28,7 +28,7 @@ fun reporterFor(reporterName: String, output: File): Reporter {
             ReporterType.json -> JsonReporter(out)
             ReporterType.plain -> PlainReporter(out)
             ReporterType.sarif -> SarifReporter(out)
-        }
+        },
     )
 }
 

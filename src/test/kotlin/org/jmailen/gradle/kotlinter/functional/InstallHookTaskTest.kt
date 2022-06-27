@@ -14,7 +14,7 @@ import java.io.File
 
 abstract class InstallHookTaskTest(
     private val taskName: String,
-    private val hookFile: String
+    private val hookFile: String,
 ) : WithGradleTest.Kotlin() {
     private lateinit var projectRoot: File
 
@@ -29,7 +29,7 @@ abstract class InstallHookTaskTest(
                             id("kotlin")
                             id("org.jmailen.kotlinter")
                         }
-                    """.trimIndent()
+                    """.trimIndent(),
                 )
             }
 
@@ -86,7 +86,7 @@ abstract class InstallHookTaskTest(
                 ${InstallHookTask.startHook}
                 $placeholder
                 ${InstallHookTask.endHook}
-                """.trimIndent()
+                """.trimIndent(),
             )
         }
 

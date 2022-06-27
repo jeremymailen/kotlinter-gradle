@@ -38,7 +38,7 @@ abstract class ConfigurableKtLintTask(
     @Internal
     protected fun getKtLintParams(): KtLintParams = KtLintParams(
         experimentalRules = experimentalRules.get(),
-        disabledRules = disabledRules.get()
+        disabledRules = disabledRules.get(),
     )
 }
 

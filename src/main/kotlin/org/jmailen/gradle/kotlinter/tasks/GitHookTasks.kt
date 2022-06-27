@@ -64,7 +64,7 @@ abstract class InstallHookTask(@get:Internal val hookFileName: String) : Default
                 val newHookFileContent = hookFileContent.replaceRange(
                     startIndex,
                     endIndex,
-                    generateHook(gradleCommand, hookContent, includeEndHook = false)
+                    generateHook(gradleCommand, hookContent, includeEndHook = false),
                 )
                 hookFile.writeText(newHookFileContent)
             }
@@ -128,7 +128,7 @@ abstract class InstallHookTask(@get:Internal val hookFileName: String) : Default
             gradlew: String,
             hookContent: String,
             addShebang: Boolean = false,
-            includeEndHook: Boolean = true
+            includeEndHook: Boolean = true,
         ): String = (if (addShebang) shebang else "") +
             """
                 |$startHook

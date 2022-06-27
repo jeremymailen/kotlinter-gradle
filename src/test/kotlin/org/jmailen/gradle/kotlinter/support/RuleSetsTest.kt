@@ -54,8 +54,8 @@ class RuleSetsTest {
 
                 """.trimIndent(),
                 ruleSets = resolveRuleSets(defaultRuleSetProviders),
-                cb = { _, _ -> }
-            )
+                cb = { _, _ -> },
+            ),
         )
     }
 }
@@ -68,6 +68,6 @@ class TestRule(id: String) : Rule(id) {
     override fun visit(
         node: ASTNode,
         autoCorrect: Boolean,
-        emit: (offset: Int, errorMessage: String, canBeAutoCorrected: Boolean) -> Unit
+        emit: (offset: Int, errorMessage: String, canBeAutoCorrected: Boolean) -> Unit,
     ) = Unit
 }

@@ -19,7 +19,7 @@ class KotlinterPlugin : Plugin<Project> {
     private val extendablePlugins = mapOf(
         "org.jetbrains.kotlin.jvm" to KotlinJvmSourceSetApplier,
         "org.jetbrains.kotlin.multiplatform" to KotlinMultiplatformSourceSetApplier,
-        "kotlin-android" to AndroidSourceSetApplier
+        "kotlin-android" to AndroidSourceSetApplier,
     )
 
     override fun apply(project: Project) = with(project) {
@@ -32,7 +32,6 @@ class KotlinterPlugin : Plugin<Project> {
         // for known kotlin plugins, register tasks by convention.
         extendablePlugins.forEach { (pluginId, sourceResolver) ->
             pluginManager.withPlugin(pluginId) {
-
                 val lintKotlin = registerParentLintTask()
                 val formatKotlin = registerParentFormatTask()
 
@@ -45,7 +44,7 @@ class KotlinterPlugin : Plugin<Project> {
                                 kotlinterExtension.reporters.associateWith { reporter ->
                                     reportFile("$id-lint.${reporterFileExtension(reporter)}")
                                 }
-                            }
+                            },
                         )
                         lintTask.experimentalRules.set(provider { kotlinterExtension.experimentalRules })
                         lintTask.disabledRules.set(provider { kotlinterExtension.disabledRules.toList() })

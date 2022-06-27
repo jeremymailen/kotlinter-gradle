@@ -1,8 +1,11 @@
 package org.jmailen.gradle.kotlinter.support
 
+import com.pinterest.ktlint.core.KtLint
 import com.pinterest.ktlint.core.api.DefaultEditorConfigProperties
 import com.pinterest.ktlint.core.api.EditorConfigOverride
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.logging.Logger
+import org.gradle.api.provider.Property
 import java.io.File
 
 internal fun editorConfigOverride(ktLintParams: KtLintParams): EditorConfigOverride {
@@ -12,6 +15,16 @@ internal fun editorConfigOverride(ktLintParams: KtLintParams): EditorConfigOverr
         EditorConfigOverride.emptyEditorConfigOverride
     } else {
         EditorConfigOverride.from(DefaultEditorConfigProperties.ktlintDisabledRulesProperty to rules.joinToString(separator = ","))
+    }
+}
+
+internal fun resetEditorconfigCacheIfNeeded(
+    wasEditorConfigChanged: Property<Boolean>,
+    logger: Logger,
+) {
+    if (wasEditorConfigChanged.get()) {
+        logger.info("Editorconfig changed, resetting KtLint caches")
+        KtLint.trimMemory() // Calling trimMemory() will also reset internal loaded `.editorconfig` cache
     }
 }
 

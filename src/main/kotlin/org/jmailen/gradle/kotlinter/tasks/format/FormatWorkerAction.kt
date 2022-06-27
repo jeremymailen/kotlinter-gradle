@@ -13,6 +13,7 @@ import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
 import org.jmailen.gradle.kotlinter.support.editorConfigOverride
 import org.jmailen.gradle.kotlinter.support.resolveRuleProviders
+import org.jmailen.gradle.kotlinter.support.resetEditorconfigCacheIfNeeded
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import java.io.File
 
@@ -25,6 +26,11 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
     private val output: File? = parameters.output.asFile.orNull
 
     override fun execute() {
+        resetEditorconfigCacheIfNeeded(
+            wasEditorConfigChanged = parameters.wasEditorConfigChanged,
+            logger = logger,
+        )
+
         val fixes = mutableListOf<String>()
         try {
             files.forEach { file ->

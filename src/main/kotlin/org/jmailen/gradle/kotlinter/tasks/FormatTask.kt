@@ -7,6 +7,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.InputChanges
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jmailen.gradle.kotlinter.support.KotlinterError
@@ -31,7 +32,7 @@ open class FormatTask @Inject constructor(
     }
 
     @TaskAction
-    fun run() {
+    fun run(inputChanges: InputChanges) {
         val result = with(workerExecutor.noIsolation()) {
             submit(FormatWorkerAction::class.java) { p ->
                 p.name.set(name)
@@ -39,6 +40,7 @@ open class FormatTask @Inject constructor(
                 p.projectDirectory.set(projectLayout.projectDirectory.asFile)
                 p.ktLintParams.set(getKtLintParams())
                 p.output.set(report)
+                p.wasEditorConfigChanged.set(wasEditorconfigChanged(inputChanges))
             }
             runCatching { await() }
         }

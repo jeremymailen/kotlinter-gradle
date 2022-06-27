@@ -6,6 +6,7 @@ import org.jmailen.gradle.kotlinter.functional.utils.kotlinClass
 import org.jmailen.gradle.kotlinter.functional.utils.resolve
 import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -100,8 +101,49 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
             assertTrue(output.contains("[indent] Unexpected indentation (2) (should be 6)"))
         }
     }
+
     @Test
-    fun `editorconfig changes are taken into account on task re-runs`() {
+    fun `editorconfig changes are taken into account on lint task re-runs`() {
+        projectRoot.resolve(".editorconfig") {
+            writeText(
+                """
+                    [*.{kt,kts}]
+                    disabled_rules=filename
+                """.trimIndent(),
+            )
+        }
+        projectRoot.resolve("src/main/kotlin/FileName.kt") {
+            writeText(kotlinClass("DifferentClassName"))
+        }
+        build("lintKotlin").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":lintKotlinMain")?.outcome)
+            assertFalse(output.contains("resetting KtLint caches"))
+        }
+
+        projectRoot.resolve(".editorconfig") {
+            writeText(editorConfig)
+        }
+        buildAndFail("lintKotlin", "--info").apply {
+            assertEquals(TaskOutcome.FAILED, task(":lintKotlinMain")?.outcome)
+            assertTrue(output.contains("[filename] File 'FileName.kt' contains a single top level declaration"))
+            assertTrue(output.contains("resetting KtLint caches"))
+        }
+
+        projectRoot.resolve("src/main/kotlin/FileName.kt") {
+            writeText(kotlinClass("FileName"))
+        }
+        build("lintKotlin").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":lintKotlinMain")?.outcome)
+            assertFalse(output.contains("resetting KtLint caches"))
+        }
+        build("lintKotlin").apply {
+            assertEquals(TaskOutcome.UP_TO_DATE, task(":lintKotlinMain")?.outcome)
+            assertFalse(output.contains("resetting KtLint caches"))
+        }
+    }
+
+    @Test
+    fun `editorconfig changes are ignored for format task re-runs`() {
         projectRoot.resolve(".editorconfig") {
             writeText(editorConfig)
         }
@@ -109,9 +151,9 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
         projectRoot.resolve("src/main/kotlin/FileName.kt") {
             writeText(kotlinClass("DifferentClassName"))
         }
-        buildAndFail("lintKotlin").apply {
-            assertEquals(TaskOutcome.FAILED, task(":lintKotlinMain")?.outcome)
-            assertTrue(output.contains("[filename] File 'FileName.kt' contains a single top level declaration"))
+        build("formatKotlin").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":formatKotlinMain")?.outcome)
+            assertTrue(output.contains("Format could not fix > [filename] File 'FileName.kt' contains a single top level declaration"))
         }
 
         projectRoot.resolve(".editorconfig") {
@@ -122,8 +164,10 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                 """.trimIndent(),
             )
         }
-        build("lintKotlin").apply {
-            assertEquals(TaskOutcome.SUCCESS, task(":lintKotlinMain")?.outcome)
+        build("formatKotlin", "--info").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":formatKotlinMain")?.outcome)
+            assertTrue(output.contains("Format could not fix"))
+            assertFalse(output.contains("resetting KtLint caches"))
         }
     }
 }

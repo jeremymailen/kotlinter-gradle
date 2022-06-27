@@ -10,6 +10,7 @@ import java.io.File
 
 interface LintWorkerParameters : WorkParameters {
     val name: Property<String>
+    val wasEditorConfigChanged: Property<Boolean>
     val files: ConfigurableFileCollection
     val projectDirectory: RegularFileProperty
     val reporters: MapProperty<String, File>

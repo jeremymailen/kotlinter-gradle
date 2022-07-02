@@ -10,6 +10,7 @@ interface FormatWorkerParameters : WorkParameters {
     val name: Property<String>
     val files: ConfigurableFileCollection
     val projectDirectory: RegularFileProperty
+    val gitProjectDirectory: RegularFileProperty
     val ktLintParams: Property<KtLintParams>
     val output: RegularFileProperty
 }

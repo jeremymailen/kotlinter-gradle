@@ -20,7 +20,7 @@ val githubUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "3.10.0"
+version = "3.10.0_local"
 group = "org.jmailen.gradle"
 description = projectDescription
 
@@ -60,6 +60,8 @@ dependencies {
     ).forEach { module ->
         implementation("com.pinterest.ktlint:$module:${Versions.ktlint}")
     }
+
+    implementation("org.eclipse.jgit:org.eclipse.jgit:6.2.0.202206071550-r")
 
     testImplementation("junit:junit:${Versions.junit}")
     testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.mockitoKotlin}")

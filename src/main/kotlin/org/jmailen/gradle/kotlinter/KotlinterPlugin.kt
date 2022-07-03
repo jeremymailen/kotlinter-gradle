@@ -9,9 +9,11 @@ import org.jmailen.gradle.kotlinter.pluginapplier.KotlinJvmSourceSetApplier
 import org.jmailen.gradle.kotlinter.pluginapplier.KotlinMultiplatformSourceSetApplier
 import org.jmailen.gradle.kotlinter.support.reporterFileExtension
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
+import org.jmailen.gradle.kotlinter.tasks.GitFormatTask
 import org.jmailen.gradle.kotlinter.tasks.InstallPreCommitHookTask
 import org.jmailen.gradle.kotlinter.tasks.InstallPrePushHookTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
+import org.jmailen.gradle.kotlinter.tasks.asGitRepository
 import java.io.File
 
 class KotlinterPlugin : Plugin<Project> {
@@ -55,7 +57,13 @@ class KotlinterPlugin : Plugin<Project> {
                         lintTask.dependsOn(lintTaskPerSourceSet)
                     }
 
-                    val formatKotlinPerSourceSet = tasks.register("formatKotlin${id.capitalize()}", FormatTask::class.java) { formatTask ->
+                    val formatTaskClass = if (kotlinterExtension.formatOnlyStagedFiles) {
+                        GitFormatTask::class.java
+                    } else {
+                        FormatTask::class.java
+                    }
+
+                    val formatKotlinPerSourceSet = tasks.register("formatKotlin${id.capitalize()}", formatTaskClass) { formatTask ->
                         formatTask.source(resolvedSources)
                         formatTask.report.set(reportFile("$id-format.txt"))
                         formatTask.experimentalRules.set(provider { kotlinterExtension.experimentalRules })

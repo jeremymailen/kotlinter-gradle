@@ -22,71 +22,60 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
     private val logger: Logger = DefaultContextAwareTaskLogger(Logging.getLogger(FormatTask::class.java))
     private val files: List<File> = parameters.files.toList()
     private val projectDirectory: File = parameters.projectDirectory.asFile.get()
-    private val gitProjectDirectory: File = parameters.gitProjectDirectory.asFile.get()
     private val name: String = parameters.name.get()
     private val ktLintParams: KtLintParams = parameters.ktLintParams.get()
     private val output: File? = parameters.output.asFile.orNull
 
-    override fun execute() {
+    internal open fun formatAngGetResult(): FormatWorkerActionResult {
         val fixes = mutableListOf<String>()
+        val formatted = mutableListOf<File>()
 
-        FileRepositoryBuilder()
-            .setWorkTree(gitProjectDirectory)
-            .setMustExist(false)
-            .readEnvironment() // scan environment GIT_* variables
-            .findGitDir() // scan up the file system tree
-            .build().use { repository ->
-                if (!repository.objectDatabase.exists()) {
-                    logger.warn("Not found git repository")
-                    return@use
-                }
+        try {
+            files.forEach { file ->
+                val ruleSets = resolveRuleSets(defaultRuleSetProviders, ktLintParams.experimentalRules)
+                val sourceText = file.readText()
+                val relativePath = file.toRelativeString(projectDirectory)
 
-                Git(repository).use { git ->
-                    try {
-                        files.forEach { file ->
-                            val ruleSets = resolveRuleSets(defaultRuleSetProviders, ktLintParams.experimentalRules)
-                            val sourceText = file.readText()
-                            val relativePath = file.toRelativeString(projectDirectory)
+                logger.log(LogLevel.DEBUG, "$name checking format: $relativePath")
 
-                            logger.log(LogLevel.DEBUG, "$name checking format: $relativePath")
-
-                            when (file.extension) {
-                                "kt" -> this::formatKt
-                                "kts" -> this::formatKts
-                                else -> {
-                                    logger.log(LogLevel.DEBUG, "$name ignoring non Kotlin file: $relativePath")
-                                    null
-                                }
-                            }?.let { formatFunc ->
-                                val formattedText = formatFunc.invoke(file, ruleSets) { error, corrected ->
-                                    val msg = when (corrected) {
-                                        true -> "${file.path}:${error.line}:${error.col}: Format fixed > [${error.ruleId}] ${error.detail}"
-                                        false -> "${file.path}:${error.line}:${error.col}: Format could not fix > [${error.ruleId}] ${error.detail}"
-                                    }
-                                    logger.log(LogLevel.QUIET, msg)
-                                    fixes.add(msg)
-                                }
-                                if (!formattedText.contentEquals(sourceText)) {
-                                    val relativePath2 = file.toRelativeString(gitProjectDirectory).replace('\\', '/')
-
-                                    logger.log(LogLevel.QUIET, "${file.path}: Format fixed")
-                                    file.writeText(formattedText)
-                                    git.add().setUpdate(true).addFilepattern(relativePath2).call()
-                                }
-                            }
+                when (file.extension) {
+                    "kt" -> this::formatKt
+                    "kts" -> this::formatKts
+                    else -> {
+                        logger.log(LogLevel.DEBUG, "$name ignoring non Kotlin file: $relativePath")
+                        null
+                    }
+                }?.let { formatFunc ->
+                    val formattedText = formatFunc.invoke(file, ruleSets) { error, corrected ->
+                        val msg = when (corrected) {
+                            true -> "${file.path}:${error.line}:${error.col}: Format fixed > [${error.ruleId}] ${error.detail}"
+                            false -> "${file.path}:${error.line}:${error.col}: Format could not fix > [${error.ruleId}] ${error.detail}"
                         }
-                    } catch (t: Throwable) {
-                        throw KotlinterError("format worker execution error", t)
+                        logger.error("${file.absolutePath} result =$corrected")
+                        logger.log(LogLevel.QUIET, msg)
+                        fixes.add(msg)
+                    }
+                    if (!formattedText.contentEquals(sourceText)) {
+                        logger.log(LogLevel.QUIET, "${file.path}: Format fixed")
+                        file.writeText(formattedText)
+                        formatted.add(file)
                     }
                 }
             }
 
+            return FormatWorkerActionResult(fixes, formatted)
+        } catch (t: Throwable) {
+            throw KotlinterError("format worker execution error", t)
+        }
+    }
 
+    override fun execute() {
+        val result = formatAngGetResult()
 
         output?.writeText(
-            when (fixes.isEmpty()) {
+            when (result.msg.isEmpty()) {
                 true -> "ok"
-                false -> fixes.joinToString("\n")
+                false -> result.msg.joinToString("\n")
             }
         )
     }

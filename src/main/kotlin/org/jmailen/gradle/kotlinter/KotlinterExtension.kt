@@ -17,4 +17,6 @@ open class KotlinterExtension {
     var experimentalRules = DEFAULT_EXPERIMENTAL_RULES
 
     var disabledRules = DEFAULT_DISABLED_RULES
+
+    var formatOnlyStagedFiles: Boolean = true
 }

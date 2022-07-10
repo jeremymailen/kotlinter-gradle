@@ -46,5 +46,5 @@ abstract class WithGradleTest {
 private fun WithGradleTest.defaultRunner(vararg args: String) =
     GradleRunner.create()
         .withProjectDir(testProjectDir.root)
-        .withArguments(args.toList() + "--stacktrace")
+        .withArguments(args.toList() + listOf("--stacktrace", "--configuration-cache"))
         .forwardOutput()

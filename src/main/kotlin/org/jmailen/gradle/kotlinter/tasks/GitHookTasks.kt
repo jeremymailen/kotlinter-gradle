@@ -41,7 +41,7 @@ abstract class InstallHookTask(@get:Internal val hookFileName: String) : Default
     abstract val hookContent: String
 
     @get:Input
-    abstract val rootProjectDir: Property<File>
+    protected abstract val rootProjectDir: Property<File>
 
     init {
         @Suppress("LeakingThis")

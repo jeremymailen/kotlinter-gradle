@@ -13,7 +13,7 @@ import org.jmailen.gradle.kotlinter.id
 internal object AndroidSourceSetApplier : SourceSetApplier {
 
     override fun applyToAll(project: Project, action: SourceSetAction) {
-        val android = project.extensions.findByName("android") as? BaseExtension ?: return
+        val android = project.extensions.findByType(BaseExtension::class.java) ?: return
         android.sourceSets.configureEach { sourceSet ->
             val id = sourceSet.name.id
             action(id, project.provider { getKotlinFiles(project, sourceSet) })

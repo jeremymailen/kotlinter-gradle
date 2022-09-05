@@ -57,9 +57,10 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
     fun `plugin respects disabled_rules set in editorconfig`() {
         projectRoot.resolve(".editorconfig") {
             appendText(
+                // language=editorconfig
                 """
                     [*.{kt,kts}]
-                    disabled_rules=filename
+                    ktlint_disabled_rules = filename
                 """.trimIndent(),
             )
         }
@@ -76,6 +77,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
     fun `plugin respects 'indent_size' set in editorconfig`() {
         projectRoot.resolve(".editorconfig") {
             appendText(
+                // language=editorconfig
                 """
                     [*.{kt,kts}]
                     indent_size = 6
@@ -106,9 +108,10 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
     fun `editorconfig changes are taken into account on lint task re-runs`() {
         projectRoot.resolve(".editorconfig") {
             writeText(
+                // language=editorconfig
                 """
                     [*.{kt,kts}]
-                    disabled_rules=filename
+                    ktlint_disabled_rules = filename
                 """.trimIndent(),
             )
         }
@@ -158,9 +161,10 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
 
         projectRoot.resolve(".editorconfig") {
             writeText(
+                // language=editorconfig
                 """
                     [*.{kt,kts}]
-                    disabled_rules=filename
+                    ktlint_disabled_rules = filename
                 """.trimIndent(),
             )
         }

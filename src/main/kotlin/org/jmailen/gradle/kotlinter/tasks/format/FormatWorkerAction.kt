@@ -12,8 +12,8 @@ import org.jmailen.gradle.kotlinter.support.KotlinterError
 import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
 import org.jmailen.gradle.kotlinter.support.editorConfigOverride
-import org.jmailen.gradle.kotlinter.support.resolveRuleProviders
 import org.jmailen.gradle.kotlinter.support.resetEditorconfigCacheIfNeeded
+import org.jmailen.gradle.kotlinter.support.resolveRuleProviders
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import java.io.File
 
@@ -27,7 +27,7 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
 
     override fun execute() {
         resetEditorconfigCacheIfNeeded(
-            wasEditorConfigChanged = parameters.wasEditorConfigChanged,
+            changedEditorconfigFiles = parameters.changedEditorConfigFiles,
             logger = logger,
         )
 

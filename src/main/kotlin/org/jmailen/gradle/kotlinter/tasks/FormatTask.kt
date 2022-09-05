@@ -40,7 +40,7 @@ open class FormatTask @Inject constructor(
                 p.projectDirectory.set(projectLayout.projectDirectory.asFile)
                 p.ktLintParams.set(getKtLintParams())
                 p.output.set(report)
-                p.wasEditorConfigChanged.set(wasEditorconfigChanged(inputChanges))
+                p.changedEditorConfigFiles.from(getChangedEditorconfigFiles(inputChanges))
             }
             runCatching { await() }
         }

@@ -13,6 +13,7 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SourceTask
 import org.gradle.internal.exceptions.MultiCauseException
+import org.gradle.work.FileChange
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_DISABLED_RULES
@@ -44,8 +45,12 @@ abstract class ConfigurableKtLintTask(
         disabledRules = disabledRules.get(),
     )
 
-    protected fun wasEditorconfigChanged(inputChanges: InputChanges) =
-        inputChanges.isIncremental && inputChanges.getFileChanges(editorconfigFiles).any()
+    protected fun getChangedEditorconfigFiles(inputChanges: InputChanges) =
+        if (inputChanges.isIncremental) {
+            inputChanges.getFileChanges(editorconfigFiles).map(FileChange::getFile)
+        } else {
+            emptyList()
+        }
 }
 
 internal inline fun <reified T> ObjectFactory.property(default: T? = null): Property<T> =

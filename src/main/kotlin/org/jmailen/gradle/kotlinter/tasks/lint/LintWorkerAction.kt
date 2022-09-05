@@ -15,8 +15,8 @@ import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
 import org.jmailen.gradle.kotlinter.support.editorConfigOverride
 import org.jmailen.gradle.kotlinter.support.reporterFor
 import org.jmailen.gradle.kotlinter.support.reporterPathFor
-import org.jmailen.gradle.kotlinter.support.resolveRuleProviders
 import org.jmailen.gradle.kotlinter.support.resetEditorconfigCacheIfNeeded
+import org.jmailen.gradle.kotlinter.support.resolveRuleProviders
 import org.jmailen.gradle.kotlinter.tasks.LintTask
 import java.io.File
 
@@ -32,7 +32,7 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
 
     override fun execute() {
         resetEditorconfigCacheIfNeeded(
-            wasEditorConfigChanged = parameters.wasEditorConfigChanged,
+            changedEditorconfigFiles = parameters.changedEditorconfigFiles,
             logger = logger,
         )
         var hasError = false

@@ -33,7 +33,7 @@ abstract class WithGradleTest {
             val androidDependencies = listOf(
                 ".*/com\\.android\\..*/.*".toRegex(),
                 ".*/androidx\\..*/.*".toRegex(),
-                ".*/com\\.google\\..*/.*".toRegex()
+                ".*/com\\.google\\..*/.*".toRegex(),
             )
             val noAndroid = classpath.filterNot { dependency -> androidDependencies.any { it.matches(dependency.path) } }
 

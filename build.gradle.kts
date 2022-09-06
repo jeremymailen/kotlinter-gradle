@@ -2,11 +2,11 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.6.20"
-    id("com.gradle.plugin-publish") version "0.18.0"
+    kotlin("jvm") version "1.7.0"
+    id("com.gradle.plugin-publish") version "0.21.0"
     `java-gradle-plugin`
     `maven-publish`
-    id("org.jmailen.kotlinter") version "3.10.0"
+    id("org.jmailen.kotlinter") version "3.11.1"
     idea
 }
 
@@ -34,6 +34,11 @@ object Versions {
 configurations {
     register("testRuntimeDependencies") {
         extendsFrom(compileOnly.get())
+        attributes {
+            // KGP publishes multiple variants https://kotlinlang.org/docs/whatsnew17.html#support-for-gradle-plugin-variants
+            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_RUNTIME))
+            attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
+        }
     }
     configureEach {
         resolutionStrategy.eachDependency {

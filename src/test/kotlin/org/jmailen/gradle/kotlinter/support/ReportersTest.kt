@@ -30,22 +30,22 @@ class ReportersTest {
 
         assertEquals(
             absolutePath,
-            reporterPathFor(reporterFor("sarif", reportFile), output, projectDir)
+            reporterPathFor(reporterFor("sarif", reportFile), output, projectDir),
         )
 
         assertEquals(
             relativePath,
-            reporterPathFor(reporterFor("checkstyle", reportFile), output, projectDir)
+            reporterPathFor(reporterFor("checkstyle", reportFile), output, projectDir),
         )
 
         assertEquals(
             relativePath,
-            reporterPathFor(reporterFor("json", reportFile), output, projectDir)
+            reporterPathFor(reporterFor("json", reportFile), output, projectDir),
         )
 
         assertEquals(
             relativePath,
-            reporterPathFor(reporterFor("html", reportFile), output, projectDir)
+            reporterPathFor(reporterFor("html", reportFile), output, projectDir),
         )
     }
 }

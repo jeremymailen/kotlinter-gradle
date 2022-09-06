@@ -4,5 +4,5 @@ import java.io.Serializable
 
 data class KtLintParams(
     val experimentalRules: Boolean,
-    val disabledRules: List<String>
+    val disabledRules: List<String>,
 ) : Serializable

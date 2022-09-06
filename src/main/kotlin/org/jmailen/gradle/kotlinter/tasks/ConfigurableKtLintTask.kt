@@ -16,6 +16,7 @@ import org.gradle.internal.exceptions.MultiCauseException
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_DISABLED_RULES
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_EXPERIMENTAL_RULES
 import org.jmailen.gradle.kotlinter.support.KtLintParams
+import org.jmailen.gradle.kotlinter.support.findApplicableEditorConfigFiles
 
 abstract class ConfigurableKtLintTask(
     projectLayout: ProjectLayout,
@@ -37,7 +38,7 @@ abstract class ConfigurableKtLintTask(
     @Internal
     protected fun getKtLintParams(): KtLintParams = KtLintParams(
         experimentalRules = experimentalRules.get(),
-        disabledRules = disabledRules.get()
+        disabledRules = disabledRules.get(),
     )
 }
 

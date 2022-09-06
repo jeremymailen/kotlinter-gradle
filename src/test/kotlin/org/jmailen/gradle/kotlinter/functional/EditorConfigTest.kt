@@ -42,7 +42,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                     |    val text: String
                     |}
                     |
-                """.trimMargin()
+                """.trimMargin(),
             )
         }
 
@@ -58,7 +58,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                 """
                     [*.{kt,kts}]
                     disabled_rules=filename
-                """.trimIndent()
+                """.trimIndent(),
             )
         }
         projectRoot.resolve("src/main/kotlin/FileName.kt") {
@@ -77,7 +77,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                 """
                     [*.{kt,kts}]
                     indent_size = 6
-                """.trimIndent()
+                """.trimIndent(),
             )
         }
         projectRoot.resolve("src/main/kotlin/FileName.kt") {

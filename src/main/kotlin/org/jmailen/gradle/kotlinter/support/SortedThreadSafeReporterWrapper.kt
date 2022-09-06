@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentSkipListSet
  * As a downside, the calls to the wrapped reporter are delayed until the end of the execution.
  */
 class SortedThreadSafeReporterWrapper(
-    private val wrapped: Reporter
+    private val wrapped: Reporter,
 ) : Reporter {
 
     private val callsToBefore: ConcurrentMap<String, Unit> = ConcurrentHashMap()
@@ -59,7 +59,7 @@ class SortedThreadSafeReporterWrapper(
 
     private data class LintErrorReport(
         val lintError: LintError,
-        val corrected: Boolean
+        val corrected: Boolean,
     ) : Comparable<LintErrorReport> {
         override fun compareTo(other: LintErrorReport) = when (lintError.line == other.lintError.line) {
             true -> lintError.col.compareTo(other.lintError.col)

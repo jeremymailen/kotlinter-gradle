@@ -82,8 +82,8 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
                 ruleSets = ruleSets,
                 script = script,
                 editorConfigOverride = editorConfigOverride(ktLintParams),
-                cb = { error, _ -> onError(error) }
-            )
+                cb = { error, _ -> onError(error) },
+            ),
         )
 }
 

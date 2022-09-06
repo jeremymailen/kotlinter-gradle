@@ -9,13 +9,15 @@ import com.pinterest.ktlint.reporter.sarif.SarifReporter
 import java.io.File
 import java.io.PrintStream
 
-enum class ReporterType(val fileExtension: String) {
+/* ktlint-disable enum-entry-name-case */
+internal enum class ReporterType(val fileExtension: String) {
     checkstyle("xml"),
     html("html"),
     json("json"),
     plain("txt"),
-    sarif("sarif.json")
+    sarif("sarif.json"),
 }
+/* ktlint-enable enum-entry-name-case */
 
 fun reporterFor(reporterName: String, output: File): Reporter {
     val out = PrintStream(output)
@@ -26,7 +28,7 @@ fun reporterFor(reporterName: String, output: File): Reporter {
             ReporterType.json -> JsonReporter(out)
             ReporterType.plain -> PlainReporter(out)
             ReporterType.sarif -> SarifReporter(out)
-        }
+        },
     )
 }
 

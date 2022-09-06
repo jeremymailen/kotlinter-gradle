@@ -64,7 +64,7 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
             when (fixes.isEmpty()) {
                 true -> "ok"
                 false -> fixes.joinToString("\n")
-            }
+            },
         )
     }
 
@@ -84,8 +84,8 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
                 editorConfigOverride = editorConfigOverride(ktLintParams),
                 cb = { error, corrected ->
                     onError(error, corrected)
-                }
-            )
+                },
+            ),
         )
     }
 }

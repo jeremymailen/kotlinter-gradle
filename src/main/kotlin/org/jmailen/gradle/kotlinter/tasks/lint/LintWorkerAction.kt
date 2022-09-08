@@ -3,7 +3,7 @@ package org.jmailen.gradle.kotlinter.tasks.lint
 import com.pinterest.ktlint.core.KtLint
 import com.pinterest.ktlint.core.LintError
 import com.pinterest.ktlint.core.Reporter
-import com.pinterest.ktlint.core.RuleSet
+import com.pinterest.ktlint.core.RuleProvider
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.internal.logging.slf4j.DefaultContextAwareTaskLogger
@@ -15,7 +15,7 @@ import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
 import org.jmailen.gradle.kotlinter.support.editorConfigOverride
 import org.jmailen.gradle.kotlinter.support.reporterFor
 import org.jmailen.gradle.kotlinter.support.reporterPathFor
-import org.jmailen.gradle.kotlinter.support.resolveRuleSets
+import org.jmailen.gradle.kotlinter.support.resolveRuleProviders
 import org.jmailen.gradle.kotlinter.tasks.LintTask
 import java.io.File
 
@@ -35,7 +35,7 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
         try {
             reporters.onEach { it.beforeAll() }
             files.forEach { file ->
-                val ruleSets = resolveRuleSets(defaultRuleSetProviders, ktLintParams.experimentalRules)
+                val ruleSets = resolveRuleProviders(defaultRuleSetProviders, ktLintParams.experimentalRules)
                 val relativePath = file.toRelativeString(projectDirectory)
                 reporters.onEach { it.before(relativePath) }
                 logger.debug("$name linting: $relativePath")
@@ -68,18 +68,18 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
         }
     }
 
-    private fun lintKt(file: File, ruleSets: List<RuleSet>, onError: (error: LintError) -> Unit) =
+    private fun lintKt(file: File, ruleSets: Set<RuleProvider>, onError: (error: LintError) -> Unit) =
         lint(file, ruleSets, onError, false)
 
-    private fun lintKts(file: File, ruleSets: List<RuleSet>, onError: (error: LintError) -> Unit) =
+    private fun lintKts(file: File, ruleSets: Set<RuleProvider>, onError: (error: LintError) -> Unit) =
         lint(file, ruleSets, onError, true)
 
-    private fun lint(file: File, ruleSets: List<RuleSet>, onError: ErrorHandler, script: Boolean) =
+    private fun lint(file: File, ruleProviders: Set<RuleProvider>, onError: ErrorHandler, script: Boolean) =
         KtLint.lint(
             KtLint.ExperimentalParams(
                 fileName = file.path,
                 text = file.readText(),
-                ruleSets = ruleSets,
+                ruleProviders = ruleProviders,
                 script = script,
                 editorConfigOverride = editorConfigOverride(ktLintParams),
                 cb = { error, _ -> onError(error) },

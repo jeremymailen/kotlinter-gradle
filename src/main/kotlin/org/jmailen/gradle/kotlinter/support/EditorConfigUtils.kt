@@ -11,7 +11,7 @@ internal fun editorConfigOverride(ktLintParams: KtLintParams): EditorConfigOverr
     return if (rules.isEmpty()) {
         EditorConfigOverride.emptyEditorConfigOverride
     } else {
-        EditorConfigOverride.from(DefaultEditorConfigProperties.disabledRulesProperty to rules.joinToString(separator = ","))
+        EditorConfigOverride.from(DefaultEditorConfigProperties.ktlintDisabledRulesProperty to rules.joinToString(separator = ","))
     }
 }
 

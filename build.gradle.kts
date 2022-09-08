@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.7.0"
+    kotlin("jvm") version "1.7.10"
     id("com.gradle.plugin-publish") version "0.21.0"
     `java-gradle-plugin`
     `maven-publish`
@@ -27,7 +27,7 @@ description = projectDescription
 object Versions {
     const val androidTools = "7.2.1"
     const val junit = "4.13.2"
-    const val ktlint = "0.46.1"
+    const val ktlint = "0.47.1"
     const val mockitoKotlin = "4.0.0"
 }
 

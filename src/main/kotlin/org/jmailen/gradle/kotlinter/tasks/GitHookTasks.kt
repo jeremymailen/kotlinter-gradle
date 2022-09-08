@@ -34,19 +34,16 @@ abstract class InstallPrePushHookTask : InstallHookTask("pre-push") {
  */
 abstract class InstallHookTask(@get:Internal val hookFileName: String) : DefaultTask() {
 
-    @get:Input
+    @Input
     val gitDirPath: Property<String> = project.objects.property(default = ".git")
+
+    @Input
+    val rootProjectDir = project.objects.property(default = project.rootProject.rootDir)
 
     @get:Internal
     abstract val hookContent: String
 
-    @get:Input
-    protected abstract val rootProjectDir: Property<File>
-
     init {
-        @Suppress("LeakingThis")
-        rootProjectDir.set(project.rootProject.rootDir)
-
         outputs.upToDateWhen {
             getHookFile()?.readText()?.contains(hookVersion) ?: false
         }

@@ -1,6 +1,5 @@
 package org.jmailen.gradle.kotlinter.tasks
 
-import org.gradle.api.GradleException
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFileProperty
@@ -11,8 +10,6 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.InputChanges
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-import org.jmailen.gradle.kotlinter.support.KotlinterError
 import org.jmailen.gradle.kotlinter.tasks.format.FormatWorkerAction
 import javax.inject.Inject
 
@@ -57,13 +54,6 @@ open class FormatTask @Inject constructor(
             p.changedEditorConfigFiles.from(getChangedEditorconfigFiles(inputChanges))
         }
 
-        try {
-            workQueue.await()
-        } catch (e: Throwable) {
-            e.workErrorCauses<KotlinterError>().ifNotEmpty {
-                forEach { logger.error(it.message, it.cause) }
-                throw GradleException("error formatting sources for $name")
-            }
-        }
+        workQueue.await()
     }
 }

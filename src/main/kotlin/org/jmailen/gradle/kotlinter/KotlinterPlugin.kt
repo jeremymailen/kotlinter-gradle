@@ -9,6 +9,7 @@ import org.jmailen.gradle.kotlinter.pluginapplier.AndroidSourceSetApplier
 import org.jmailen.gradle.kotlinter.pluginapplier.KotlinJvmSourceSetApplier
 import org.jmailen.gradle.kotlinter.pluginapplier.KotlinMultiplatformSourceSetApplier
 import org.jmailen.gradle.kotlinter.support.reporterFileExtension
+import org.jmailen.gradle.kotlinter.tasks.ConfigurableKtLintTask
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.InstallPreCommitHookTask
 import org.jmailen.gradle.kotlinter.tasks.InstallPrePushHookTask
@@ -44,6 +45,11 @@ class KotlinterPlugin : Plugin<Project> {
                 val ktlintConfiguration = createKtlintConfiguration(kotlinterExtension)
                 val ruleSetConfiguration = createRuleSetConfiguration(ktlintConfiguration)
 
+                tasks.withType(ConfigurableKtLintTask::class.java).configureEach { task ->
+                    task.ktlintClasspath.setFrom(ktlintConfiguration)
+                    task.ruleSetsClasspath.setFrom(ruleSetConfiguration)
+                }
+
                 sourceResolver.applyToAll(this) { id, resolvedSources ->
                     val lintTaskPerSourceSet = tasks.register("lintKotlin${id.capitalize()}", LintTask::class.java) { lintTask ->
                         lintTask.source(resolvedSources)
@@ -57,8 +63,6 @@ class KotlinterPlugin : Plugin<Project> {
                         )
                         lintTask.experimentalRules.set(provider { kotlinterExtension.experimentalRules })
                         lintTask.disabledRules.set(provider { kotlinterExtension.disabledRules.toList() })
-                        lintTask.ktlintClasspath.setFrom(ktlintConfiguration)
-                        lintTask.ruleSetsClasspath.setFrom(ruleSetConfiguration)
                     }
                     lintKotlin.configure { lintTask ->
                         lintTask.dependsOn(lintTaskPerSourceSet)
@@ -69,8 +73,6 @@ class KotlinterPlugin : Plugin<Project> {
                         formatTask.report.set(reportFile("$id-format.txt"))
                         formatTask.experimentalRules.set(provider { kotlinterExtension.experimentalRules })
                         formatTask.disabledRules.set(provider { kotlinterExtension.disabledRules.toList() })
-                        formatTask.ktlintClasspath.setFrom(ktlintConfiguration)
-                        formatTask.ruleSetsClasspath.setFrom(ruleSetConfiguration)
                     }
                     formatKotlin.configure { formatTask ->
                         formatTask.dependsOn(formatKotlinPerSourceSet)

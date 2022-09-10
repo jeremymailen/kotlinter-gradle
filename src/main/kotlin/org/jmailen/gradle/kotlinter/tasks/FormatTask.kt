@@ -1,10 +1,8 @@
 package org.jmailen.gradle.kotlinter.tasks
 
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -25,12 +23,6 @@ open class FormatTask @Inject constructor(
     @OutputFile
     @Optional
     val report: RegularFileProperty = objectFactory.fileProperty()
-
-    @Classpath
-    val ktlintClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
-
-    @Classpath
-    val ruleSetsClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
 
     init {
         outputs.upToDateWhen { false }

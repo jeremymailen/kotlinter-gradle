@@ -1,11 +1,13 @@
 package org.jmailen.gradle.kotlinter.tasks
 
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
@@ -38,8 +40,14 @@ abstract class ConfigurableKtLintTask(
         from(projectLayout.findApplicableEditorConfigFiles().toList())
     }
 
-    @Internal
-    val workerMaxHeapSize = objectFactory.property(default = "256m")
+    @Input
+    val workerMaxHeapSize: Property<String> = objectFactory.property(default = "256m")
+
+    @Classpath
+    val ktlintClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
+
+    @Classpath
+    val ruleSetsClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
 
     @Internal
     protected fun getKtLintParams(): KtLintParams = KtLintParams(

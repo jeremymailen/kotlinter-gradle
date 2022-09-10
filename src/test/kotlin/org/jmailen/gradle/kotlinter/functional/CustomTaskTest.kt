@@ -28,6 +28,10 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                         id 'kotlin'
                         id 'org.jmailen.kotlinter'
                     }
+                    
+                    repositories {
+                        mavenCentral()
+                    }
                 
                     """.trimIndent()
                 writeText(buildScript)

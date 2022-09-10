@@ -22,5 +22,5 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.4.0"
 }
 
-include("test-custom-rules")
-project(":test-custom-rules").projectDir = file("../test-custom-rules")
+include("app")
+include("custom-ktlint-rules")

@@ -8,7 +8,7 @@ import org.gradle.api.tasks.TaskAction
 import org.jmailen.gradle.kotlinter.support.VersionProperties
 import java.io.File
 
-open class InstallPreCommitHookTask : InstallHookTask("pre-commit") {
+abstract class InstallPreCommitHookTask : InstallHookTask("pre-commit") {
     override val hookContent =
         """
             if ! ${'$'}GRADLEW formatKotlin ; then
@@ -18,7 +18,7 @@ open class InstallPreCommitHookTask : InstallHookTask("pre-commit") {
         """.trimIndent()
 }
 
-open class InstallPrePushHookTask : InstallHookTask("pre-push") {
+abstract class InstallPrePushHookTask : InstallHookTask("pre-push") {
     override val hookContent =
         """
             if ! ${'$'}GRADLEW lintKotlin ; then
@@ -33,8 +33,12 @@ open class InstallPrePushHookTask : InstallHookTask("pre-push") {
  * Install or update a kotlinter-gradle hook.
  */
 abstract class InstallHookTask(@get:Internal val hookFileName: String) : DefaultTask() {
+
     @Input
     val gitDirPath: Property<String> = project.objects.property(default = ".git")
+
+    @Input
+    val rootProjectDir = project.objects.property(default = project.rootProject.rootDir)
 
     @get:Internal
     abstract val hookContent: String
@@ -74,7 +78,7 @@ abstract class InstallHookTask(@get:Internal val hookFileName: String) : Default
     }
 
     private fun getHookFile(warn: Boolean = false): File? {
-        val gitDir = project.rootProject.file(gitDirPath.get())
+        val gitDir = File(rootProjectDir.get(), gitDirPath.get())
         if (!gitDir.isDirectory) {
             if (warn) logger.warn("skipping hook creation because $gitDir is not a directory")
             return null
@@ -97,7 +101,7 @@ abstract class InstallHookTask(@get:Internal val hookFileName: String) : Default
             "gradlew"
         }
 
-        val gradlew = File(project.rootDir, gradlewFilename)
+        val gradlew = File(rootProjectDir.get(), gradlewFilename)
         if (gradlew.exists() && gradlew.isFile && gradlew.canExecute()) {
             logger.info("Using gradlew wrapper at ${gradlew.invariantSeparatorsPath}")
             gradlew.invariantSeparatorsPath

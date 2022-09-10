@@ -12,7 +12,6 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SourceTask
-import org.gradle.internal.exceptions.MultiCauseException
 import org.gradle.work.FileChange
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
@@ -70,13 +69,3 @@ internal inline fun <reified K, reified V> ObjectFactory.mapProperty(default: Ma
     mapProperty(K::class.java, V::class.java).apply {
         set(default)
     }
-
-inline fun <reified T : Throwable> Throwable.workErrorCauses(): List<Throwable> {
-    return when (this) {
-        is MultiCauseException -> this.causes.map { it.cause }
-        else -> listOf(this.cause)
-    }.filter {
-        // class instance comparison doesn't work due to different classloaders
-        it?.javaClass?.canonicalName == T::class.java.canonicalName
-    }.filterNotNull()
-}

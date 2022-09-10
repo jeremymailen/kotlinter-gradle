@@ -134,10 +134,11 @@ jobs:
 
       - name: Assert fixes
         run: |
-          cd test-project-android/build/reports/ktlint
+          cd test-project-android/app/build/reports/ktlint
           grep 'no-empty-class-body' main-format.txt | grep -q 'EmptyClassBodyClass.kt:3:27'
           grep 'no-empty-class-body' main-format.txt | grep -q 'EmptyClassBodyInJavaSourcesClass.kt:3:40'
           grep 'op-spacing' test-format.txt | grep -q 'OpSpacing.kt:5:16'
+          grep 'no-newline-before-return-type' test-format.txt | grep -q 'CustomRuleTest.kt:4:16'
 
       - name: Upload reports
         if: ${{ failure() }}

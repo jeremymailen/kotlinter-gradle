@@ -63,7 +63,8 @@ dependencies {
         "ktlint-ruleset-experimental",
         "ktlint-ruleset-standard"
     ).forEach { module ->
-        implementation("com.pinterest.ktlint:$module:${Versions.ktlint}")
+        compileOnly("com.pinterest.ktlint:$module:${Versions.ktlint}")
+        testImplementation("com.pinterest.ktlint:$module:${Versions.ktlint}")
     }
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${Versions.junit}")

@@ -24,11 +24,14 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                 // language=groovy
                 val buildScript =
                     """
-                plugins {
-                    id 'kotlin'
-                    id 'org.jmailen.kotlinter'
-                }
-                
+                    plugins {
+                        id 'kotlin'
+                        id 'org.jmailen.kotlinter'
+                    }
+                    
+                    repositories {
+                        mavenCentral()
+                    }
                     """.trimIndent()
                 writeText(buildScript)
             }
@@ -146,7 +149,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `editorconfig changes are ignored for format task re-runs`() {
+    fun `editorconfig changes do not clear ktlint caches for format task re-runs`() {
         projectRoot.resolve(".editorconfig") {
             writeText(editorConfig)
         }
@@ -170,7 +173,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
         }
         build("formatKotlin", "--info").apply {
             assertEquals(TaskOutcome.SUCCESS, task(":formatKotlinMain")?.outcome)
-            assertTrue(output.contains("Format could not fix"))
+            assertFalse(output.contains("Format could not fix"))
             assertFalse(output.contains("resetting KtLint caches"))
         }
     }

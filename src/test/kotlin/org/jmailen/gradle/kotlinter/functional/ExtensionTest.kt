@@ -22,11 +22,15 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
                 // language=groovy
                 val buildScript =
                     """
-                plugins {
-                    id 'kotlin'
-                    id 'org.jmailen.kotlinter'
-                }
-                
+                    plugins {
+                        id 'kotlin'
+                        id 'org.jmailen.kotlinter'
+                    }
+                    
+                    repositories {
+                        mavenCentral()
+                    }
+                    
                     """.trimIndent()
                 writeText(buildScript)
             }
@@ -107,6 +111,10 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
                 plugins {
                     id 'kotlin'
                     id 'org.jmailen.kotlinter'
+                }
+                
+                repositories {
+                    mavenCentral()
                 }
                 
                 tasks.whenTaskAdded {

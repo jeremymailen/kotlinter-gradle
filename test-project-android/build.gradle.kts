@@ -6,4 +6,11 @@ plugins {
 
 android {
     compileSdkVersion(31)
+
+    if (properties["agpVersion"].toString().startsWith("4")) {
+        sourceSets {
+            named("main") { java.srcDirs("src/main/kotlin") }
+            named("test") { java.srcDirs("src/test/kotlin") }
+        }
+    }
 }

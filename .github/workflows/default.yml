@@ -77,14 +77,40 @@ jobs:
           gradle-version: ${{ matrix.gradle }}
           arguments: formatKotlin lintKotlin
 
+      - name: Assert fixes
+        run: |
+          cd test-project/build/reports/ktlint
+          grep 'no-empty-class-body' main-format.txt | grep -q 'EmptyClassBodyClass.kt:3:27'
+          grep 'op-spacing' test-format.txt | grep -q 'OpSpacing.kt:5:16'
+
+      - name: Upload reports
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: "test-project-reports-${{ matrix.os }}-${{ matrix.gradle }}-${{ matrix.java }}"
+          path: "${{ github.workspace }}/**/build/reports/ktlint"
+
+  provide-agp-version-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      agp-versions: ${{ steps.build-agp-matrix.outputs.agp-versions }}
+    steps:
+      - id: agp-version-finder
+        uses: usefulness/agp-version-finder-action@v1
+
+      - id: build-agp-matrix
+        run: echo '::set-output name=agp-versions::["${{ steps.agp-version-finder.outputs.latest-stable }}", "${{ steps.agp-version-finder.outputs.latest-alpha }}"]'
+
   integration-tests-android:
     runs-on: ubuntu-latest
+    needs:
+      - provide-agp-version-matrix
     strategy:
       fail-fast: false
       matrix:
         gradle: [ current ]
         java: [ 17 ]
-        agp: [ 7.0.4 ]
+        agp: ${{ fromJSON(needs.provide-agp-version-matrix.outputs.agp-versions) }}
         include:
           - gradle: 7.0.1
             java: 11
@@ -110,3 +136,17 @@ jobs:
           build-root-directory: test-project-android
           gradle-version: ${{ matrix.gradle }}
           arguments: formatKotlin lintKotlin -PagpVersion=${{ matrix.agp }}
+
+      - name: Assert fixes
+        run: |
+          cd test-project-android/build/reports/ktlint
+          grep 'no-empty-class-body' main-format.txt | grep -q 'EmptyClassBodyClass.kt:3:27'
+          grep 'no-empty-class-body' main-format.txt | grep -q 'EmptyClassBodyInJavaSourcesClass.kt:3:40'
+          grep 'op-spacing' test-format.txt | grep -q 'OpSpacing.kt:5:16'
+
+      - name: Upload reports
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: "test-project-android-reports-${{ matrix.gradle }}-${{ matrix.java }}-${{ matrix.agp }}"
+          path: "${{ github.workspace }}/**/build/reports/ktlint"

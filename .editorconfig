@@ -1,7 +1,9 @@
+root = true
+
 [*.{kt,kts}]
 max_line_length = 140
 indent_size = 4
 insert_final_newline = true
 ij_kotlin_allow_trailing_comma = true
 ij_kotlin_allow_trailing_comma_on_call_site = true
-disabled_rules=filename
+ktlint_disabled_rules = filename

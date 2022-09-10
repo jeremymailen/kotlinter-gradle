@@ -77,6 +77,19 @@ jobs:
           gradle-version: ${{ matrix.gradle }}
           arguments: formatKotlin lintKotlin
 
+      - name: Assert fixes
+        run: |
+          cd test-project/build/reports/ktlint
+          grep 'no-empty-class-body' main-format.txt | grep -q 'EmptyClassBodyClass.kt:3:27'
+          grep 'op-spacing' test-format.txt | grep -q 'OpSpacing.kt:5:16'
+
+      - name: Upload reports
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: "test-project-reports-${{ matrix.os }}-${{ matrix.gradle }}-${{ matrix.java }}"
+          path: "${{ github.workspace }}/**/build/reports/ktlint"
+
   provide-agp-version-matrix:
     runs-on: ubuntu-latest
     outputs:
@@ -123,3 +136,17 @@ jobs:
           build-root-directory: test-project-android
           gradle-version: ${{ matrix.gradle }}
           arguments: formatKotlin lintKotlin -PagpVersion=${{ matrix.agp }}
+
+      - name: Assert fixes
+        run: |
+          cd test-project-android/build/reports/ktlint
+          grep 'no-empty-class-body' main-format.txt | grep -q 'EmptyClassBodyClass.kt:3:27'
+          grep 'no-empty-class-body' main-format.txt | grep -q 'EmptyClassBodyInJavaSourcesClass.kt:3:40'
+          grep 'op-spacing' test-format.txt | grep -q 'OpSpacing.kt:5:16'
+
+      - name: Upload reports
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: "test-project-android-reports-${{ matrix.gradle }}-${{ matrix.java }}-${{ matrix.agp }}"
+          path: "${{ github.workspace }}/**/build/reports/ktlint"

@@ -1,6 +1,5 @@
 package org.jmailen.gradle.kotlinter.tasks
 
-import org.gradle.api.GradleException
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.ProjectLayout
@@ -17,10 +16,7 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.InputChanges
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_IGNORE_FAILURES
-import org.jmailen.gradle.kotlinter.support.KotlinterError
-import org.jmailen.gradle.kotlinter.support.LintFailure
 import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerAction
 import java.io.File
 import javax.inject.Inject
@@ -72,13 +68,8 @@ open class LintTask @Inject constructor(
         try {
             workQueue.await()
         } catch (e: Throwable) {
-            e.workErrorCauses<KotlinterError>().ifNotEmpty {
-                forEach { logger.error(it.message, it.cause) }
-                throw GradleException("error linting sources for $name")
-            }
-            val lintFailures = e.workErrorCauses<LintFailure>()
-            if (lintFailures.isNotEmpty() && !ignoreFailures.get()) {
-                throw GradleException("$name sources failed lint check")
+            if (!ignoreFailures.get()) {
+                throw e
             }
         }
     }

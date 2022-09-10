@@ -10,7 +10,6 @@ import org.gradle.internal.logging.slf4j.DefaultContextAwareTaskLogger
 import org.gradle.workers.WorkAction
 import org.jmailen.gradle.kotlinter.support.KotlinterError
 import org.jmailen.gradle.kotlinter.support.KtLintParams
-import org.jmailen.gradle.kotlinter.support.LintFailure
 import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
 import org.jmailen.gradle.kotlinter.support.editorConfigOverride
 import org.jmailen.gradle.kotlinter.support.reporterFor
@@ -65,11 +64,11 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
             }
             reporters.onEach { it.afterAll() }
         } catch (t: Throwable) {
-            throw KotlinterError("lint worker execution error", t)
+            throw KotlinterError.WorkerError("lint worker execution error", t)
         }
 
         if (hasError) {
-            throw LintFailure("kotlin source failed lint check")
+            throw KotlinterError.LintingError("kotlin source failed lint check")
         }
     }
 

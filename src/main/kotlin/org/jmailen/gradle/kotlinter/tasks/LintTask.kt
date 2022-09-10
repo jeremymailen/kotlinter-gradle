@@ -1,13 +1,11 @@
 package org.jmailen.gradle.kotlinter.tasks
 
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFiles
@@ -40,12 +38,6 @@ open class LintTask @Inject constructor(
 
     @Input
     val ignoreFailures: Property<Boolean> = objectFactory.property(default = DEFAULT_IGNORE_FAILURES)
-
-    @Classpath
-    val ktlintClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
-
-    @Classpath
-    val ruleSetsClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
 
     @TaskAction
     fun run(inputChanges: InputChanges) {

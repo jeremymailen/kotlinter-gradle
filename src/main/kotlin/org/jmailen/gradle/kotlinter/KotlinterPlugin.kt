@@ -17,10 +17,6 @@ import java.io.File
 
 class KotlinterPlugin : Plugin<Project> {
 
-    private object Versions {
-        const val ktlint = "0.45.2"
-    }
-
     companion object {
         private const val KTLINT_CONFIGURATION_NAME = "ktlint"
         private const val RULE_SET_CONFIGURATION_NAME = "ktlintRuleSet"
@@ -45,7 +41,7 @@ class KotlinterPlugin : Plugin<Project> {
                 val lintKotlin = registerParentLintTask()
                 val formatKotlin = registerParentFormatTask()
 
-                val ktlintConfiguration = createKtlintConfiguration()
+                val ktlintConfiguration = createKtlintConfiguration(kotlinterExtension)
                 val ruleSetConfiguration = createRuleSetConfiguration(ktlintConfiguration)
 
                 sourceResolver.applyToAll(this) { id, resolvedSources ->
@@ -110,19 +106,19 @@ class KotlinterPlugin : Plugin<Project> {
             it.description = "Installs Kotlinter Git pre-commit hook"
         }
 
-    private fun Project.createKtlintConfiguration(): Configuration = configurations.maybeCreate(KTLINT_CONFIGURATION_NAME).apply {
-        isCanBeResolved = true
-        isCanBeConsumed = false
-        isVisible = false
+    private fun Project.createKtlintConfiguration(kotlinterExtension: KotlinterExtension): Configuration =
+        configurations.maybeCreate(KTLINT_CONFIGURATION_NAME).apply {
+            isCanBeResolved = true
+            isCanBeConsumed = false
+            isVisible = false
 
-        val dependencyProvider = provider {
-            this@createKtlintConfiguration.dependencies.create(
-                "com.pinterest:ktlint:${Versions.ktlint}",
-            )
+            val dependencyProvider = provider {
+                val ktlintVersion = kotlinterExtension.ktlintVersion
+                this@createKtlintConfiguration.dependencies.create("com.pinterest:ktlint:$ktlintVersion")
+            }
+
+            dependencies.addLater(dependencyProvider)
         }
-
-        dependencies.addLater(dependencyProvider)
-    }
 
     @Suppress("UnstableApiUsage")
     private fun Project.createRuleSetConfiguration(

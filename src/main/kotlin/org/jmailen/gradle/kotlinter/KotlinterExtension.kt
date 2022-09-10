@@ -17,4 +17,6 @@ open class KotlinterExtension {
     var experimentalRules = DEFAULT_EXPERIMENTAL_RULES
 
     var disabledRules = DEFAULT_DISABLED_RULES
+
+    var ktlintVersion = "0.47.1"
 }

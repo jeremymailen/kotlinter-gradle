@@ -63,7 +63,7 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
         }
 
         if (hasError) {
-            throw KotlinterError.LintingError("kotlin source failed lint check")
+            throw KotlinterError.LintingError("$name source failed lint check")
         }
     }
 }

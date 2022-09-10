@@ -13,6 +13,7 @@ import org.gradle.api.tasks.OutputFiles
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.InputChanges
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_IGNORE_FAILURES
@@ -43,7 +44,7 @@ open class LintTask @Inject constructor(
     val ignoreFailures: Property<Boolean> = objectFactory.property(default = DEFAULT_IGNORE_FAILURES)
 
     @TaskAction
-    fun run() {
+    fun run(inputChanges: InputChanges) {
         val result = with(workerExecutor.noIsolation()) {
             submit(LintWorkerAction::class.java) { p ->
                 p.name.set(name)
@@ -51,6 +52,7 @@ open class LintTask @Inject constructor(
                 p.projectDirectory.set(projectLayout.projectDirectory.asFile)
                 p.reporters.putAll(reports)
                 p.ktLintParams.set(getKtLintParams())
+                p.changedEditorconfigFiles.from(getChangedEditorconfigFiles(inputChanges))
             }
             runCatching { await() }
         }

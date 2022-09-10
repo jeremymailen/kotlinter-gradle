@@ -8,6 +8,7 @@ import org.jmailen.gradle.kotlinter.support.KtLintParams
 
 interface FormatWorkerParameters : WorkParameters {
     val name: Property<String>
+    val changedEditorConfigFiles: ConfigurableFileCollection
     val files: ConfigurableFileCollection
     val projectDirectory: RegularFileProperty
     val ktLintParams: Property<KtLintParams>

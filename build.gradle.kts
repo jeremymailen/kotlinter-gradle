@@ -25,7 +25,7 @@ group = "org.jmailen.gradle"
 description = projectDescription
 
 object Versions {
-    const val androidTools = "7.2.1"
+    const val androidTools = "7.2.2"
     const val junit = "4.13.2"
     const val ktlint = "0.47.1"
     const val mockitoKotlin = "4.0.0"

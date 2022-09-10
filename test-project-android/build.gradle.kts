@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    compileSdkVersion(31)
+    compileSdkVersion(33)
 
     if (properties["agpVersion"].toString().startsWith("4")) {
         sourceSets {

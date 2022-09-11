@@ -87,7 +87,13 @@ tasks {
         outputs.file(propertiesFile)
 
         doLast {
-            propertiesFile.writeText("version = $projectVersion")
+            propertiesFile.writeText(
+                """
+                version = $projectVersion
+                ktlint_version = ${Versions.ktlint}
+                
+                """.trimIndent()
+            )
         }
     }
 

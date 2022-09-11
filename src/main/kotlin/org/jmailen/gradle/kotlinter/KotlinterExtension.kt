@@ -1,6 +1,7 @@
 package org.jmailen.gradle.kotlinter
 
 import org.jmailen.gradle.kotlinter.support.ReporterType
+import org.jmailen.gradle.kotlinter.support.versionProperties
 
 open class KotlinterExtension {
     companion object {
@@ -18,5 +19,5 @@ open class KotlinterExtension {
 
     var disabledRules = DEFAULT_DISABLED_RULES
 
-    var ktlintVersion = "0.47.1"
+    var ktlintVersion = versionProperties.ktlintVersion()
 }

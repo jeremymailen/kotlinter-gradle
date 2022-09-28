@@ -4,13 +4,15 @@ import org.gradle.internal.classpath.DefaultClassPath
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.internal.PluginUnderTestMetadataReading
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
+
+val File.root get() = this
 
 abstract class WithGradleTest {
 
-    @get:Rule
-    val testProjectDir = TemporaryFolder()
+    @TempDir
+    lateinit var testProjectDir: File
 
     protected fun build(vararg args: String): BuildResult = gradleRunnerFor(*args).build()
 
@@ -45,6 +47,6 @@ abstract class WithGradleTest {
 
 private fun WithGradleTest.defaultRunner(vararg args: String) =
     GradleRunner.create()
-        .withProjectDir(testProjectDir.root)
+        .withProjectDir(testProjectDir)
         .withArguments(args.toList() + listOf("--stacktrace", "--configuration-cache"))
         .forwardOutput()

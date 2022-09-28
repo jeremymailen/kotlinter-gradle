@@ -4,10 +4,10 @@ import org.gradle.testkit.runner.TaskOutcome.FAILED
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.jmailen.gradle.kotlinter.functional.utils.editorConfig
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.File
 
 internal class KotlinProjectTest : WithGradleTest.Kotlin() {
@@ -18,12 +18,12 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
     private lateinit var editorconfigFile: File
     private val pathPattern = "(.*\\.kt):\\d+:\\d+".toRegex()
 
-    @Before
+    @BeforeEach
     fun setup() {
-        settingsFile = testProjectDir.newFile("settings.gradle")
-        buildFile = testProjectDir.newFile("build.gradle")
-        sourceDir = testProjectDir.newFolder("src", "main", "kotlin")
-        editorconfigFile = testProjectDir.newFile(".editorconfig")
+        settingsFile = testProjectDir.resolve("settings.gradle")
+        buildFile = testProjectDir.resolve("build.gradle")
+        sourceDir = testProjectDir.resolve("src/main/kotlin/").also(File::mkdirs)
+        editorconfigFile = testProjectDir.resolve(".editorconfig")
     }
 
     @Test

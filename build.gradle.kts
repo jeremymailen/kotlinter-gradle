@@ -26,7 +26,7 @@ description = projectDescription
 
 object Versions {
     const val androidTools = "7.2.2"
-    const val junit = "4.13.2"
+    const val junit = "5.9.1"
     const val ktlint = "0.47.1"
     const val mockitoKotlin = "4.0.0"
 }
@@ -66,7 +66,8 @@ dependencies {
         implementation("com.pinterest.ktlint:$module:${Versions.ktlint}")
     }
 
-    testImplementation("junit:junit:${Versions.junit}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${Versions.junit}")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
     testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.mockitoKotlin}")
 }
 
@@ -102,6 +103,9 @@ tasks {
             languageVersion = "1.4"
             jvmTarget = targetJavaVersion.toString()
         }
+    }
+    withType<Test>().configureEach {
+        useJUnitPlatform()
     }
 
     // Required to put the Kotlin plugin on the classpath for the functional test suite

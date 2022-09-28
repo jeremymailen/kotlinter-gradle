@@ -4,17 +4,17 @@ import org.gradle.testkit.runner.TaskOutcome
 import org.jmailen.gradle.kotlinter.functional.utils.kotlinClass
 import org.jmailen.gradle.kotlinter.functional.utils.resolve
 import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.File
 
 internal class ExtensionTest : WithGradleTest.Kotlin() {
 
     lateinit var projectRoot: File
 
-    @Before
+    @BeforeEach
     fun setUp() {
         projectRoot = testProjectDir.root.apply {
             resolve("settings.gradle") { writeText(settingsFile) }

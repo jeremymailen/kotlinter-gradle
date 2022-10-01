@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.DisabledOnOs
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 
 class CustomTaskTest : WithGradleTest.Kotlin() {
@@ -233,6 +235,7 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS, disabledReason = "https://github.com/gradle/gradle/issues/21964")
     fun `ktLint custom task treats reports as input parameter`() {
         projectRoot.resolve("build.gradle") {
             // language=groovy

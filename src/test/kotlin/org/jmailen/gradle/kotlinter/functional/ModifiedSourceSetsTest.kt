@@ -16,7 +16,7 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
 
     @BeforeEach
     fun setUp() {
-        testProjectDir.root.apply {
+        testProjectDir.apply {
             resolve("settings.gradle") { writeText(settingsFile) }
             resolve("build.gradle") {
                 // language=groovy

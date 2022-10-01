@@ -7,8 +7,6 @@ import org.gradle.testkit.runner.internal.PluginUnderTestMetadataReading
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-val File.root get() = this
-
 abstract class WithGradleTest {
 
     @TempDir

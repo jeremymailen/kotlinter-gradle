@@ -20,7 +20,7 @@ abstract class InstallHookTaskTest(
 
     @BeforeEach
     fun setup() {
-        projectRoot = testProjectDir.root.apply {
+        projectRoot = testProjectDir.apply {
             resolve("settings.gradle") { writeText(settingsFile) }
             resolve("build.gradle") {
                 writeText(
@@ -39,11 +39,11 @@ abstract class InstallHookTaskTest(
 
     @Test
     fun `installs hook in project without hook directory`() {
-        File(testProjectDir.root, ".git").apply { mkdir() }
+        File(testProjectDir, ".git").apply { mkdir() }
 
         build(taskName).apply {
             assertEquals(SUCCESS, task(":$taskName")?.outcome)
-            testProjectDir.root.apply {
+            testProjectDir.apply {
                 resolve(".git/hooks/$hookFile") {
                     assertTrue(readText().contains("${'$'}GRADLEW formatKotlin"))
                     assertTrue(canExecute())
@@ -59,14 +59,14 @@ abstract class InstallHookTaskTest(
                 #!/bin/bash
                 This is some existing hook
             """.trimIndent()
-        File(testProjectDir.root, ".git/hooks").apply { mkdirs() }
-        File(testProjectDir.root, ".git/hooks/$hookFile").apply {
+        File(testProjectDir, ".git/hooks").apply { mkdirs() }
+        File(testProjectDir, ".git/hooks/$hookFile").apply {
             writeText(existingHook)
         }
 
         build(taskName).apply {
             assertEquals(SUCCESS, task(":$taskName")?.outcome)
-            testProjectDir.root.apply {
+            testProjectDir.apply {
                 resolve(".git/hooks/$hookFile") {
                     val hookContents = readText()
                     assertTrue(hookContents.startsWith(existingHook))
@@ -79,8 +79,8 @@ abstract class InstallHookTaskTest(
     @Test
     fun `updates previously installed kotlinter hook`() {
         val placeholder = "Not actually the hook, just a placeholder"
-        File(testProjectDir.root, ".git/hooks").apply { mkdirs() }
-        File(testProjectDir.root, ".git/hooks/$hookFile").apply {
+        File(testProjectDir, ".git/hooks").apply { mkdirs() }
+        File(testProjectDir, ".git/hooks/$hookFile").apply {
             writeText(
                 """
                 ${InstallHookTask.startHook}
@@ -92,7 +92,7 @@ abstract class InstallHookTaskTest(
 
         build(taskName).apply {
             assertEquals(SUCCESS, task(":$taskName")?.outcome)
-            testProjectDir.root.apply {
+            testProjectDir.apply {
                 resolve(".git/hooks/$hookFile") {
                     val hookContents = readText()
                     assertTrue(hookContents.contains("${'$'}GRADLEW formatKotlin"))
@@ -104,11 +104,11 @@ abstract class InstallHookTaskTest(
 
     @Test
     fun `up-to-date when after hook installed`() {
-        File(testProjectDir.root, ".git").apply { mkdir() }
+        File(testProjectDir, ".git").apply { mkdir() }
         lateinit var hookContent: String
         build(taskName).apply {
             assertEquals(SUCCESS, task(":$taskName")?.outcome)
-            testProjectDir.root.apply {
+            testProjectDir.apply {
                 resolve(".git/hooks/$hookFile") {
                     hookContent = readText()
                     println(hookContent)
@@ -120,7 +120,7 @@ abstract class InstallHookTaskTest(
 
         build(taskName).apply {
             assertEquals(UP_TO_DATE, task(":$taskName")?.outcome)
-            testProjectDir.root.apply {
+            testProjectDir.apply {
                 resolve(".git/hooks/$hookFile") {
                     assertEquals(hookContent, readText())
                 }

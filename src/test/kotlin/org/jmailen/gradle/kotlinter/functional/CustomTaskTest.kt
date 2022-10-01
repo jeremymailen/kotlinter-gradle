@@ -18,7 +18,7 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
 
     @BeforeEach
     fun setUp() {
-        projectRoot = testProjectDir.root.apply {
+        projectRoot = testProjectDir.apply {
             resolve("settings.gradle") { writeText(settingsFile) }
             resolve("build.gradle") {
                 // language=groovy

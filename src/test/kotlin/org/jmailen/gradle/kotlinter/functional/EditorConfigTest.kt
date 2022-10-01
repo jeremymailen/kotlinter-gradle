@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.DisabledOnOs
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 
 internal class EditorConfigTest : WithGradleTest.Kotlin() {
@@ -108,6 +110,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS, disabledReason = "https://github.com/gradle/gradle/issues/21964")
     fun `editorconfig changes are taken into account on lint task re-runs`() {
         projectRoot.resolve(".editorconfig") {
             writeText(

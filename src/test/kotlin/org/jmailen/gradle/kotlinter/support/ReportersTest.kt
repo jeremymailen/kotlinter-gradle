@@ -1,7 +1,8 @@
 package org.jmailen.gradle.kotlinter.support
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.io.File
 
 class ReportersTest {
@@ -15,9 +16,9 @@ class ReportersTest {
         assertEquals("html", reporterFileExtension("html"))
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun testUnknownReporterExtension() {
-        reporterFileExtension("unknown")
+        assertThrows<IllegalArgumentException> { reporterFileExtension("unknown") }
     }
 
     @Test

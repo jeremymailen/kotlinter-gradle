@@ -5,20 +5,20 @@ import org.jmailen.gradle.kotlinter.functional.utils.editorConfig
 import org.jmailen.gradle.kotlinter.functional.utils.kotlinClass
 import org.jmailen.gradle.kotlinter.functional.utils.resolve
 import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.File
 
 internal class EditorConfigTest : WithGradleTest.Kotlin() {
 
     lateinit var projectRoot: File
 
-    @Before
+    @BeforeEach
     fun setUp() {
-        projectRoot = testProjectDir.root.apply {
+        projectRoot = testProjectDir.apply {
             resolve("settings.gradle") { writeText(settingsFile) }
             resolve("build.gradle") {
                 // language=groovy

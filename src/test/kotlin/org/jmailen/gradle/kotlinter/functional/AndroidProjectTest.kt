@@ -4,18 +4,18 @@ import org.gradle.testkit.runner.TaskOutcome
 import org.jmailen.gradle.kotlinter.functional.utils.androidManifest
 import org.jmailen.gradle.kotlinter.functional.utils.kotlinClass
 import org.jmailen.gradle.kotlinter.functional.utils.resolve
-import org.junit.Assert.assertEquals
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.File
 
 internal class AndroidProjectTest : WithGradleTest.Android() {
 
     private lateinit var androidModuleRoot: File
 
-    @Before
+    @BeforeEach
     fun setUp() {
-        testProjectDir.root.apply {
+        testProjectDir.apply {
             resolve("settings.gradle") { writeText(settingsFile) }
             resolve("build.gradle") {
                 // language=groovy

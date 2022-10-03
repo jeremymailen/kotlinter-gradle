@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.7.10"
+    kotlin("jvm") version "1.7.20"
     id("com.gradle.plugin-publish") version "0.21.0"
     `java-gradle-plugin`
     `maven-publish`
@@ -25,8 +25,8 @@ group = "org.jmailen.gradle"
 description = projectDescription
 
 object Versions {
-    const val androidTools = "7.2.2"
-    const val junit = "4.13.2"
+    const val androidTools = "7.3.0"
+    const val junit = "5.9.1"
     const val ktlint = "0.47.1"
     const val mockitoKotlin = "4.0.0"
 }
@@ -66,7 +66,9 @@ dependencies {
         implementation("com.pinterest.ktlint:$module:${Versions.ktlint}")
     }
 
-    testImplementation("junit:junit:${Versions.junit}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${Versions.junit}")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
+    implementation("commons-io:commons-io:2.11.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.mockitoKotlin}")
 }
 
@@ -102,6 +104,9 @@ tasks {
             languageVersion = "1.4"
             jvmTarget = targetJavaVersion.toString()
         }
+    }
+    withType<Test>().configureEach {
+        useJUnitPlatform()
     }
 
     // Required to put the Kotlin plugin on the classpath for the functional test suite

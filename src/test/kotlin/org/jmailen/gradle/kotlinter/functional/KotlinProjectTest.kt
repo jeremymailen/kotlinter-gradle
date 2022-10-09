@@ -224,6 +224,34 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
         }
     }
 
+    @Test
+    fun `plugin resolves dynamically loaded RulesetProviders`() {
+        settingsFile()
+        buildFile()
+        editorConfig()
+        kotlinSourceFile(
+            "CustomObject.kt",
+            """
+            object CustomObject
+            
+            """.trimIndent(),
+        )
+
+        val matcher = "Resolved (\\d+) RuleProviders".toRegex()
+
+        build("lintKotlin", "--info").apply {
+            assertEquals(SUCCESS, task(":lintKotlin")?.outcome)
+            val resolvedRulesCount = matcher.find(output)?.groups?.get(1)?.value?.toIntOrNull() ?: 0
+            assertTrue(resolvedRulesCount > 0)
+        }
+
+        build("formatKotlin", "--info").apply {
+            assertEquals(SUCCESS, task(":formatKotlin")?.outcome)
+            val resolvedRulesCount = matcher.find(output)?.groups?.get(1)?.value?.toIntOrNull() ?: 0
+            assertTrue(resolvedRulesCount > 0)
+        }
+    }
+
     private fun settingsFile() = settingsFile.apply {
         writeText("rootProject.name = 'kotlinter'")
     }

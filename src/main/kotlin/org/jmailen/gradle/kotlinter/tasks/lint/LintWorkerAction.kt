@@ -31,6 +31,10 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
             changedEditorconfigFiles = parameters.changedEditorConfigFiles,
             logger = logger,
         )
+        logger.info("Resolved ${ktLintEngine.ruleProviders.size} RuleProviders")
+        if (logger.isDebugEnabled) {
+            logger.debug("Resolved RuleSetProviders = ${ktLintEngine.ruleProviders.joinToString { it.createNewRuleInstance().id }}")
+        }
 
         var hasError = false
 

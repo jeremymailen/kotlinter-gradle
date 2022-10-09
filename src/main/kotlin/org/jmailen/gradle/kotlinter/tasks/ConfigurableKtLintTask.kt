@@ -1,6 +1,6 @@
 package org.jmailen.gradle.kotlinter.tasks
 
-import org.gradle.api.file.FileCollection
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -19,7 +19,6 @@ import org.gradle.work.InputChanges
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_DISABLED_RULES
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_EXPERIMENTAL_RULES
 import org.jmailen.gradle.kotlinter.support.KtLintParams
-import org.jmailen.gradle.kotlinter.support.findApplicableEditorConfigFiles
 
 abstract class ConfigurableKtLintTask(
     projectLayout: ProjectLayout,
@@ -35,9 +34,7 @@ abstract class ConfigurableKtLintTask(
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:Incremental
-    internal val editorconfigFiles: FileCollection = objectFactory.fileCollection().apply {
-        from(projectLayout.findApplicableEditorConfigFiles().toList())
-    }
+    internal val editorconfigFiles: ConfigurableFileCollection = objectFactory.fileCollection()
 
     @Internal
     protected fun getKtLintParams(): KtLintParams = KtLintParams(

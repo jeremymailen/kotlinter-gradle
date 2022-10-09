@@ -13,6 +13,7 @@ plugins {
 repositories {
     mavenCentral()
     google()
+    maven { setUrl("https://oss.sonatype.org/content/repositories/snapshots") }
 }
 
 val pluginId = "org.jmailen.kotlinter"
@@ -20,14 +21,14 @@ val githubUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "3.12.0"
+version = "3.13.0"
 group = "org.jmailen.gradle"
 description = projectDescription
 
 object Versions {
     const val androidTools = "7.3.0"
     const val junit = "5.9.1"
-    const val ktlint = "0.47.1"
+    const val ktlint = "0.48.0-SNAPSHOT"
     const val mockitoKotlin = "4.0.0"
 }
 

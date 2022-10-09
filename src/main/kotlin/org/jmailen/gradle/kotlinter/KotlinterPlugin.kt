@@ -1,5 +1,6 @@
 package org.jmailen.gradle.kotlinter
 
+import com.pinterest.ktlint.core.KtLint
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -8,11 +9,15 @@ import org.jmailen.gradle.kotlinter.pluginapplier.AndroidSourceSetApplier
 import org.jmailen.gradle.kotlinter.pluginapplier.KotlinJvmSourceSetApplier
 import org.jmailen.gradle.kotlinter.pluginapplier.KotlinMultiplatformSourceSetApplier
 import org.jmailen.gradle.kotlinter.support.reporterFileExtension
+import org.jmailen.gradle.kotlinter.tasks.ConfigurableKtLintTask
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.InstallPreCommitHookTask
 import org.jmailen.gradle.kotlinter.tasks.InstallPrePushHookTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
 import java.io.File
+import kotlin.system.measureTimeMillis
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
 class KotlinterPlugin : Plugin<Project> {
 
@@ -22,6 +27,7 @@ class KotlinterPlugin : Plugin<Project> {
         "kotlin-android" to AndroidSourceSetApplier,
     )
 
+    @OptIn(ExperimentalTime::class)
     override fun apply(project: Project) = with(project) {
         val kotlinterExtension = extensions.create("kotlinter", KotlinterExtension::class.java)
 
@@ -35,6 +41,14 @@ class KotlinterPlugin : Plugin<Project> {
                 val lintKotlin = registerParentLintTask()
                 val formatKotlin = registerParentFormatTask()
 
+                val duration = measureTime {
+                    val thisShouldBeSourceSetRootConfiguredForEachTask = project.rootDir.toPath() // TODO
+                    val projectEditorConfigFiles = KtLint.editorConfigFilePaths(thisShouldBeSourceSetRootConfiguredForEachTask)
+                    tasks.withType(ConfigurableKtLintTask::class.java).configureEach { task ->
+                        task.editorconfigFiles.from(projectEditorConfigFiles)
+                    }
+                }
+                logger.quiet("Took $duration")
                 sourceResolver.applyToAll(this) { id, resolvedSources ->
                     val lintTaskPerSourceSet = tasks.register("lintKotlin${id.capitalize()}", LintTask::class.java) { lintTask ->
                         lintTask.source(resolvedSources)

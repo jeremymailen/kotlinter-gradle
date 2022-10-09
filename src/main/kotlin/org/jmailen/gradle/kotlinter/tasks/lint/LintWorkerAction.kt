@@ -86,6 +86,7 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
                 text = file.readText(),
                 ruleProviders = ruleProviders,
                 script = script,
+                debug = true,
                 editorConfigOverride = editorConfigOverride(ktLintParams),
                 cb = { error, _ -> onError(error) },
             ),

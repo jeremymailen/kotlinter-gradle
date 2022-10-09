@@ -136,4 +136,43 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
             assertEquals(TaskOutcome.SUCCESS, task(":lintKotlinMain")?.outcome)
         }
     }
+
+    @Test
+    fun `can override ktlint version`() {
+        projectRoot.resolve("build.gradle") {
+            // language=groovy
+            val buildScript =
+                """
+                plugins {
+                    id 'kotlin'
+                    id 'org.jmailen.kotlinter'
+                }
+                
+                repositories {
+                    mavenCentral()
+                }
+                
+                kotlinter {
+                    ktlintVersion = "0.46.0"
+                }
+                
+                """.trimIndent()
+            writeText(buildScript)
+        }
+        projectRoot.resolve("src/main/kotlin/FileName.kt") {
+            writeText(kotlinClass("FileName"))
+        }
+
+        buildAndFail("lintKotlin").apply {
+            assertEquals(TaskOutcome.FAILED, task(":lintKotlinMain")?.outcome) { "should fail due to incompatibility" }
+            val expectedMessage = "Caused by: java.lang.NoSuchMethodError: 'void com.pinterest.ktlint.core.KtLint\$ExperimentalParams."
+            assertTrue(output.contains(expectedMessage)) { "should explain the incompatibility" }
+        }
+        // remove `--configuration-cache-problems=warn` when upgrading to Gradle 7.6 https://github.com/gradle/gradle/issues/17470
+        build("dependencies", "--configuration", "ktlint", "--configuration-cache-problems=warn").apply {
+            assertTrue(output.contains("com.pinterest:ktlint:0.46.0")) {
+                "should include overridden ktlin version in `ktlint` configuration"
+            }
+        }
+    }
 }

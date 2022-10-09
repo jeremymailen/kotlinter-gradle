@@ -10,7 +10,6 @@ import org.gradle.internal.logging.slf4j.DefaultContextAwareTaskLogger
 import org.gradle.workers.WorkAction
 import org.jmailen.gradle.kotlinter.support.KotlinterError
 import org.jmailen.gradle.kotlinter.support.KtLintParams
-import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
 import org.jmailen.gradle.kotlinter.support.editorConfigOverride
 import org.jmailen.gradle.kotlinter.support.reporterFor
 import org.jmailen.gradle.kotlinter.support.reporterPathFor
@@ -34,12 +33,17 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
             changedEditorconfigFiles = parameters.changedEditorconfigFiles,
             logger = logger,
         )
+        val ruleSets = resolveRuleProviders(includeExperimentalRules = ktLintParams.experimentalRules)
+        logger.info("Resolved ${ruleSets.size} RuleSetProviders")
+        if (logger.isDebugEnabled) {
+            logger.debug("Resolved RuleSetProviders = ${ruleSets.joinToString { it.createNewRuleInstance().id }}")
+        }
+
         var hasError = false
 
         try {
             reporters.onEach { it.beforeAll() }
             files.forEach { file ->
-                val ruleSets = resolveRuleProviders(defaultRuleSetProviders, ktLintParams.experimentalRules)
                 val relativePath = file.toRelativeString(projectDirectory)
                 reporters.onEach { it.before(relativePath) }
                 logger.debug("$name linting: $relativePath")

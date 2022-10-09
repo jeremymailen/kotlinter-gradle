@@ -59,9 +59,7 @@ dependencies {
         "ktlint-reporter-json",
         "ktlint-reporter-html",
         "ktlint-reporter-plain",
-        "ktlint-reporter-sarif",
-        "ktlint-ruleset-experimental",
-        "ktlint-ruleset-standard"
+        "ktlint-reporter-sarif"
     ).forEach { module ->
         compileOnly("com.pinterest.ktlint:$module:${Versions.ktlint}")
         testImplementation("com.pinterest.ktlint:$module:${Versions.ktlint}")

@@ -3,14 +3,12 @@ package org.jmailen.gradle.kotlinter.tasks.format
 import com.pinterest.ktlint.core.KtLint
 import com.pinterest.ktlint.core.LintError
 import com.pinterest.ktlint.core.RuleProvider
-import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.internal.logging.slf4j.DefaultContextAwareTaskLogger
 import org.gradle.workers.WorkAction
 import org.jmailen.gradle.kotlinter.support.KotlinterError
 import org.jmailen.gradle.kotlinter.support.KtLintParams
-import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
 import org.jmailen.gradle.kotlinter.support.editorConfigOverride
 import org.jmailen.gradle.kotlinter.support.resetEditorconfigCacheIfNeeded
 import org.jmailen.gradle.kotlinter.support.resolveRuleProviders
@@ -30,21 +28,22 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
             changedEditorconfigFiles = parameters.changedEditorConfigFiles,
             logger = logger,
         )
+        val ruleSets = resolveRuleProviders(includeExperimentalRules = ktLintParams.experimentalRules)
+        logger.info("Resolved ${ruleSets.size} RuleSetProviders")
 
         val fixes = mutableListOf<String>()
         try {
             files.forEach { file ->
-                val ruleSets = resolveRuleProviders(defaultRuleSetProviders, ktLintParams.experimentalRules)
                 val sourceText = file.readText()
                 val relativePath = file.toRelativeString(projectDirectory)
 
-                logger.log(LogLevel.DEBUG, "$name checking format: $relativePath")
+                logger.debug("$name checking format: $relativePath")
 
                 when (file.extension) {
                     "kt" -> this::formatKt
                     "kts" -> this::formatKts
                     else -> {
-                        logger.log(LogLevel.DEBUG, "$name ignoring non Kotlin file: $relativePath")
+                        logger.debug("$name ignoring non Kotlin file: $relativePath")
                         null
                     }
                 }?.let { formatFunc ->
@@ -53,11 +52,11 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
                             true -> "${file.path}:${error.line}:${error.col}: Format fixed > [${error.ruleId}] ${error.detail}"
                             false -> "${file.path}:${error.line}:${error.col}: Format could not fix > [${error.ruleId}] ${error.detail}"
                         }
-                        logger.log(LogLevel.QUIET, msg)
+                        logger.quiet(msg)
                         fixes.add(msg)
                     }
                     if (!formattedText.contentEquals(sourceText)) {
-                        logger.log(LogLevel.QUIET, "${file.path}: Format fixed")
+                        logger.quiet("${file.path}: Format fixed")
                         file.writeText(formattedText)
                     }
                 }

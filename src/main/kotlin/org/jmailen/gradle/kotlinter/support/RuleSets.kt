@@ -2,15 +2,13 @@ package org.jmailen.gradle.kotlinter.support
 
 import com.pinterest.ktlint.core.RuleProvider
 import com.pinterest.ktlint.core.RuleSetProviderV2
-import com.pinterest.ktlint.ruleset.experimental.ExperimentalRuleSetProvider
 import java.util.ServiceLoader
 
 internal fun resolveRuleProviders(
-    providers: Iterable<RuleSetProviderV2>,
     includeExperimentalRules: Boolean = false,
-): Set<RuleProvider> = providers
+): Set<RuleProvider> = defaultRuleSetProviders()
     .asSequence()
-    .filter { includeExperimentalRules || it !is ExperimentalRuleSetProvider }
+    .filter { includeExperimentalRules || it.id != "experimental" }
     .sortedWith(
         compareBy {
             when (it.id) {
@@ -23,7 +21,9 @@ internal fun resolveRuleProviders(
     .flatten()
     .toSet()
 
-// statically resolve providers from plugin classpath. ServiceLoader#load alone resolves classes lazily which fails when run in parallel
-// https://github.com/jeremymailen/kotlinter-gradle/issues/101
-val defaultRuleSetProviders: List<RuleSetProviderV2> =
+/**
+ * Make sure this gets called with proper classpath (i.e. within Gradle Worker class)
+ * `toList()` call prevents concurrency issues: https://github.com/jeremymailen/kotlinter-gradle/issues/101
+ */
+private fun defaultRuleSetProviders(): List<RuleSetProviderV2> =
     ServiceLoader.load(RuleSetProviderV2::class.java).toList()

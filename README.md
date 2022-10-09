@@ -157,6 +157,7 @@ kotlinter {
     reporters = arrayOf("checkstyle", "plain")
     experimentalRules = false
     disabledRules = emptyArray()
+    ktlintVersion = "x.y.z"
 }
 ```
 
@@ -171,6 +172,7 @@ kotlinter {
     reporters = ['checkstyle', 'plain']
     experimentalRules = false
     disabledRules = []
+    ktlintVersion = 'x.y.z'
 }
 ```
 
@@ -187,6 +189,9 @@ The `disabledRules` property can includes an array of rule ids you wish to disab
 disabledRules = ["no-wildcard-imports"]
 ```
 You must prefix rule ids not part of the standard rule set with `<rule-set-id>:<rule-id>`. For example `experimental:annotation`.
+
+There is a basic support for overriding `ktlintVersion`, but the plugin doesn't guarantee backwards compatibility with all `ktlint` versions.
+Errors like `java.lang.NoSuchMethodError:` or `com/pinterest/ktlint/core/KtLint$Params` can be thrown if provided `ktlint` version isn't compatible with the latest ktlint apis.   
 
 ### Editorconfig
 
@@ -224,6 +229,34 @@ tasks.named('lintKotlinMain') {
 </details>
 
 Note that exclude paths are relative to the package root.
+
+#### Advanced
+By default, `Kotlinter` Gradle workers will use 256MB of heap size. To adjust this setting use:
+<details>
+<summary>Kotlin</summary>
+
+```kotlin
+import org.jmailen.gradle.kotlinter.tasks.ConfigurableKtLintTask
+
+tasks.withType<ConfigurableKtLintTask> {
+  workerMaxHeapSize.set("512m")
+}
+```
+
+</details>
+
+<details>
+<summary>Groovy</summary>
+
+```groovy
+import org.jmailen.gradle.kotlinter.tasks.ConfigurableKtLintTask
+
+tasks.withType(ConfigurableKtLintTask::class).configureEach {
+  workerMaxHeapSize.set("512m")
+}
+```
+
+</details>
 
 ### Custom Tasks
 
@@ -284,61 +317,9 @@ tasks.register('ktFormat', FormatTask) {
 
 </details>
 
-### Custom ktlint version
-
-If you need to use a different version of `ktlint` you can override the dependency.
-
-<details open>
-<summary>Kotlin</summary>
-
-```kotlin
-buildscript {
-    configurations.classpath {
-        resolutionStrategy {
-            force(
-                "com.pinterest.ktlint:ktlint-core:0.39.0",
-                "com.pinterest.ktlint:ktlint-reporter-checkstyle:0.39.0",
-                "com.pinterest.ktlint:ktlint-reporter-json:0.39.0",
-                "com.pinterest.ktlint:ktlint-reporter-html:0.39.0",
-                "com.pinterest.ktlint:ktlint-reporter-plain:0.39.0",
-                "com.pinterest.ktlint:ktlint-reporter-sarif:0.39.0",
-                "com.pinterest.ktlint:ktlint-ruleset-experimental:0.39.0",
-                "com.pinterest.ktlint:ktlint-ruleset-standard:0.39.0"
-            )
-        }
-    }
-}
-```
-
-</details>
-
-<details>
-<summary>Groovy</summary>
-
-```groovy
-buildscript {
-    configurations.classpath {
-        resolutionStrategy {
-            force(
-                "com.pinterest.ktlint:ktlint-core:0.39.0",
-                "com.pinterest.ktlint:ktlint-reporter-checkstyle:0.39.0",
-                "com.pinterest.ktlint:ktlint-reporter-json:0.39.0",
-                "com.pinterest.ktlint:ktlint-reporter-html:0.39.0",
-                "com.pinterest.ktlint:ktlint-reporter-plain:0.39.0", 
-                "com.pinterest.ktlint:ktlint-reporter-sarif:0.39.0",
-                "com.pinterest.ktlint:ktlint-ruleset-experimental:0.39.0",
-                "com.pinterest.ktlint:ktlint-ruleset-standard:0.39.0"
-            )
-        }
-    }
-}
-```
-
-</details>
-
 ### Custom Rules
 
-You can add custom ktlint RuleSets using the `ktlintRuleSet` dependency:
+You can add custom `ktlint` RuleSets using the `ktlintRuleSet` dependency:
 
 <details open>
 <summary>Kotlin</summary>

@@ -115,9 +115,6 @@ jobs:
           - gradle: 7.0.1
             java: 11
             agp: 4.2.2
-          - gradle: 6.9.1
-            java: 8
-            agp: 4.0.0
 
     name: '[android] Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}, AGP: ${{ matrix.agp }}'
     steps:

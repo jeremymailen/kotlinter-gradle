@@ -27,7 +27,8 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
             changedEditorconfigFiles = parameters.changedEditorConfigFiles,
             logger = logger,
         )
-        logger.info("Resolved ${ktLintEngine.ruleProviders.size} RuleProviders")
+        logger.info("$name - resolved ${ktLintEngine.ruleProviders.size} RuleProviders")
+        logger.info("$name - executing against ${files.size} file(s)")
 
         val fixes = mutableListOf<String>()
         try {

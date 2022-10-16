@@ -31,7 +31,8 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
             changedEditorconfigFiles = parameters.changedEditorConfigFiles,
             logger = logger,
         )
-        logger.info("Resolved ${ktLintEngine.ruleProviders.size} RuleProviders")
+        logger.info("$name - resolved ${ktLintEngine.ruleProviders.size} RuleProviders")
+        logger.info("$name - executing against ${files.size} file(s)")
         if (logger.isDebugEnabled) {
             logger.debug("Resolved RuleSetProviders = ${ktLintEngine.ruleProviders.joinToString { it.createNewRuleInstance().id }}")
         }

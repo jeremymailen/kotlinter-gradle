@@ -40,7 +40,7 @@ open class FormatTask @Inject constructor(
 
         workQueue.submit(FormatWorkerAction::class.java) { p ->
             p.name.set(name)
-            p.files.from(getChangedSources(inputChanges))
+            p.files.from(source)
             p.projectDirectory.set(projectLayout.projectDirectory.asFile)
             p.ktLintParams.set(getKtLintParams())
             p.output.set(report)

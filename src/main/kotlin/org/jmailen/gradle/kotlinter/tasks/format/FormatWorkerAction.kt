@@ -29,7 +29,8 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
             logger = logger,
         )
         val ruleSets = resolveRuleProviders(includeExperimentalRules = ktLintParams.experimentalRules)
-        logger.info("Resolved ${ruleSets.size} RuleSetProviders")
+        logger.info("$name - resolved ${ruleSets.size} RuleSetProviders")
+        logger.info("$name - executing against ${files.size} file(s)")
 
         val fixes = mutableListOf<String>()
         try {

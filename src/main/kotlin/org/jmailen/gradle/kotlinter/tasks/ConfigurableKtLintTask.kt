@@ -62,7 +62,7 @@ abstract class ConfigurableKtLintTask(
     @get:Internal
     internal val patternFilterable: PatternFilterable = PatternSet()
 
-    @SkipWhenEmpty // Marks the input incremental: https://github.com/gradle/gradle/issues/17593
+    @SkipWhenEmpty // Marks the input as incremental: https://github.com/gradle/gradle/issues/17593
     @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
     @IgnoreEmptyDirectories

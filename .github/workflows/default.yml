@@ -99,7 +99,12 @@ jobs:
         uses: usefulness/agp-version-finder-action@v1
 
       - id: build-agp-matrix
-        run: echo '::set-output name=agp-versions::["${{ steps.agp-version-finder.outputs.latest-stable }}", "${{ steps.agp-version-finder.outputs.latest-alpha }}"]'
+        run: |
+           if [[ ${{ github.event_name }} == 'pull_request' ]]; then
+             echo '::set-output name=agp-versions::["${{ steps.agp-version-finder.outputs.latest-stable }}"]'
+           else
+             echo '::set-output name=agp-versions::["${{ steps.agp-version-finder.outputs.latest-stable }}", "${{ steps.agp-version-finder.outputs.latest-alpha }}"]'
+           fi
 
   integration-tests-android:
     runs-on: ubuntu-latest

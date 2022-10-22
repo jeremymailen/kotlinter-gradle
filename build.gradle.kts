@@ -28,7 +28,6 @@ object Versions {
     const val androidTools = "7.3.1"
     const val junit = "5.9.1"
     const val ktlint = "0.48.1"
-    const val mockitoKotlin = "4.1.0"
 }
 
 configurations {
@@ -57,7 +56,6 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${Versions.junit}")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
     testImplementation("commons-io:commons-io:2.11.0")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.mockitoKotlin}")
 }
 
 kotlin {

@@ -8,7 +8,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.jmailen.gradle.kotlinter.pluginapplier.AndroidSourceSetApplier
 import org.jmailen.gradle.kotlinter.pluginapplier.KotlinJvmSourceSetApplier
 import org.jmailen.gradle.kotlinter.pluginapplier.KotlinMultiplatformSourceSetApplier
-import org.jmailen.gradle.kotlinter.support.reporterFileExtension
+import org.jmailen.gradle.kotlinter.support.ReporterType
 import org.jmailen.gradle.kotlinter.tasks.ConfigurableKtLintTask
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.InstallPreCommitHookTask
@@ -56,8 +56,9 @@ class KotlinterPlugin : Plugin<Project> {
                         lintTask.ignoreFailures.set(provider { kotlinterExtension.ignoreFailures })
                         lintTask.reports.set(
                             provider {
-                                kotlinterExtension.reporters.associateWith { reporter ->
-                                    reportFile("$id-lint.${reporterFileExtension(reporter)}")
+                                kotlinterExtension.reporters.associateWith { reporterId ->
+                                    val type = ReporterType.getById(reporterId)
+                                    reportFile("$id-lint.${type.fileExtension}")
                                 }
                             },
                         )

@@ -15,6 +15,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.work.InputChanges
 import org.gradle.workers.WorkerExecutor
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_IGNORE_FAILURES
+import org.jmailen.gradle.kotlinter.support.ReporterType
 import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerAction
 import java.io.File
 import javax.inject.Inject
@@ -52,7 +53,7 @@ open class LintTask @Inject constructor(
             p.name.set(name)
             p.files.from(source)
             p.projectDirectory.set(projectLayout.projectDirectory.asFile)
-            p.reporters.putAll(reports)
+            p.reporters.putAll(getReports())
             p.ktLintParams.set(getKtLintParams())
             p.changedEditorconfigFiles.from(getChangedEditorconfigFiles(inputChanges))
         }
@@ -65,4 +66,7 @@ open class LintTask @Inject constructor(
             }
         }
     }
+
+    private fun getReports() = reports.get()
+        .mapKeys { (id, _) -> ReporterType.getById(id = id) }
 }

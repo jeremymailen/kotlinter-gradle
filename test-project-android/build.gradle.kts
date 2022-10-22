@@ -6,6 +6,7 @@ plugins {
 
 android {
     compileSdkVersion(33)
+    namespace = "com.kotlinter.example"
 
     if (properties["agpVersion"].toString().startsWith("4")) {
         sourceSets {

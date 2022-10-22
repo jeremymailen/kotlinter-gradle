@@ -99,7 +99,12 @@ jobs:
         uses: usefulness/agp-version-finder-action@v1
 
       - id: build-agp-matrix
-        run: echo '::set-output name=agp-versions::["${{ steps.agp-version-finder.outputs.latest-stable }}", "${{ steps.agp-version-finder.outputs.latest-alpha }}"]'
+        run: |
+           if [[ ${{ github.event_name }} == 'pull_request' ]]; then
+             echo 'agp-versions=["${{ steps.agp-version-finder.outputs.latest-stable }}"]' >> $GITHUB_OUTPUT
+           else
+             echo 'agp-versions=["${{ steps.agp-version-finder.outputs.latest-stable }}", "${{ steps.agp-version-finder.outputs.latest-alpha }}"]' >> $GITHUB_OUTPUT
+           fi
 
   integration-tests-android:
     runs-on: ubuntu-latest
@@ -115,9 +120,6 @@ jobs:
           - gradle: 7.0.1
             java: 11
             agp: 4.2.2
-          - gradle: 6.9.1
-            java: 8
-            agp: 4.0.0
 
     name: '[android] Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}, AGP: ${{ matrix.agp }}'
     steps:

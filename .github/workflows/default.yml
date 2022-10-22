@@ -101,9 +101,9 @@ jobs:
       - id: build-agp-matrix
         run: |
            if [[ ${{ github.event_name }} == 'pull_request' ]]; then
-             echo '::set-output name=agp-versions::["${{ steps.agp-version-finder.outputs.latest-stable }}"]'
+             echo 'agp-versions=["${{ steps.agp-version-finder.outputs.latest-stable }}"]' >> $GITHUB_OUTPUT
            else
-             echo '::set-output name=agp-versions::["${{ steps.agp-version-finder.outputs.latest-stable }}", "${{ steps.agp-version-finder.outputs.latest-alpha }}"]'
+             echo 'agp-versions=["${{ steps.agp-version-finder.outputs.latest-stable }}", "${{ steps.agp-version-finder.outputs.latest-alpha }}"]' >> $GITHUB_OUTPUT
            fi
 
   integration-tests-android:

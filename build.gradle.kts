@@ -52,18 +52,7 @@ configurations {
 dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin")
     compileOnly("com.android.tools.build:gradle:${Versions.androidTools}")
-
-    listOf(
-        "ktlint-core",
-        "ktlint-reporter-checkstyle",
-        "ktlint-reporter-json",
-        "ktlint-reporter-html",
-        "ktlint-reporter-plain",
-        "ktlint-reporter-sarif"
-    ).forEach { module ->
-        compileOnly("com.pinterest.ktlint:$module:${Versions.ktlint}")
-        testImplementation("com.pinterest.ktlint:$module:${Versions.ktlint}")
-    }
+    compileOnly("com.pinterest.ktlint:ktlint-core:${Versions.ktlint}")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${Versions.junit}")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")

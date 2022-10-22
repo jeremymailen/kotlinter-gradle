@@ -15,7 +15,7 @@ import java.io.File
 
 abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
     private val logger: Logger = DefaultContextAwareTaskLogger(Logging.getLogger(FormatTask::class.java))
-    private val files: List<File> = parameters.files.toList()
+    private val files: Iterable<File> = parameters.files
     private val projectDirectory: File = parameters.projectDirectory.asFile.get()
     private val name: String = parameters.name.get()
     private val ktLintParams: KtLintParams = parameters.ktLintParams.get()

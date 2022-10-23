@@ -68,7 +68,7 @@ dependencies {
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${Versions.junit}")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
-    implementation("commons-io:commons-io:2.11.0")
+    testImplementation("commons-io:commons-io:2.11.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.mockitoKotlin}")
 }
 

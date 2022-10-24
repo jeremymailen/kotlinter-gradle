@@ -30,3 +30,18 @@ jobs:
           GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
         with:
           arguments: publishPlugins
+
+      - name: Update README.md version references
+        run: sed -i -E 's/version "[[:digit:]]+.[[:digit:]]+.[[:digit:]]+"/version "${{ github.event.release.tag_name }}"/g' README.md
+        shell: bash
+
+      - name: Create Readme version bump Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          commit-message: "Update Readme for the release ${{ github.event.release.tag_name }}"
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          delete-branch: true
+          title: "Update Readme for the release ${{ github.event.release.tag_name }}"
+          body: |
+            Release: https://github.com/${{ github.repository }}/releases/tag/${{ github.event.release.tag_name }}

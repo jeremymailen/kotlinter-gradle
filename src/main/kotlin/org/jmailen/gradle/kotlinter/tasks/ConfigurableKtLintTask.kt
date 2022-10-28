@@ -6,6 +6,7 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTreeElement
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
@@ -14,8 +15,10 @@ import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.IgnoreEmptyDirectories
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SkipWhenEmpty
@@ -28,6 +31,7 @@ import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_DISABLE
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_EXPERIMENTAL_RULES
 import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.findApplicableEditorConfigFiles
+import java.io.File
 import java.util.concurrent.Callable
 
 abstract class ConfigurableKtLintTask(
@@ -57,7 +61,14 @@ abstract class ConfigurableKtLintTask(
     @Classpath
     val ruleSetsClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
 
-    private val allSourceFiles = project.objects.fileCollection()
+    private val allSourceFiles = objectFactory.fileCollection()
+
+    @Optional
+    @InputFile
+    @PathSensitive(PathSensitivity.RELATIVE)
+    val baselineFile = objectFactory.fileProperty().apply {
+        set(projectLayout.projectDirectory.dir("config").file("ktlint-baseline.xml"))
+    }
 
     @get:Internal
     internal val patternFilterable: PatternFilterable = PatternSet()

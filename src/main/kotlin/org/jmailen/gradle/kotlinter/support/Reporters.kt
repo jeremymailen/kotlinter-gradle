@@ -56,5 +56,9 @@ private fun ReporterType.generateOpt() = when (this) {
     ReporterType.Plain -> mapOf("color_name" to "DARK_GRAY")
 }
 
+internal fun loadBaselineReporter(output: File) = defaultReporters()
+    .first { it.id == "baseline" }
+    .get(PrintStream(output), emptyMap())
+
 private fun defaultReporters(): List<ReporterProvider<*>> =
     ServiceLoader.load(ReporterProvider::class.java).toList()

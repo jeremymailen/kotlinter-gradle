@@ -3,6 +3,8 @@ package org.jmailen.gradle.kotlinter.tasks.lint
 import com.pinterest.ktlint.core.KtLint
 import com.pinterest.ktlint.core.LintError
 import com.pinterest.ktlint.core.RuleProvider
+import com.pinterest.ktlint.core.api.containsLintError
+import com.pinterest.ktlint.core.api.loadBaseline
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.internal.logging.slf4j.DefaultContextAwareTaskLogger
@@ -38,14 +40,20 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
 
         val reporters = resolveReporters(enabled = parameters.reporters.get())
 
+        val baselineRules = parameters.baselineFile.orNull?.asFile?.absolutePath
+            ?.let(::loadBaseline)
+            ?.lintErrorsPerFile
+
         var hasError = false
 
         try {
             reporters.onEach { (_, reporter) -> reporter.beforeAll() }
             files.forEach { file ->
                 val relativePath = file.toRelativeString(projectDirectory)
+                val errorsInTheFile = baselineRules?.get(relativePath).orEmpty()
                 reporters.onEach { (_, reporter) -> reporter.before(relativePath) }
                 logger.debug("$name linting: $relativePath")
+
                 val lintFunc = when (file.extension) {
                     "kt" -> ::lintKt
                     "kts" -> ::lintKts
@@ -56,16 +64,19 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
                 }
                 lintFunc?.invoke(file, ruleSets) { error ->
                     hasError = true
-                    reporters.onEach { (type, reporter) ->
-                        // some reporters want relative paths, some want absolute
-                        val filePath = reporterPathFor(
-                            reporterType = type,
-                            output = file,
-                            relativeRoot = projectDirectory,
-                        )
-                        reporter.onLintError(filePath, error, false)
+
+                    if (!errorsInTheFile.containsLintError(error)) {
+                        reporters.onEach { (type, reporter) ->
+                            // some reporters want relative paths, some want absolute
+                            val filePath = reporterPathFor(
+                                reporterType = type,
+                                output = file,
+                                relativeRoot = projectDirectory,
+                            )
+                            reporter.onLintError(filePath, error, false)
+                        }
+                        logger.quiet("${file.path}:${error.line}:${error.col}: Lint error > [${error.ruleId}] ${error.detail}")
                     }
-                    logger.quiet("${file.path}:${error.line}:${error.col}: Lint error > [${error.ruleId}] ${error.detail}")
                 }
                 reporters.onEach { (_, reporter) -> reporter.after(relativePath) }
             }

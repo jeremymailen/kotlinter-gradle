@@ -30,7 +30,8 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
             logger = logger,
         )
         val ruleSets = resolveRuleProviders(includeExperimentalRules = ktLintParams.experimentalRules)
-        logger.info("Resolved ${ruleSets.size} RuleSetProviders")
+        logger.info("$name - resolved ${ruleSets.size} RuleSetProviders")
+        logger.info("$name - executing against ${files.size} file(s)")
         if (logger.isDebugEnabled) {
             logger.debug("Resolved RuleSetProviders = ${ruleSets.joinToString { it.createNewRuleInstance().id }}")
         }

@@ -11,6 +11,7 @@ import org.jmailen.gradle.kotlinter.pluginapplier.KotlinMultiplatformSourceSetAp
 import org.jmailen.gradle.kotlinter.support.ReporterType
 import org.jmailen.gradle.kotlinter.tasks.ConfigurableKtLintTask
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
+import org.jmailen.gradle.kotlinter.tasks.GenerateBaselineTask
 import org.jmailen.gradle.kotlinter.tasks.InstallPreCommitHookTask
 import org.jmailen.gradle.kotlinter.tasks.InstallPrePushHookTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
@@ -41,6 +42,7 @@ class KotlinterPlugin : Plugin<Project> {
             pluginManager.withPlugin(pluginId) {
                 val lintKotlin = registerParentLintTask()
                 val formatKotlin = registerParentFormatTask()
+                val generateBaselineTask = registerParentBaselineTask()
 
                 val ktlintConfiguration = createKtlintConfiguration(kotlinterExtension)
                 val ruleSetConfiguration = createRuleSetConfiguration(ktlintConfiguration)
@@ -78,6 +80,15 @@ class KotlinterPlugin : Plugin<Project> {
                     formatKotlin.configure { formatTask ->
                         formatTask.dependsOn(formatKotlinPerSourceSet)
                     }
+
+                    val generateBaselinePerSourceSet = tasks.register("generateKtlintBaseline${id.capitalize()}", GenerateBaselineTask::class.java) { baselineTask ->
+                        baselineTask.source(resolvedSources)
+                        baselineTask.experimentalRules.set(provider { kotlinterExtension.experimentalRules })
+                        baselineTask.disabledRules.set(provider { kotlinterExtension.disabledRules.toList() })
+                    }
+                    generateBaselineTask.configure { baselineTask ->
+                        baselineTask.dependsOn(generateBaselinePerSourceSet)
+                    }
                 }
             }
         }
@@ -95,6 +106,12 @@ class KotlinterPlugin : Plugin<Project> {
         tasks.register("formatKotlin") {
             it.group = "formatting"
             it.description = "Formats the Kotlin source files."
+        }
+
+    private fun Project.registerParentBaselineTask(): TaskProvider<Task> =
+        tasks.register("generateKtlintBaseline") {
+            it.group = "formatting"
+            it.description = "Generate ktlint baseline for Kotlin source files."
         }
 
     private fun Project.registerPrePushHookTask(): TaskProvider<InstallPrePushHookTask> =

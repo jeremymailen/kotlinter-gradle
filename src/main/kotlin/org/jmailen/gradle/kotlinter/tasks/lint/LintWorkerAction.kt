@@ -63,9 +63,8 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
                     }
                 }
                 lintFunc?.invoke(file, ruleSets) { error ->
-                    hasError = true
-
                     if (!errorsInTheFile.containsLintError(error)) {
+                        hasError = true
                         reporters.onEach { (type, reporter) ->
                             // some reporters want relative paths, some want absolute
                             val filePath = reporterPathFor(

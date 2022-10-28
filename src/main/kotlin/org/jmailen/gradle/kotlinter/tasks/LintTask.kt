@@ -6,7 +6,11 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFiles
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.InputChanges
 import org.gradle.workers.WorkerExecutor
@@ -31,6 +35,13 @@ open class LintTask @Inject constructor(
 
     @Input
     val ignoreFailures: Property<Boolean> = objectFactory.property(default = DEFAULT_IGNORE_FAILURES)
+
+    @Optional
+    @InputFile
+    @PathSensitive(PathSensitivity.RELATIVE)
+    val baselineFile = objectFactory.fileProperty().apply {
+        set(projectLayout.projectDirectory.dir("config").file("ktlint-baseline.xml").takeIf { it.asFile.exists() })
+    }
 
     @TaskAction
     fun run(inputChanges: InputChanges) {

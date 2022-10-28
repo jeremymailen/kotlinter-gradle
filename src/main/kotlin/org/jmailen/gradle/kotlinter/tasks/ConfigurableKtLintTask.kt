@@ -63,13 +63,6 @@ abstract class ConfigurableKtLintTask(
 
     private val allSourceFiles = objectFactory.fileCollection()
 
-    @Optional
-    @InputFile
-    @PathSensitive(PathSensitivity.RELATIVE)
-    val baselineFile = objectFactory.fileProperty().apply {
-        set(projectLayout.projectDirectory.dir("config").file("ktlint-baseline.xml"))
-    }
-
     @get:Internal
     internal val patternFilterable: PatternFilterable = PatternSet()
 

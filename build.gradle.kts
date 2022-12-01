@@ -8,6 +8,7 @@ plugins {
     `maven-publish`
     id("org.jmailen.kotlinter") version "3.12.0"
     idea
+    id("pl.allegro.tech.build.axion-release") version "1.14.2"
 }
 
 repositories {
@@ -15,12 +16,16 @@ repositories {
     google()
 }
 
+scmVersion {
+    tag.prefix.set("")
+}
+
 val pluginId = "org.jmailen.kotlinter"
 val githubUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "3.12.0"
+version = scmVersion.version
 group = "org.jmailen.gradle"
 description = projectDescription
 

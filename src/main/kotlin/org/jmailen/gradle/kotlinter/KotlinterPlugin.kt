@@ -5,8 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 import org.jmailen.gradle.kotlinter.pluginapplier.AndroidSourceSetApplier
-import org.jmailen.gradle.kotlinter.pluginapplier.KotlinJvmSourceSetApplier
-import org.jmailen.gradle.kotlinter.pluginapplier.KotlinMultiplatformSourceSetApplier
+import org.jmailen.gradle.kotlinter.pluginapplier.KotlinSourceSetApplier
 import org.jmailen.gradle.kotlinter.support.reporterFileExtension
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.InstallPreCommitHookTask
@@ -17,8 +16,9 @@ import java.io.File
 class KotlinterPlugin : Plugin<Project> {
 
     private val extendablePlugins = mapOf(
-        "org.jetbrains.kotlin.jvm" to KotlinJvmSourceSetApplier,
-        "org.jetbrains.kotlin.multiplatform" to KotlinMultiplatformSourceSetApplier,
+        "org.jetbrains.kotlin.jvm" to KotlinSourceSetApplier,
+        "org.jetbrains.kotlin.multiplatform" to KotlinSourceSetApplier,
+        "org.jetbrains.kotlin.js" to KotlinSourceSetApplier,
         "kotlin-android" to AndroidSourceSetApplier,
     )
 

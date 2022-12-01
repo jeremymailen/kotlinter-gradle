@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm") version "1.7.22"
     id("com.gradle.plugin-publish") version "0.21.0"
     `java-gradle-plugin`
     `maven-publish`
@@ -25,10 +25,10 @@ group = "org.jmailen.gradle"
 description = projectDescription
 
 object Versions {
-    const val androidTools = "7.3.0"
+    const val androidTools = "7.3.1"
     const val junit = "5.9.1"
     const val ktlint = "0.47.1"
-    const val mockitoKotlin = "4.0.0"
+    const val mockitoKotlin = "4.1.0"
 }
 
 configurations {
@@ -115,7 +115,7 @@ tasks {
     }
 
     wrapper {
-        gradleVersion = "7.5.1"
+        gradleVersion = "7.6"
     }
 }
 

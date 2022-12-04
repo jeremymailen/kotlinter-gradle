@@ -101,14 +101,14 @@ plugins {
 - Incremental build support and fast parallelization with Gradle Worker API
 - Configures from `.editorconfig` when available
 - Configurable reporters
+- Baseline file _(note: you must generate your baseline file with [`ktlint`](https://github.com/pinterest/ktlint))_
 
 ### Tasks
 
 When your project uses one of the supported Kotlin Gradle plugins, Kotlinter adds these tasks:
 
-`formatKotlin`: format Kotlin source code according to `ktlint` rules or warn when auto-format not possible.
-
-`lintKotlin`: report Kotlin lint errors and by default fail the build.
+ - `formatKotlin`: format Kotlin source code according to `ktlint` rules or warn when auto-format not possible.
+ - `lintKotlin`: report Kotlin lint errors and by default fail the build.
 
 Also `check` becomes dependent on `lintKotlin`.
 
@@ -157,6 +157,7 @@ kotlinter {
     reporters = arrayOf("checkstyle", "plain")
     experimentalRules = false
     disabledRules = emptyArray()
+    baseline = File("config/baseline.xml") 
 }
 ```
 
@@ -171,6 +172,7 @@ kotlinter {
     reporters = ['checkstyle', 'plain']
     experimentalRules = false
     disabledRules = []
+    baseline = "config/baseline.xml"
 }
 ```
 
@@ -182,11 +184,13 @@ Reporters behave as described at: https://github.com/pinterest/ktlint
 
 The `experimentalRules` property enables rules which are part of ktlint's experimental rule set.
 
-The `disabledRules` property can includes an array of rule ids you wish to disable. For example to allow wildcard imports:
+The `disabledRules` property can include an array of rule ids you wish to disable. For example to allow wildcard imports:
 ```groovy
 disabledRules = ["no-wildcard-imports"]
 ```
 You must prefix rule ids not part of the standard rule set with `<rule-set-id>:<rule-id>`. For example `experimental:annotation`.
+
+The `baseline` property is a path to a baseline file relative to the module being configured. The baseline file needs to be generated via [`ktlint`](https://github.com/pinterest/ktlint)
 
 ### Editorconfig
 

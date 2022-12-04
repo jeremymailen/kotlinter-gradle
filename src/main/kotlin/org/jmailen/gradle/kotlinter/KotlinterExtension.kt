@@ -8,6 +8,7 @@ open class KotlinterExtension {
         const val DEFAULT_EXPERIMENTAL_RULES = false
         val DEFAULT_REPORTER = ReporterType.checkstyle.name
         val DEFAULT_DISABLED_RULES = emptyArray<String>()
+        val DEFAULT_BASELINE: String? = null
     }
 
     var ignoreFailures = DEFAULT_IGNORE_FAILURES
@@ -17,4 +18,6 @@ open class KotlinterExtension {
     var experimentalRules = DEFAULT_EXPERIMENTAL_RULES
 
     var disabledRules = DEFAULT_DISABLED_RULES
+
+    var baseline = DEFAULT_BASELINE
 }

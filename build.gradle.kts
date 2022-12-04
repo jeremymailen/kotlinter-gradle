@@ -55,6 +55,7 @@ dependencies {
 
     listOf(
         "ktlint-core",
+        "ktlint-reporter-baseline",
         "ktlint-reporter-checkstyle",
         "ktlint-reporter-json",
         "ktlint-reporter-html",

@@ -60,7 +60,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                 // language=editorconfig
                 """
                     [*.{kt,kts}]
-                    ktlint_disabled_rules = filename
+                    ktlint_standard_filename = disabled
                 """.trimIndent(),
             )
         }
@@ -111,7 +111,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                 // language=editorconfig
                 """
                     [*.{kt,kts}]
-                    ktlint_disabled_rules = filename
+                    ktlint_standard_filename = disabled
                 """.trimIndent(),
             )
         }
@@ -164,7 +164,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                 // language=editorconfig
                 """
                     [*.{kt,kts}]
-                    ktlint_disabled_rules = filename
+                    ktlint_standard_filename = disabled
                 """.trimIndent(),
             )
         }

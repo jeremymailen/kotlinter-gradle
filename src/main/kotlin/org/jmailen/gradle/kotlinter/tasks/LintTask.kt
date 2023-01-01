@@ -52,7 +52,7 @@ open class LintTask @Inject constructor(
                 p.projectDirectory.set(projectLayout.projectDirectory.asFile)
                 p.reporters.putAll(reports)
                 p.ktLintParams.set(getKtLintParams())
-                p.changedEditorconfigFiles.from(getChangedEditorconfigFiles(inputChanges))
+                p.changedEditorConfigFiles.from(getChangedEditorconfigFiles(inputChanges))
             }
             runCatching { await() }
         }

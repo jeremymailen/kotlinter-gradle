@@ -84,13 +84,22 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
             val script =
                 """
                 kotlinter {
-                    disabledRules = ["filename"]
+                    experimentalRules = true
+                    disabledRules = ["filename", "experimental:unnecessary-parentheses-before-trailing-lambda"]
                 }
                 """.trimIndent()
             appendText(script)
         }
         projectRoot.resolve("src/main/kotlin/FileName.kt") {
             writeText(kotlinClass("DifferentClassName"))
+        }
+        projectRoot.resolve("src/main/kotlin/UnnecessaryParentheses.kt") {
+            writeText(
+                """
+                val FAILING = "should not have '()'".count() { it == 'x' }
+
+                """.trimIndent(),
+            )
         }
 
         build("lintKotlin").apply {

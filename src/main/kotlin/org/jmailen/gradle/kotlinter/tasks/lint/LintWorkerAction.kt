@@ -1,9 +1,8 @@
 package org.jmailen.gradle.kotlinter.tasks.lint
 
-import com.pinterest.ktlint.core.KtLint
-import com.pinterest.ktlint.core.LintError
+import com.pinterest.ktlint.core.Code
+import com.pinterest.ktlint.core.KtLintRuleEngine
 import com.pinterest.ktlint.core.Reporter
-import com.pinterest.ktlint.core.RuleProvider
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.internal.logging.slf4j.DefaultContextAwareTaskLogger
@@ -31,8 +30,13 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
     private val ktLintParams: KtLintParams = parameters.ktLintParams.get()
 
     override fun execute() {
-        resetEditorconfigCacheIfNeeded(
-            changedEditorconfigFiles = parameters.changedEditorconfigFiles,
+        val ktLintEngine = KtLintRuleEngine(
+            ruleProviders = resolveRuleProviders(defaultRuleSetProviders, ktLintParams.experimentalRules),
+            editorConfigOverride = editorConfigOverride(ktLintParams),
+        )
+
+        ktLintEngine.resetEditorconfigCacheIfNeeded(
+            changedEditorconfigFiles = parameters.changedEditorConfigFiles,
             logger = logger,
         )
         var hasError = false
@@ -40,19 +44,16 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
         try {
             reporters.onEach { it.beforeAll() }
             files.forEach { file ->
-                val ruleSets = resolveRuleProviders(defaultRuleSetProviders, ktLintParams.experimentalRules)
                 val relativePath = file.toRelativeString(projectDirectory)
                 reporters.onEach { it.before(relativePath) }
                 logger.debug("$name linting: $relativePath")
-                val lintFunc = when (file.extension) {
-                    "kt" -> ::lintKt
-                    "kts" -> ::lintKts
-                    else -> {
-                        logger.debug("$name ignoring non Kotlin file: $relativePath")
-                        null
-                    }
+
+                if (file.extension !in supportedExtensions) {
+                    logger.debug("$name ignoring non Kotlin file: $relativePath")
+                    return@forEach
                 }
-                lintFunc?.invoke(file, ruleSets) { error ->
+
+                ktLintEngine.lint(Code.CodeFile(file)) { error ->
                     hasError = true
                     reporters.onEach { reporter ->
                         // some reporters want relative paths, some want absolute
@@ -72,24 +73,6 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
             throw LintFailure("kotlin source failed lint check")
         }
     }
-
-    private fun lintKt(file: File, ruleSets: Set<RuleProvider>, onError: (error: LintError) -> Unit) =
-        lint(file, ruleSets, onError, false)
-
-    private fun lintKts(file: File, ruleSets: Set<RuleProvider>, onError: (error: LintError) -> Unit) =
-        lint(file, ruleSets, onError, true)
-
-    private fun lint(file: File, ruleProviders: Set<RuleProvider>, onError: ErrorHandler, script: Boolean) =
-        KtLint.lint(
-            KtLint.ExperimentalParams(
-                fileName = file.path,
-                text = file.readText(),
-                ruleProviders = ruleProviders,
-                script = script,
-                editorConfigOverride = editorConfigOverride(ktLintParams),
-                cb = { error, _ -> onError(error) },
-            ),
-        )
 }
 
-typealias ErrorHandler = (error: LintError) -> Unit
+private val supportedExtensions = setOf("kt", "kts")

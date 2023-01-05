@@ -2,8 +2,8 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.7.22"
     id("com.gradle.plugin-publish") version "0.21.0"
+    kotlin("jvm") version "1.8.0"
     `java-gradle-plugin`
     `maven-publish`
     id("org.jmailen.kotlinter") version "3.12.0"

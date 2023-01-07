@@ -49,15 +49,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, windows-latest ]
-        gradle: [ 7.0.1, current, release-candidate ]
-        java: [ 8, 11, 17 ]
-        exclude:
-          - os: ubuntu-latest
-            gradle: 7.0.1
-            java: 17
-          - os: windows-latest
-            gradle: 7.0.1
-            java: 17
+        gradle: [ 7.6, current, release-candidate ]
+        java: [ 11, 17, 19 ]
 
     name: '[${{ matrix.os }}] Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}'
     steps:
@@ -117,7 +110,7 @@ jobs:
         java: [ 17 ]
         agp: ${{ fromJSON(needs.provide-agp-version-matrix.outputs.agp-versions) }}
         include:
-          - gradle: 7.0.1
+          - gradle: 7.6
             java: 11
             agp: 4.2.2
 

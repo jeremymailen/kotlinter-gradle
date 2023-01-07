@@ -72,10 +72,8 @@ dependencies {
     testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.mockitoKotlin}")
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(JavaVersion.VERSION_17.majorVersion))
-    }
+kotlin {
+    jvmToolchain(17)
 }
 
 tasks {

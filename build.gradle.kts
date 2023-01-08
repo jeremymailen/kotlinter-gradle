@@ -2,11 +2,11 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.7.22"
-    id("com.gradle.plugin-publish") version "0.21.0"
+    kotlin("jvm") version "1.8.0"
+    id("com.gradle.plugin-publish") version "1.1.0"
     `java-gradle-plugin`
     `maven-publish`
-    id("org.jmailen.kotlinter") version "3.12.0"
+    id("org.jmailen.kotlinter") version "3.13.0"
     idea
 }
 
@@ -72,10 +72,8 @@ dependencies {
     testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.mockitoKotlin}")
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(JavaVersion.VERSION_17.majorVersion))
-    }
+kotlin {
+    jvmToolchain(17)
 }
 
 tasks {
@@ -119,43 +117,22 @@ tasks {
     }
 }
 
-val sourcesJar by tasks.registering(Jar::class) {
-    dependsOn(JavaPlugin.CLASSES_TASK_NAME)
-    group = JavaBasePlugin.DOCUMENTATION_GROUP
-    description = "Assembles sources JAR"
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-}
-
 gradlePlugin {
+    website.set(webUrl)
+    vcsUrl.set(githubUrl)
     plugins {
         create("kotlinterPlugin") {
             id = pluginId
+            displayName = "Kotlin Lint plugin"
+            description = project.description
+            tags.addAll(listOf("kotlin", "ktlint", "lint", "format", "style", "android"))
             implementationClass = "org.jmailen.gradle.kotlinter.KotlinterPlugin"
         }
     }
 }
 
-pluginBundle {
-    website = webUrl
-    vcsUrl = githubUrl
-    description = project.description
-    tags = listOf("kotlin", "ktlint", "lint", "format", "style", "android")
-
-    plugins {
-        named("kotlinterPlugin") {
-            displayName = "Kotlin Lint plugin"
-        }
-    }
-}
-
-artifacts {
-    add(configurations.archives.name, sourcesJar)
-}
-
 publishing {
     publications.withType<MavenPublication> {
-        artifact(sourcesJar.get())
 
         pom {
             name.set(project.name)

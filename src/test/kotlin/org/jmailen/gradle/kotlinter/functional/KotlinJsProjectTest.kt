@@ -30,7 +30,7 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
                     repositories.mavenCentral()
                     
                     kotlin {
-                        js {
+                        js(IR) {
                             browser()
                             binaries.executable()
                         }

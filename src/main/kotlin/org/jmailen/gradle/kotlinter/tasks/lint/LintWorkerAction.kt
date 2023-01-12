@@ -4,17 +4,13 @@ import com.pinterest.ktlint.core.KtLint
 import com.pinterest.ktlint.core.LintError
 import com.pinterest.ktlint.core.Reporter
 import com.pinterest.ktlint.core.RuleProvider
+import com.pinterest.ktlint.core.api.loadBaseline
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.internal.logging.slf4j.DefaultContextAwareTaskLogger
 import org.gradle.workers.WorkAction
-import org.jmailen.gradle.kotlinter.support.KotlinterError
-import org.jmailen.gradle.kotlinter.support.KtLintParams
-import org.jmailen.gradle.kotlinter.support.LintFailure
-import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
+import org.jmailen.gradle.kotlinter.support.*
 import org.jmailen.gradle.kotlinter.support.editorConfigOverride
-import org.jmailen.gradle.kotlinter.support.reporterFor
-import org.jmailen.gradle.kotlinter.support.reporterPathFor
 import org.jmailen.gradle.kotlinter.support.resetEditorconfigCacheIfNeeded
 import org.jmailen.gradle.kotlinter.support.resolveRuleProviders
 import org.jmailen.gradle.kotlinter.tasks.LintTask
@@ -29,6 +25,13 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
     private val projectDirectory: File = parameters.projectDirectory.asFile.get()
     private val name: String = parameters.name.get()
     private val ktLintParams: KtLintParams = parameters.ktLintParams.get()
+
+    private val baselineLintErrorsByFile by lazy {
+        ktLintParams.baselineFile?.let { baselineFile ->
+            loadBaseline(baselineFile.absolutePath)
+                .lintErrorsPerFile
+        } ?: emptyMap()
+    }
 
     override fun execute() {
         resetEditorconfigCacheIfNeeded(
@@ -52,14 +55,22 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
                         null
                     }
                 }
+                val relativeFilePath = file.path.removePrefix(projectDirectory.path + "/")
+                val fileBaselineErrors = baselineLintErrorsByFile[relativeFilePath] ?: emptyList()
+
                 lintFunc?.invoke(file, ruleSets) { error ->
-                    hasError = true
-                    reporters.onEach { reporter ->
-                        // some reporters want relative paths, some want absolute
-                        val filePath = reporterPathFor(reporter, file, projectDirectory)
-                        reporter.onLintError(filePath, error, false)
+                    if (fileBaselineErrors.doesNotContain(error)) {
+                        hasError = true
+                        reporters.onEach { reporter ->
+                            // some reporters want relative paths, some want absolute
+                            val filePath = reporterPathFor(reporter, file, projectDirectory)
+                            reporter.onLintError(filePath, error, false)
+                        }
+
+                        logger.quiet("${file.path}:${error.line}:${error.col}: Lint error > [${error.ruleId}] ${error.detail}")
+                    } else {
+                        logger.debug("${file.path}:${error.line}:${error.col}: [Found in baseline; ignoring] Lint error > [${error.ruleId}] ${error.detail}")
                     }
-                    logger.quiet("${file.path}:${error.line}:${error.col}: Lint error > [${error.ruleId}] ${error.detail}")
                 }
                 reporters.onEach { it.after(relativePath) }
             }

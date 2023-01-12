@@ -3,6 +3,7 @@ package org.jmailen.gradle.kotlinter
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.RegularFile
 import org.gradle.api.tasks.TaskProvider
 import org.jmailen.gradle.kotlinter.pluginapplier.AndroidSourceSetApplier
 import org.jmailen.gradle.kotlinter.pluginapplier.KotlinSourceSetApplier
@@ -48,6 +49,7 @@ class KotlinterPlugin : Plugin<Project> {
                         )
                         lintTask.experimentalRules.set(provider { kotlinterExtension.experimentalRules })
                         lintTask.disabledRules.set(provider { kotlinterExtension.disabledRules.toList() })
+                        lintTask.baseline = kotlinterExtension.baseline?.let { File(it) }
                     }
                     lintKotlin.configure { lintTask ->
                         lintTask.dependsOn(lintTaskPerSourceSet)

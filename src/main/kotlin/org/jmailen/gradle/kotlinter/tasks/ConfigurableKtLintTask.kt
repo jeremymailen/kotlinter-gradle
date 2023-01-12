@@ -6,12 +6,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.SourceTask
+import org.gradle.api.tasks.*
 import org.gradle.internal.exceptions.MultiCauseException
 import org.gradle.work.FileChange
 import org.gradle.work.Incremental
@@ -20,6 +15,7 @@ import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_DISABLE
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_EXPERIMENTAL_RULES
 import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.findApplicableEditorConfigFiles
+import java.io.File
 
 abstract class ConfigurableKtLintTask(
     projectLayout: ProjectLayout,
@@ -32,6 +28,11 @@ abstract class ConfigurableKtLintTask(
     @Input
     val disabledRules: ListProperty<String> = objectFactory.listProperty(default = DEFAULT_DISABLED_RULES.toList())
 
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @Optional
+    var baseline: File? = null
+
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:Incremental
@@ -43,6 +44,7 @@ abstract class ConfigurableKtLintTask(
     protected fun getKtLintParams(): KtLintParams = KtLintParams(
         experimentalRules = experimentalRules.get(),
         disabledRules = disabledRules.get(),
+        baselineFile = baseline?.let { project.file(it) }
     )
 
     protected fun getChangedEditorconfigFiles(inputChanges: InputChanges) =

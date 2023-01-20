@@ -26,7 +26,7 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
 
     override fun execute() {
         val ktLintEngine = KtLintRuleEngine(
-            ruleProviders = resolveRuleProviders(defaultRuleSetProviders, ktLintParams.experimentalRules),
+            ruleProviders = resolveRuleProviders(defaultRuleSetProviders),
             editorConfigOverride = editorConfigOverride(ktLintParams),
         )
 

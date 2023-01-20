@@ -31,7 +31,7 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
 
     override fun execute() {
         val ktLintEngine = KtLintRuleEngine(
-            ruleProviders = resolveRuleProviders(defaultRuleSetProviders, ktLintParams.experimentalRules),
+            ruleProviders = resolveRuleProviders(defaultRuleSetProviders),
             editorConfigOverride = editorConfigOverride(ktLintParams),
         )
 

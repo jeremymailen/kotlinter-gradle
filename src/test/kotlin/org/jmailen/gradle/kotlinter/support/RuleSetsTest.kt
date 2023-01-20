@@ -13,11 +13,9 @@ class RuleSetsTest {
 
     @Test
     fun `resolveRuleSets loads from classpath providers`() {
-        val standardOnly = resolveRuleProviders(defaultRuleSetProviders, includeExperimentalRules = false)
-        val withExperimentalRules = resolveRuleProviders(defaultRuleSetProviders, includeExperimentalRules = true)
+        val rules = resolveRuleProviders(defaultRuleSetProviders)
 
-        assertTrue(standardOnly.isNotEmpty())
-        assertTrue(standardOnly.size < withExperimentalRules.size)
+        assertTrue(rules.isNotEmpty())
     }
 
     @Test

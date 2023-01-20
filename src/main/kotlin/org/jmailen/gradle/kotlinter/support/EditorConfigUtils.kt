@@ -1,19 +1,24 @@
 package org.jmailen.gradle.kotlinter.support
 
-import com.pinterest.ktlint.core.KtLintRuleEngine
+import com.pinterest.ktlint.core.api.EditorConfigDefaults
 import com.pinterest.ktlint.core.api.EditorConfigOverride
 import com.pinterest.ktlint.core.api.editorconfig.EditorConfigProperty
+import org.ec4j.core.model.EditorConfig
+import org.ec4j.core.model.Glob
+import org.ec4j.core.model.Property
 import org.ec4j.core.model.PropertyType
 import org.ec4j.core.model.PropertyType.PropertyValueParser.IDENTITY_VALUE_PARSER
-import org.gradle.api.file.ConfigurableFileCollection
+import org.ec4j.core.model.Section
 import org.gradle.api.file.ProjectLayout
-import org.gradle.api.logging.Logger
 import java.io.File
 
 internal fun editorConfigOverride(ktLintParams: KtLintParams) =
     getPropertiesForDisabledRules(ktLintParams)
-        .plus(getPropertiesForExperimentalRules(ktLintParams))
         .let(::buildEditorConfigOverride)
+
+internal fun editorConfigDefaults(ktLintParams: KtLintParams): EditorConfigDefaults =
+    getPropertiesForExperimentalRules(ktLintParams)
+        .let(::buildEditorConfigDefaults)
 
 private fun getPropertiesForDisabledRules(
     ktLintParams: KtLintParams,
@@ -37,16 +42,11 @@ private fun getPropertiesForDisabledRules(
 }
 
 private fun getPropertiesForExperimentalRules(ktLintParams: KtLintParams) =
-    if (ktLintParams.experimentalRules) {
-        listOf(
-            EditorConfigProperty(
-                type = PropertyType("ktlint_experimental", "Experimental rules", IDENTITY_VALUE_PARSER),
-                defaultValue = "enabled",
-            ) to "enabled",
-        )
-    } else {
-        emptyList()
-    }
+    Property
+        .builder()
+        .name("ktlint_experimental")
+        .value(if (ktLintParams.experimentalRules) "enabled" else "disabled")
+        .let(::listOf)
 
 private fun buildEditorConfigOverride(editorConfigProperties: List<Pair<EditorConfigProperty<String>, String>>) =
     if (editorConfigProperties.isEmpty()) {
@@ -55,23 +55,29 @@ private fun buildEditorConfigOverride(editorConfigProperties: List<Pair<EditorCo
         EditorConfigOverride.from(*editorConfigProperties.toTypedArray())
     }
 
+private fun buildEditorConfigDefaults(kotlinSectionProperties: List<Property.Builder>) =
+    if (kotlinSectionProperties.isEmpty()) {
+        EditorConfigDefaults.EMPTY_EDITOR_CONFIG_DEFAULTS
+    } else {
+        EditorConfigDefaults(
+            EditorConfig
+                .builder()
+                .section(
+                    Section
+                        .builder()
+                        .glob(Glob("*.{kt,kts}"))
+                        .properties(kotlinSectionProperties),
+                )
+                .build(),
+        )
+    }
+
 private fun getKtlintRulePropertyName(ruleName: String) =
     if (ruleName.contains(':')) { // Rule from a non-standard rule set
         "ktlint_${ruleName.replace(':', '_')}"
     } else {
         "ktlint_standard_$ruleName"
     }
-
-internal fun KtLintRuleEngine.resetEditorconfigCacheIfNeeded(
-    changedEditorconfigFiles: ConfigurableFileCollection,
-    logger: Logger,
-) {
-    val changedFiles = changedEditorconfigFiles.files
-    if (changedFiles.any()) {
-        logger.info("Editorconfig changed, resetting KtLint caches")
-        changedFiles.map(File::toPath).forEach(::reloadEditorConfigFile)
-    }
-}
 
 internal fun ProjectLayout.findApplicableEditorConfigFiles(): Sequence<File> {
     val projectEditorConfig = projectDirectory.file(".editorconfig").asFile

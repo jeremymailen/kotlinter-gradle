@@ -1,7 +1,6 @@
 package org.jmailen.gradle.kotlinter.tasks.lint
 
 import com.pinterest.ktlint.core.Code
-import com.pinterest.ktlint.core.KtLintRuleEngine
 import com.pinterest.ktlint.core.Reporter
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
@@ -10,12 +9,10 @@ import org.gradle.workers.WorkAction
 import org.jmailen.gradle.kotlinter.support.KotlinterError
 import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.LintFailure
-import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
-import org.jmailen.gradle.kotlinter.support.editorConfigOverride
+import org.jmailen.gradle.kotlinter.support.createKtlintEngine
 import org.jmailen.gradle.kotlinter.support.reporterFor
 import org.jmailen.gradle.kotlinter.support.reporterPathFor
 import org.jmailen.gradle.kotlinter.support.resetEditorconfigCacheIfNeeded
-import org.jmailen.gradle.kotlinter.support.resolveRuleProviders
 import org.jmailen.gradle.kotlinter.tasks.LintTask
 import java.io.File
 
@@ -30,15 +27,12 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
     private val ktLintParams: KtLintParams = parameters.ktLintParams.get()
 
     override fun execute() {
-        val ktLintEngine = KtLintRuleEngine(
-            ruleProviders = resolveRuleProviders(defaultRuleSetProviders),
-            editorConfigOverride = editorConfigOverride(ktLintParams),
-        )
-
+        val ktLintEngine = createKtlintEngine(ktLintParams = ktLintParams)
         ktLintEngine.resetEditorconfigCacheIfNeeded(
             changedEditorconfigFiles = parameters.changedEditorConfigFiles,
             logger = logger,
         )
+
         var hasError = false
 
         try {

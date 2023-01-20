@@ -1,7 +1,6 @@
 package org.jmailen.gradle.kotlinter.tasks.format
 
 import com.pinterest.ktlint.core.Code
-import com.pinterest.ktlint.core.KtLintRuleEngine
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
@@ -9,10 +8,8 @@ import org.gradle.internal.logging.slf4j.DefaultContextAwareTaskLogger
 import org.gradle.workers.WorkAction
 import org.jmailen.gradle.kotlinter.support.KotlinterError
 import org.jmailen.gradle.kotlinter.support.KtLintParams
-import org.jmailen.gradle.kotlinter.support.defaultRuleSetProviders
-import org.jmailen.gradle.kotlinter.support.editorConfigOverride
+import org.jmailen.gradle.kotlinter.support.createKtlintEngine
 import org.jmailen.gradle.kotlinter.support.resetEditorconfigCacheIfNeeded
-import org.jmailen.gradle.kotlinter.support.resolveRuleProviders
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import java.io.File
 
@@ -25,11 +22,7 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
     private val output: File? = parameters.output.asFile.orNull
 
     override fun execute() {
-        val ktLintEngine = KtLintRuleEngine(
-            ruleProviders = resolveRuleProviders(defaultRuleSetProviders),
-            editorConfigOverride = editorConfigOverride(ktLintParams),
-        )
-
+        val ktLintEngine = createKtlintEngine(ktLintParams = ktLintParams)
         ktLintEngine.resetEditorconfigCacheIfNeeded(
             changedEditorconfigFiles = parameters.changedEditorConfigFiles,
             logger = logger,

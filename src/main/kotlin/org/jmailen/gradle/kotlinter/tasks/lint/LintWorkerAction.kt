@@ -38,7 +38,7 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
 
         try {
             reporters.onEach { (_, reporter) -> reporter.beforeAll() }
-            files.forEach { file ->
+            files.sorted().forEach { file ->
                 val relativePath = file.toRelativeString(projectDirectory)
                 reporters.onEach { (_, reporter) -> reporter.before(relativePath) }
                 logger.debug("$name linting: $relativePath")

@@ -31,7 +31,7 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
 
         val fixes = mutableListOf<String>()
         try {
-            files.forEach { file ->
+            files.sorted().forEach { file ->
                 val sourceText = file.readText()
                 val relativePath = file.toRelativeString(projectDirectory)
 

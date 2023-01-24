@@ -1,6 +1,7 @@
 package org.jmailen.gradle.kotlinter.functional
 
 import org.gradle.testkit.runner.TaskOutcome.FAILED
+import org.gradle.testkit.runner.TaskOutcome.NO_SOURCE
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.jmailen.gradle.kotlinter.functional.utils.editorConfig
@@ -194,6 +195,66 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
     }
 
     @Test
+    fun `lint task is incremental`() {
+        settingsFile()
+        buildFile()
+        editorConfig()
+        kotlinSourceFile(
+            "CustomObject.kt",
+            """
+            object CustomObject
+            
+            """.trimIndent(),
+        )
+        kotlinSourceFile(
+            "CustomClass.kt",
+            """
+            data class CustomClass(val value: Int)
+            
+            """.trimIndent(),
+        )
+
+        build("lintKotlin", "--info").apply {
+            assertEquals(SUCCESS, task(":lintKotlin")?.outcome)
+            assertEquals(SUCCESS, task(":lintKotlinMain")?.outcome)
+            assertEquals(NO_SOURCE, task(":lintKotlinTest")?.outcome)
+            assertTrue(output.contains("lintKotlinMain - executing against 2 file(s)"))
+        }
+
+        kotlinSourceFile(
+            "CustomClass.kt",
+            """
+            data class CustomClass(val modified: Int)
+            
+            """.trimIndent(),
+        )
+        build("lintKotlin", "--info").apply {
+            assertEquals(SUCCESS, task(":lintKotlin")?.outcome)
+            assertEquals(SUCCESS, task(":lintKotlinMain")?.outcome)
+            assertEquals(NO_SOURCE, task(":lintKotlinTest")?.outcome)
+            assertTrue(output.contains("lintKotlinMain - executing against 1 file(s)"))
+        }
+
+        editorconfigFile.appendText("content=updated")
+        build("lintKotlin", "--info").apply {
+            assertEquals(SUCCESS, task(":lintKotlin")?.outcome)
+            assertTrue(output.contains("lintKotlinMain - executing against 2 file(s)"))
+        }
+
+        kotlinSourceFile(
+            "CustomClass.kt",
+            """
+            data class CustomClass(val modifiedEditorconfig: Int)
+            
+            """.trimIndent(),
+        )
+        build("lintKotlin", "--info").apply {
+            assertEquals(SUCCESS, task(":lintKotlin")?.outcome)
+            assertTrue(output.contains("lintKotlinMain - executing against 1 file(s)"))
+        }
+    }
+
+    @Test
     fun `plugin is compatible with configuration cache`() {
         settingsFile()
         buildFile()
@@ -225,7 +286,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `plugin resolves dynamically loaded RulesetProviders`() {
+    fun `plugin resolves dynamically loaded RuleSetProviders`() {
         settingsFile()
         buildFile()
         editorConfig()
@@ -237,18 +298,22 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
             """.trimIndent(),
         )
 
-        val matcher = "Resolved (\\d+) RuleProviders".toRegex()
+        fun String.findResolvedRuleProvidersCount(taskName: String): Int {
+            val matcher = "$taskName - resolved (\\d+) RuleProviders".toRegex()
+
+            return matcher.find(this)?.groups?.get(1)?.value?.toIntOrNull() ?: 0
+        }
 
         build("lintKotlin", "--info").apply {
             assertEquals(SUCCESS, task(":lintKotlin")?.outcome)
-            val resolvedRulesCount = matcher.find(output)?.groups?.get(1)?.value?.toIntOrNull() ?: 0
-            assertTrue(resolvedRulesCount > 0)
+            val resolvedRulesCount = output.findResolvedRuleProvidersCount("lintKotlinMain")
+            assertTrue(resolvedRulesCount > 0) { "expected to find more than 0 resolved RuleProviders, was=$resolvedRulesCount" }
         }
 
         build("formatKotlin", "--info").apply {
             assertEquals(SUCCESS, task(":formatKotlin")?.outcome)
-            val resolvedRulesCount = matcher.find(output)?.groups?.get(1)?.value?.toIntOrNull() ?: 0
-            assertTrue(resolvedRulesCount > 0)
+            val resolvedRulesCount = output.findResolvedRuleProvidersCount("formatKotlinMain")
+            assertTrue(resolvedRulesCount > 0) { "expected to find more than 0 resolved RuleProviders, was=$resolvedRulesCount" }
         }
     }
 

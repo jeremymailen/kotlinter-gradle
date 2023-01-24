@@ -106,7 +106,7 @@ class ReportersTest : WithGradleTest.Kotlin() {
 
                 kotlinter {
                     reporters = ['sarif']
-                    ktlintVersion = "0.47.0"
+                    ktlintVersion = "0.48.1"
                 }
 
                 """
@@ -115,8 +115,8 @@ class ReportersTest : WithGradleTest.Kotlin() {
 
         build("lintKotlin").apply {
             val reportContent = projectRoot.resolve("build/reports/ktlint/main-lint.sarif.json").readText()
-            assertTrue(reportContent.contains(""""version": "0.47.0""""))
-            assertTrue(reportContent.contains(""""semanticVersion": "0.47.0""""))
+            assertTrue(reportContent.contains(""""version": "0.48.1""""))
+            assertTrue(reportContent.contains(""""semanticVersion": "0.48.1""""))
         }
     }
 
@@ -164,6 +164,9 @@ private fun expectedEmptyJson() = """
 private fun expectedFailedPlain() = """
 src/main/kotlin/FirstClass.kt:1:1: File 'FirstClass.kt' contains a single top level declaration and should be named 'WrongClassName.kt' (filename)
 src/main/kotlin/SecondClass.kt:1:1: File 'SecondClass.kt' contains a single top level declaration and should be named 'MultipleOffencesInSingleSourceSet.kt' (filename)
+
+Summary error count (descending) by rule:
+  filename: 2
 
 """.trimIndent()
 

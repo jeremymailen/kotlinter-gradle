@@ -245,7 +245,7 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
     
                 task ktLintWithReports(type: LintTask) {
                     source files('src')
-                    reports = reports = ['plain': file('build/lint-report.txt')]
+                    reports = ['plain': file('build/lint-report.txt')]
                 }
                 
                 """
@@ -254,7 +254,7 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
 
         build("ktLintWithReports").apply {
             assertEquals(TaskOutcome.SUCCESS, task(":ktLintWithReports")?.outcome)
-            assertTrue(projectRoot.resolve("build/lint-report.txt").exists())
+            assertTrue(projectRoot.resolve("build/lint-report.txt").readText().isEmpty())
         }
         build("ktLintWithReports").apply {
             assertEquals(TaskOutcome.UP_TO_DATE, task(":ktLintWithReports")?.outcome)
@@ -264,7 +264,7 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
 
         build("ktLintWithReports").apply {
             assertEquals(TaskOutcome.SUCCESS, task(":ktLintWithReports")?.outcome)
-            assertTrue(projectRoot.resolve("build/lint-report.txt").exists())
+            assertTrue(projectRoot.resolve("build/lint-report.txt").readText().isEmpty())
         }
     }
 }

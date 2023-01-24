@@ -7,7 +7,7 @@ open class KotlinterExtension {
     companion object {
         const val DEFAULT_IGNORE_FAILURES = false
         const val DEFAULT_EXPERIMENTAL_RULES = false
-        val DEFAULT_REPORTER = ReporterType.checkstyle.name
+        val DEFAULT_REPORTER = ReporterType.Checkstyle.id
         val DEFAULT_DISABLED_RULES = emptyArray<String>()
     }
 

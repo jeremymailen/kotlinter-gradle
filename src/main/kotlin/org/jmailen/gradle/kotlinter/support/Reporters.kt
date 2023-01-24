@@ -1,43 +1,60 @@
 package org.jmailen.gradle.kotlinter.support
 
 import com.pinterest.ktlint.core.Reporter
-import com.pinterest.ktlint.reporter.checkstyle.CheckStyleReporter
-import com.pinterest.ktlint.reporter.html.HtmlReporter
-import com.pinterest.ktlint.reporter.json.JsonReporter
-import com.pinterest.ktlint.reporter.plain.PlainReporter
-import com.pinterest.ktlint.reporter.sarif.SarifReporter
+import com.pinterest.ktlint.core.ReporterProvider
 import java.io.File
 import java.io.PrintStream
+import java.util.ServiceLoader
 
-/* ktlint-disable enum-entry-name-case */
-internal enum class ReporterType(val fileExtension: String) {
-    checkstyle("xml"),
-    html("html"),
-    json("json"),
-    plain("txt"),
-    sarif("sarif.json"),
-}
-/* ktlint-enable enum-entry-name-case */
+internal enum class ReporterType(val id: String, val fileExtension: String) {
+    Checkstyle(id = "checkstyle", fileExtension = "xml"),
+    Html(id = "html", fileExtension = "html"),
+    Json(id = "json", fileExtension = "json"),
+    Plain(id = "plain", fileExtension = "txt"),
+    Sarif(id = "sarif", fileExtension = "sarif.json"),
+    ;
 
-fun reporterFor(reporterName: String, output: File): Reporter {
-    val out = PrintStream(output)
-    return SortedThreadSafeReporterWrapper(
-        when (ReporterType.valueOf(reporterName)) {
-            ReporterType.checkstyle -> CheckStyleReporter(out)
-            ReporterType.html -> HtmlReporter(out)
-            ReporterType.json -> JsonReporter(out)
-            ReporterType.plain -> PlainReporter(out)
-            ReporterType.sarif -> SarifReporter(out)
-        },
-    )
-}
+    companion object {
 
-fun reporterPathFor(reporter: Reporter, output: File, projectDir: File): String {
-    val unwrappedReporter = (reporter as? SortedThreadSafeReporterWrapper)?.unwrap() ?: reporter
-    return when (unwrappedReporter) {
-        is SarifReporter -> output.absolutePath
-        else -> output.toRelativeString(projectDir)
+        fun getById(id: String) =
+            values().firstOrNull { it.id == id } ?: error("Unknown reporter type=$id")
     }
 }
 
-fun reporterFileExtension(reporterName: String) = ReporterType.valueOf(reporterName).fileExtension
+internal fun reporterPathFor(reporterType: ReporterType, output: File, relativeRoot: File) = when (reporterType) {
+    ReporterType.Checkstyle,
+    ReporterType.Html,
+    ReporterType.Json,
+    ReporterType.Plain,
+    -> output.toRelativeString(base = relativeRoot)
+
+    ReporterType.Sarif -> output.absolutePath
+}
+
+internal fun resolveReporters(
+    enabled: Map<ReporterType, File>,
+): Map<ReporterType, Reporter> {
+    val allReporterProviders = defaultReporters().associateBy { it.id }
+
+    return enabled
+        .filter { (type, _) -> allReporterProviders.containsKey(type.id) }
+        .mapValues { (type, output) ->
+            allReporterProviders.getValue(type.id).get(
+                out = PrintStream(output),
+                opt = type.generateOpt(),
+            )
+        }
+}
+
+private fun ReporterType.generateOpt() = when (this) {
+    ReporterType.Checkstyle,
+    ReporterType.Html,
+    ReporterType.Json,
+    ReporterType.Sarif,
+    -> emptyMap()
+
+    ReporterType.Plain -> mapOf("color_name" to "DARK_GRAY")
+}
+
+private fun defaultReporters(): List<ReporterProvider<*>> =
+    ServiceLoader.load(ReporterProvider::class.java).toList()

@@ -1,6 +1,7 @@
 package org.jmailen.gradle.kotlinter.support
 
-import com.pinterest.ktlint.core.KtLint
+import com.pinterest.ktlint.core.Code
+import com.pinterest.ktlint.core.KtLintRuleEngine
 import com.pinterest.ktlint.core.Rule
 import com.pinterest.ktlint.core.RuleProvider
 import com.pinterest.ktlint.core.RuleSetProviderV2
@@ -12,11 +13,9 @@ class RuleSetsTest {
 
     @Test
     fun `resolveRuleSets loads from classpath providers`() {
-        val standardOnly = resolveRuleProviders(defaultRuleSetProviders, includeExperimentalRules = false)
-        val withExperimentalRules = resolveRuleProviders(defaultRuleSetProviders, includeExperimentalRules = true)
+        val rules = resolveRuleProviders(defaultRuleSetProviders)
 
-        assertTrue(standardOnly.isNotEmpty())
-        assertTrue(standardOnly.size < withExperimentalRules.size)
+        assertTrue(rules.isNotEmpty())
     }
 
     @Test
@@ -34,22 +33,22 @@ class RuleSetsTest {
 
     @Test
     fun `test compatibility`() {
-        KtLint.lint(
-            KtLint.ExperimentalParams(
-                fileName = "/tmp/src/test/KotlinClass.kt",
-                text = """
-                    package test
+        KtLintRuleEngine(
+            ruleProviders = resolveRuleProviders(defaultRuleSetProviders),
+        ).lint(
+            Code.CodeSnippet(
+                """
+                package test
 
-                    class KotlinClass {
-                        private fun hi() {
-                            println("hi")
-                        }
+                class KotlinClass {
+                    private fun hi() {
+                        println("hi")
                     }
+                }
 
                 """.trimIndent(),
-                ruleProviders = resolveRuleProviders(defaultRuleSetProviders),
-                cb = { _, _ -> },
             ),
+            callback = { _ -> },
         )
     }
 }

@@ -56,6 +56,32 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
     }
 
     @Test
+    fun `lintKotlinMain fails when lint errors for experimental rules are detected`() {
+        settingsFile()
+        buildFile()
+
+        buildFile.appendText(
+            """
+            
+            kotlinter {
+                experimentalRules = true
+            }
+            """.trimIndent(),
+        )
+
+        fileWithFailingExperimentalRule()
+
+        buildAndFail("lintKotlinMain").apply {
+            assertTrue(output.contains(".*Lint error > \\[experimental:unnecessary-parentheses".toRegex()))
+            output.lines().filter { it.contains("Lint error") }.forEach { line ->
+                val filePath = pathPattern.find(line)?.groups?.get(1)?.value.orEmpty()
+                assertTrue(File(filePath).exists())
+            }
+            assertEquals(FAILED, task(":lintKotlinMain")?.outcome)
+        }
+    }
+
+    @Test
     fun `lintKotlinMain succeeds when no lint errors detected`() {
         settingsFile()
         buildFile()
@@ -70,6 +96,18 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
 
             """.trimIndent(),
         )
+
+        build("lintKotlinMain").apply {
+            assertEquals(SUCCESS, task(":lintKotlinMain")?.outcome)
+        }
+    }
+
+    @Test
+    fun `lintKotlinMain succeeds when experimental rules are not enabled and code contains experimental rules violations`() {
+        settingsFile()
+        buildFile()
+
+        fileWithFailingExperimentalRule()
 
         build("lintKotlinMain").apply {
             assertEquals(SUCCESS, task(":lintKotlinMain")?.outcome)
@@ -212,5 +250,15 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
 
     private fun kotlinSourceFile(name: String, content: String) = File(sourceDir, name).apply {
         writeText(content)
+    }
+
+    private fun fileWithFailingExperimentalRule() {
+        kotlinSourceFile(
+            "ExperimentalRuleViolations.kt",
+            """
+            val variable = "should not contain '()'".count() { it == 'x' }
+    
+            """.trimIndent(),
+        )
     }
 }

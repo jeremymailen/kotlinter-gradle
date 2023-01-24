@@ -2,15 +2,12 @@ package org.jmailen.gradle.kotlinter.support
 
 import com.pinterest.ktlint.core.RuleProvider
 import com.pinterest.ktlint.core.RuleSetProviderV2
-import com.pinterest.ktlint.ruleset.experimental.ExperimentalRuleSetProvider
 import java.util.ServiceLoader
 
 internal fun resolveRuleProviders(
     providers: Iterable<RuleSetProviderV2>,
-    includeExperimentalRules: Boolean = false,
 ): Set<RuleProvider> = providers
     .asSequence()
-    .filter { includeExperimentalRules || it !is ExperimentalRuleSetProvider }
     .sortedWith(
         compareBy {
             when (it.id) {

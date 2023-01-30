@@ -59,11 +59,10 @@ dependencies {
         "ktlint-reporter-json",
         "ktlint-reporter-html",
         "ktlint-reporter-plain",
-        "ktlint-reporter-sarif",
-        "ktlint-ruleset-experimental",
-        "ktlint-ruleset-standard"
+        "ktlint-reporter-sarif"
     ).forEach { module ->
-        implementation("com.pinterest.ktlint:$module:${Versions.ktlint}")
+        compileOnly("com.pinterest.ktlint:$module:${Versions.ktlint}")
+        testImplementation("com.pinterest.ktlint:$module:${Versions.ktlint}")
     }
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${Versions.junit}")
@@ -84,7 +83,13 @@ tasks {
         outputs.file(propertiesFile)
 
         doLast {
-            propertiesFile.writeText("version = $projectVersion")
+            propertiesFile.writeText(
+                """
+                version = $projectVersion
+                ktlint_version = ${Versions.ktlint}
+                
+                """.trimIndent()
+            )
         }
     }
 

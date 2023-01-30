@@ -1,6 +1,5 @@
 package org.jmailen.gradle.kotlinter.tasks
 
-import org.gradle.api.GradleException
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
@@ -15,10 +14,7 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.InputChanges
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_IGNORE_FAILURES
-import org.jmailen.gradle.kotlinter.support.KotlinterError
-import org.jmailen.gradle.kotlinter.support.LintFailure
 import org.jmailen.gradle.kotlinter.tasks.lint.LintWorkerAction
 import java.io.File
 import javax.inject.Inject
@@ -45,26 +41,28 @@ open class LintTask @Inject constructor(
 
     @TaskAction
     fun run(inputChanges: InputChanges) {
-        val result = with(workerExecutor.noIsolation()) {
-            submit(LintWorkerAction::class.java) { p ->
-                p.name.set(name)
-                p.files.from(source)
-                p.projectDirectory.set(projectLayout.projectDirectory.asFile)
-                p.reporters.putAll(reports)
-                p.ktLintParams.set(getKtLintParams())
-                p.changedEditorConfigFiles.from(getChangedEditorconfigFiles(inputChanges))
+        val workQueue = workerExecutor.processIsolation { spec ->
+            spec.classpath.setFrom(ktlintClasspath, ruleSetsClasspath)
+            spec.forkOptions { options ->
+                options.maxHeapSize = workerMaxHeapSize.get()
             }
-            runCatching { await() }
         }
 
-        result.exceptionOrNull()?.workErrorCauses<KotlinterError>()?.ifNotEmpty {
-            forEach { logger.error(it.message, it.cause) }
-            throw GradleException("error linting sources for $name")
+        workQueue.submit(LintWorkerAction::class.java) { p ->
+            p.name.set(name)
+            p.files.from(source)
+            p.projectDirectory.set(projectLayout.projectDirectory.asFile)
+            p.reporters.putAll(reports)
+            p.ktLintParams.set(getKtLintParams())
+            p.changedEditorConfigFiles.from(getChangedEditorconfigFiles(inputChanges))
         }
 
-        val lintFailures = result.exceptionOrNull()?.workErrorCauses<LintFailure>() ?: emptyList()
-        if (lintFailures.isNotEmpty() && !ignoreFailures.get()) {
-            throw GradleException("$name sources failed lint check")
+        try {
+            workQueue.await()
+        } catch (e: Throwable) {
+            if (!ignoreFailures.get()) {
+                throw e
+            }
         }
     }
 }

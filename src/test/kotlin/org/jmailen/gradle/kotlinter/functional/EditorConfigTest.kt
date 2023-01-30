@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.DisabledOnOs
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 
 internal class EditorConfigTest : WithGradleTest.Kotlin() {
@@ -24,11 +26,14 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                 // language=groovy
                 val buildScript =
                     """
-                plugins {
-                    id 'kotlin'
-                    id 'org.jmailen.kotlinter'
-                }
-                
+                    plugins {
+                        id 'kotlin'
+                        id 'org.jmailen.kotlinter'
+                    }
+                    
+                    repositories {
+                        mavenCentral()
+                    }
                     """.trimIndent()
                 writeText(buildScript)
             }
@@ -105,6 +110,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS, disabledReason = "https://github.com/gradle/gradle/issues/21964")
     fun `editorconfig changes are taken into account on lint task re-runs`() {
         projectRoot.resolve(".editorconfig") {
             writeText(
@@ -146,7 +152,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `editorconfig changes are ignored for format task re-runs`() {
+    fun `editorconfig changes do not clear ktlint caches for format task re-runs`() {
         projectRoot.resolve(".editorconfig") {
             writeText(editorConfig)
         }
@@ -170,7 +176,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
         }
         build("formatKotlin", "--info").apply {
             assertEquals(TaskOutcome.SUCCESS, task(":formatKotlinMain")?.outcome)
-            assertTrue(output.contains("Format could not fix"))
+            assertFalse(output.contains("Format could not fix"))
             assertFalse(output.contains("resetting KtLint caches"))
         }
     }

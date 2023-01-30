@@ -1,18 +1,19 @@
 package org.jmailen.gradle.kotlinter.tasks
 
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SourceTask
-import org.gradle.internal.exceptions.MultiCauseException
 import org.gradle.work.FileChange
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
@@ -38,6 +39,15 @@ abstract class ConfigurableKtLintTask(
     internal val editorconfigFiles: FileCollection = objectFactory.fileCollection().apply {
         from(projectLayout.findApplicableEditorConfigFiles().toList())
     }
+
+    @Input
+    val workerMaxHeapSize: Property<String> = objectFactory.property(default = "256m")
+
+    @Classpath
+    val ktlintClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
+
+    @Classpath
+    val ruleSetsClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
 
     @Internal
     protected fun getKtLintParams(): KtLintParams = KtLintParams(
@@ -67,13 +77,3 @@ internal inline fun <reified K, reified V> ObjectFactory.mapProperty(default: Ma
     mapProperty(K::class.java, V::class.java).apply {
         set(default)
     }
-
-inline fun <reified T : Throwable> Throwable.workErrorCauses(): List<Throwable> {
-    return when (this) {
-        is MultiCauseException -> this.causes.map { it.cause }
-        else -> listOf(this.cause)
-    }.filter {
-        // class instance comparison doesn't work due to different classloaders
-        it?.javaClass?.canonicalName == T::class.java.canonicalName
-    }.filterNotNull()
-}

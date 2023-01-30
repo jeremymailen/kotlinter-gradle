@@ -8,7 +8,6 @@ import org.gradle.internal.logging.slf4j.DefaultContextAwareTaskLogger
 import org.gradle.workers.WorkAction
 import org.jmailen.gradle.kotlinter.support.KotlinterError
 import org.jmailen.gradle.kotlinter.support.KtLintParams
-import org.jmailen.gradle.kotlinter.support.LintFailure
 import org.jmailen.gradle.kotlinter.support.createKtlintEngine
 import org.jmailen.gradle.kotlinter.support.reporterFor
 import org.jmailen.gradle.kotlinter.support.reporterPathFor
@@ -32,6 +31,10 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
             changedEditorconfigFiles = parameters.changedEditorConfigFiles,
             logger = logger,
         )
+        logger.info("Resolved ${ktLintEngine.ruleProviders.size} RuleProviders")
+        if (logger.isDebugEnabled) {
+            logger.debug("Resolved RuleSetProviders = ${ktLintEngine.ruleProviders.joinToString { it.createNewRuleInstance().id }}")
+        }
 
         var hasError = false
 
@@ -60,11 +63,11 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
             }
             reporters.onEach { it.afterAll() }
         } catch (t: Throwable) {
-            throw KotlinterError("lint worker execution error", t)
+            throw KotlinterError.WorkerError("lint worker execution error", t)
         }
 
         if (hasError) {
-            throw LintFailure("kotlin source failed lint check")
+            throw KotlinterError.LintingError("$name source failed lint check")
         }
     }
 }

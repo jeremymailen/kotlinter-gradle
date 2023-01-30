@@ -27,7 +27,7 @@ description = projectDescription
 object Versions {
     const val androidTools = "7.3.1"
     const val junit = "5.9.1"
-    const val ktlint = "0.48.1"
+    const val ktlint = "0.48.2"
     const val mockitoKotlin = "4.1.0"
 }
 

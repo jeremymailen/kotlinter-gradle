@@ -20,7 +20,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "3.13.0"
+    id("org.jmailen.kotlinter") version "3.14.0"
 }
 ```
 
@@ -31,7 +31,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "3.13.0"
+    id "org.jmailen.kotlinter" version "3.14.0"
 }
 ```
 
@@ -45,7 +45,7 @@ Root `build.gradle.kts`
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "3.13.0" apply false
+    id("org.jmailen.kotlinter") version "3.14.0" apply false
 }
 ```
 
@@ -65,7 +65,7 @@ Root `build.gradle`
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version "3.13.0" apply false
+    id 'org.jmailen.kotlinter' version "3.14.0" apply false
 }
 ```
 
@@ -155,8 +155,6 @@ Options are configured in the `kotlinter` extension. Defaults shown (you may omi
 kotlinter {
     ignoreFailures = false
     reporters = arrayOf("checkstyle", "plain")
-    experimentalRules = false
-    disabledRules = emptyArray()
 }
 ```
 
@@ -169,8 +167,6 @@ kotlinter {
 kotlinter {
     ignoreFailures = false
     reporters = ['checkstyle', 'plain']
-    experimentalRules = false
-    disabledRules = []
 }
 ```
 
@@ -180,21 +176,13 @@ Options for `reporters`: `checkstyle`, `html`, `json`, `plain`, `sarif`
 
 Reporters behave as described at: https://github.com/pinterest/ktlint
 
-The `experimentalRules` property enables rules which are part of ktlint's experimental rule set.
-
-The `disabledRules` property can includes an array of rule ids you wish to disable. For example to allow wildcard imports:
-```groovy
-disabledRules = ["no-wildcard-imports"]
-```
-You must prefix rule ids not part of the standard rule set with `<rule-set-id>:<rule-id>`. For example `experimental:annotation`.
-
 ### Editorconfig
 
 Kotlinter will configure itself using an `.editorconfig` file if one is present.
 
-If a non-empty `disabledRules` value is specified in the `kotlinter` extension, it will take precedence over any `disabled_rules` in `.editorconfig`.
+This configuration includes code style and linting rules.
 
-See [Ktlint editorconfig](https://github.com/pinterest/ktlint#editorconfig) for supported values.
+See [KtLint configuration](https://pinterest.github.io/ktlint/rules/configuration-ktlint/) for details.
 
 ### Customizing Tasks
 
@@ -205,8 +193,8 @@ so you can customize includes, excludes, and source.
 <summary>Kotlin</summary>
 
 ```kotlin
-tasks.lintKotlinMain {
-  exclude("com/example/**/generated/*.kt")
+tasks.named("lintKotlinMain") {
+  source = source - fileTree("$buildDir/generated")
 }
 ```
 
@@ -216,8 +204,8 @@ tasks.lintKotlinMain {
 <summary>Groovy</summary>
 
 ```groovy
-tasks.named('lintKotlinMain') {
-    exclude 'com/example/**/generated/*.kt'
+tasks.named("lintKotlinMain") {
+  source = source - fileTree("$buildDir/generated")
 }
 ```
 
@@ -270,7 +258,6 @@ tasks.register('ktLint', LintTask) {
             'plain': file('build/lint-report.txt'),
             'json' : file('build/lint-report.json')
     ]
-    disabledRules = ['import-ordering']
 }
 
 
@@ -278,7 +265,6 @@ tasks.register('ktFormat', FormatTask) {
   group 'formatting'
   source files('src/test')
   report = file('build/format-report.txt')
-  disabledRules = ['import-ordering']
 }
 ```
 
@@ -296,14 +282,14 @@ buildscript {
     configurations.classpath {
         resolutionStrategy {
             force(
-                "com.pinterest.ktlint:ktlint-core:0.39.0",
-                "com.pinterest.ktlint:ktlint-reporter-checkstyle:0.39.0",
-                "com.pinterest.ktlint:ktlint-reporter-json:0.39.0",
-                "com.pinterest.ktlint:ktlint-reporter-html:0.39.0",
-                "com.pinterest.ktlint:ktlint-reporter-plain:0.39.0",
-                "com.pinterest.ktlint:ktlint-reporter-sarif:0.39.0",
-                "com.pinterest.ktlint:ktlint-ruleset-experimental:0.39.0",
-                "com.pinterest.ktlint:ktlint-ruleset-standard:0.39.0"
+                "com.pinterest.ktlint:ktlint-core:0.48.0",
+                "com.pinterest.ktlint:ktlint-reporter-checkstyle:0.48.0",
+                "com.pinterest.ktlint:ktlint-reporter-json:0.48.0",
+                "com.pinterest.ktlint:ktlint-reporter-html:0.48.0",
+                "com.pinterest.ktlint:ktlint-reporter-plain:0.48.0",
+                "com.pinterest.ktlint:ktlint-reporter-sarif:0.48.0",
+                "com.pinterest.ktlint:ktlint-ruleset-experimental:0.48.0",
+                "com.pinterest.ktlint:ktlint-ruleset-standard:0.48.0"
             )
         }
     }
@@ -320,14 +306,14 @@ buildscript {
     configurations.classpath {
         resolutionStrategy {
             force(
-                "com.pinterest.ktlint:ktlint-core:0.39.0",
-                "com.pinterest.ktlint:ktlint-reporter-checkstyle:0.39.0",
-                "com.pinterest.ktlint:ktlint-reporter-json:0.39.0",
-                "com.pinterest.ktlint:ktlint-reporter-html:0.39.0",
-                "com.pinterest.ktlint:ktlint-reporter-plain:0.39.0", 
-                "com.pinterest.ktlint:ktlint-reporter-sarif:0.39.0",
-                "com.pinterest.ktlint:ktlint-ruleset-experimental:0.39.0",
-                "com.pinterest.ktlint:ktlint-ruleset-standard:0.39.0"
+                "com.pinterest.ktlint:ktlint-core:0.48.0",
+                "com.pinterest.ktlint:ktlint-reporter-checkstyle:0.48.0",
+                "com.pinterest.ktlint:ktlint-reporter-json:0.48.0",
+                "com.pinterest.ktlint:ktlint-reporter-html:0.48.0",
+                "com.pinterest.ktlint:ktlint-reporter-plain:0.48.0",
+                "com.pinterest.ktlint:ktlint-reporter-sarif:0.48.0",
+                "com.pinterest.ktlint:ktlint-ruleset-experimental:0.48.0",
+                "com.pinterest.ktlint:ktlint-ruleset-standard:0.48.0"
             )
         }
     }

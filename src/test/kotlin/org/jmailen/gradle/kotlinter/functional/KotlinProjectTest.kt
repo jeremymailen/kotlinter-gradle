@@ -56,32 +56,6 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `lintKotlinMain fails when lint errors for experimental rules are detected`() {
-        settingsFile()
-        buildFile()
-
-        buildFile.appendText(
-            """
-            
-            kotlinter {
-                experimentalRules = true
-            }
-            """.trimIndent(),
-        )
-
-        fileWithFailingExperimentalRule()
-
-        buildAndFail("lintKotlinMain").apply {
-            assertTrue(output.contains(".*Lint error > \\[experimental:unnecessary-parentheses".toRegex()))
-            output.lines().filter { it.contains("Lint error") }.forEach { line ->
-                val filePath = pathPattern.find(line)?.groups?.get(1)?.value.orEmpty()
-                assertTrue(File(filePath).exists())
-            }
-            assertEquals(FAILED, task(":lintKotlinMain")?.outcome)
-        }
-    }
-
-    @Test
     fun `lintKotlinMain succeeds when no lint errors detected`() {
         settingsFile()
         buildFile()

@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.8.0"
+    kotlin("jvm") version "1.8.10"
     id("com.gradle.plugin-publish") version "1.1.0"
     `java-gradle-plugin`
     `maven-publish`
@@ -20,7 +20,7 @@ val githubUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "3.13.0"
+version = "3.14.0"
 group = "org.jmailen.gradle"
 description = projectDescription
 
@@ -98,8 +98,8 @@ tasks {
     }
     withType<KotlinCompile>().configureEach {
         kotlinOptions {
-            apiVersion = "1.4"
-            languageVersion = "1.4"
+            apiVersion = "1.8"
+            languageVersion = "1.8"
             jvmTarget = targetJavaVersion.toString()
         }
     }
@@ -131,6 +131,10 @@ gradlePlugin {
     }
 }
 
+java {
+    withSourcesJar()
+}
+
 publishing {
     publications.withType<MavenPublication> {
 
@@ -155,6 +159,10 @@ publishing {
                 developer {
                     id.set("jeremymailen")
                     name.set("Jeremy Mailen")
+                }
+                developer {
+                    id.set("mateuszkwiecinski")
+                    name.set("Mateusz Kwieciński")
                 }
             }
         }

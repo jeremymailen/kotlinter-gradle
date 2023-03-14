@@ -78,36 +78,6 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `extension configures disabledRules`() {
-        projectRoot.resolve("build.gradle") {
-            // language=groovy
-            val script =
-                """
-                kotlinter {
-                    experimentalRules = true
-                    disabledRules = ["filename", "experimental:unnecessary-parentheses-before-trailing-lambda"]
-                }
-                """.trimIndent()
-            appendText(script)
-        }
-        projectRoot.resolve("src/main/kotlin/FileName.kt") {
-            writeText(kotlinClass("DifferentClassName"))
-        }
-        projectRoot.resolve("src/main/kotlin/UnnecessaryParentheses.kt") {
-            writeText(
-                """
-                val FAILING = "should not have '()'".count() { it == 'x' }
-
-                """.trimIndent(),
-            )
-        }
-
-        build("lintKotlin").apply {
-            assertEquals(TaskOutcome.SUCCESS, task(":lintKotlinMain")?.outcome)
-        }
-    }
-
-    @Test
     fun `extension properties are evaluated only during task execution`() {
         projectRoot.resolve("build.gradle") {
             // language=groovy
@@ -123,7 +93,7 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
                 }
                 
                 kotlinter {
-                    disabledRules = ["filename"]
+                    ignoreFailures = true
                 }
                 
                 """.trimIndent()

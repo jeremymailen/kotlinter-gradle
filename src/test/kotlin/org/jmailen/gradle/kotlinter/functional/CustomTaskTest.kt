@@ -52,6 +52,7 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                         println("go")
                     }
                 }
+
                 """.trimIndent()
             writeText(validClass)
         }
@@ -64,8 +65,6 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                 task ktLint(type: LintTask) {
                     source files('src')
                     reports = ['plain': file('build/lint-report.txt')]
-                    experimentalRules = true
-                    disabledRules = ["final-newline"]
                 }
                 
                 """
@@ -112,8 +111,6 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                 task customizedLintTask(type: LintTask) {
                     source files('src')
                     reports = ['plain': file('build/lint-report.txt')]
-                    experimentalRules = true
-                    disabledRules = ["final-newline"]
                     ignoreFailures = true
                 }
                 
@@ -139,8 +136,6 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
     
                 task customizedFormatTask(type: FormatTask) {
                     source files('src')
-                    experimentalRules = true
-                    disabledRules = ["final-newline"]
                 }
                 
                 """.trimIndent()

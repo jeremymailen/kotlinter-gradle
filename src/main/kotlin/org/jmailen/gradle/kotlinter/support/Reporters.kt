@@ -10,7 +10,7 @@ import java.io.File
 import java.io.PrintStream
 
 /* ktlint-disable enum-entry-name-case */
-internal enum class ReporterType(val fileExtension: String) {
+enum class ReporterType(val fileExtension: String) {
     checkstyle("xml"),
     html("html"),
     json("json"),

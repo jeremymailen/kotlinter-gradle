@@ -7,7 +7,6 @@ import org.gradle.api.logging.Logging
 import org.gradle.internal.logging.slf4j.DefaultContextAwareTaskLogger
 import org.gradle.workers.WorkAction
 import org.jmailen.gradle.kotlinter.support.KotlinterError
-import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.createKtlintEngine
 import org.jmailen.gradle.kotlinter.support.resetEditorconfigCacheIfNeeded
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
@@ -18,19 +17,19 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
     private val files: List<File> = parameters.files.toList()
     private val projectDirectory: File = parameters.projectDirectory.asFile.get()
     private val name: String = parameters.name.get()
-    private val ktLintParams: KtLintParams = parameters.ktLintParams.get()
     private val output: File? = parameters.output.asFile.orNull
 
     override fun execute() {
-        val ktLintEngine = createKtlintEngine(ktLintParams = ktLintParams)
-        ktLintEngine.resetEditorconfigCacheIfNeeded(
+        resetEditorconfigCacheIfNeeded(
             changedEditorconfigFiles = parameters.changedEditorConfigFiles,
             logger = logger,
         )
-
         val fixes = mutableListOf<String>()
+
         try {
             files.forEach { file ->
+                val ktLintEngine = createKtlintEngine()
+
                 val sourceText = file.readText()
                 val relativePath = file.toRelativeString(projectDirectory)
 
@@ -46,11 +45,11 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
                         true -> "${file.path}:${error.line}:${error.col}: Format fixed > [${error.ruleId}] ${error.detail}"
                         false -> "${file.path}:${error.line}:${error.col}: Format could not fix > [${error.ruleId}] ${error.detail}"
                     }
-                    logger.log(LogLevel.QUIET, msg)
+                    logger.warn(msg)
                     fixes.add(msg)
                 }
                 if (!formattedText.contentEquals(sourceText)) {
-                    logger.log(LogLevel.QUIET, "${file.path}: Format fixed")
+                    logger.warn("${file.path}: Format fixed")
                     file.writeText(formattedText)
                 }
             }

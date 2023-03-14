@@ -7,7 +7,6 @@ import org.gradle.api.logging.Logging
 import org.gradle.internal.logging.slf4j.DefaultContextAwareTaskLogger
 import org.gradle.workers.WorkAction
 import org.jmailen.gradle.kotlinter.support.KotlinterError
-import org.jmailen.gradle.kotlinter.support.KtLintParams
 import org.jmailen.gradle.kotlinter.support.LintFailure
 import org.jmailen.gradle.kotlinter.support.createKtlintEngine
 import org.jmailen.gradle.kotlinter.support.reporterFor
@@ -24,20 +23,19 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
     private val files: List<File> = parameters.files.toList()
     private val projectDirectory: File = parameters.projectDirectory.asFile.get()
     private val name: String = parameters.name.get()
-    private val ktLintParams: KtLintParams = parameters.ktLintParams.get()
 
     override fun execute() {
-        val ktLintEngine = createKtlintEngine(ktLintParams = ktLintParams)
-        ktLintEngine.resetEditorconfigCacheIfNeeded(
+        resetEditorconfigCacheIfNeeded(
             changedEditorconfigFiles = parameters.changedEditorConfigFiles,
             logger = logger,
         )
-
         var hasError = false
 
         try {
             reporters.onEach { it.beforeAll() }
             files.forEach { file ->
+                val ktLintEngine = createKtlintEngine()
+
                 val relativePath = file.toRelativeString(projectDirectory)
                 reporters.onEach { it.before(relativePath) }
                 logger.debug("$name linting: $relativePath")
@@ -54,7 +52,7 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
                         val filePath = reporterPathFor(reporter, file, projectDirectory)
                         reporter.onLintError(filePath, error, false)
                     }
-                    logger.quiet("${file.path}:${error.line}:${error.col}: Lint error > [${error.ruleId}] ${error.detail}")
+                    logger.error("${file.path}:${error.line}:${error.col}: Lint error > [${error.ruleId}] ${error.detail}")
                 }
                 reporters.onEach { it.after(relativePath) }
             }

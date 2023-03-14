@@ -5,7 +5,6 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkParameters
-import org.jmailen.gradle.kotlinter.support.KtLintParams
 import java.io.File
 
 interface LintWorkerParameters : WorkParameters {
@@ -14,5 +13,4 @@ interface LintWorkerParameters : WorkParameters {
     val files: ConfigurableFileCollection
     val projectDirectory: RegularFileProperty
     val reporters: MapProperty<String, File>
-    val ktLintParams: Property<KtLintParams>
 }

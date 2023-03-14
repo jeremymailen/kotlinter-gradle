@@ -36,7 +36,10 @@ class KotlinterPlugin : Plugin<Project> {
                 val formatKotlin = registerParentFormatTask()
 
                 sourceResolver.applyToAll(this) { id, resolvedSources ->
-                    val lintTaskPerSourceSet = tasks.register("lintKotlin${id.capitalize()}", LintTask::class.java) { lintTask ->
+                    val lintTaskPerSourceSet = tasks.register(
+                        "lintKotlin${id.replaceFirstChar(Char::titlecase)}",
+                        LintTask::class.java,
+                    ) { lintTask ->
                         lintTask.source(resolvedSources)
                         lintTask.ignoreFailures.set(provider { kotlinterExtension.ignoreFailures })
                         lintTask.reports.set(
@@ -46,18 +49,17 @@ class KotlinterPlugin : Plugin<Project> {
                                 }
                             },
                         )
-                        lintTask.experimentalRules.set(provider { kotlinterExtension.experimentalRules })
-                        lintTask.disabledRules.set(provider { kotlinterExtension.disabledRules.toList() })
                     }
                     lintKotlin.configure { lintTask ->
                         lintTask.dependsOn(lintTaskPerSourceSet)
                     }
 
-                    val formatKotlinPerSourceSet = tasks.register("formatKotlin${id.capitalize()}", FormatTask::class.java) { formatTask ->
+                    val formatKotlinPerSourceSet = tasks.register(
+                        "formatKotlin${id.replaceFirstChar(Char::titlecase)}",
+                        FormatTask::class.java,
+                    ) { formatTask ->
                         formatTask.source(resolvedSources)
                         formatTask.report.set(reportFile("$id-format.txt"))
-                        formatTask.experimentalRules.set(provider { kotlinterExtension.experimentalRules })
-                        formatTask.disabledRules.set(provider { kotlinterExtension.disabledRules.toList() })
                     }
                     formatKotlin.configure { formatTask ->
                         formatTask.dependsOn(formatKotlinPerSourceSet)

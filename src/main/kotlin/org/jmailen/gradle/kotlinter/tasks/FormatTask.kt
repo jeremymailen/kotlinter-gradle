@@ -38,7 +38,6 @@ open class FormatTask @Inject constructor(
                 p.name.set(name)
                 p.files.from(source)
                 p.projectDirectory.set(projectLayout.projectDirectory.asFile)
-                p.ktLintParams.set(getKtLintParams())
                 p.output.set(report)
                 p.changedEditorConfigFiles.from(getChangedEditorconfigFiles(inputChanges))
             }

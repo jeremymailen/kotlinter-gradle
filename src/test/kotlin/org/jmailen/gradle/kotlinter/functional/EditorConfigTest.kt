@@ -100,7 +100,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
 
         buildAndFail("lintKotlin").apply {
             assertEquals(TaskOutcome.FAILED, task(":lintKotlinMain")?.outcome)
-            assertTrue(output.contains("[indent] Unexpected indentation (2) (should be 6)"))
+            assertTrue(output.contains("[standard:indent] Unexpected indentation (2) (should be 6)"))
         }
     }
 
@@ -128,7 +128,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
         }
         buildAndFail("lintKotlin", "--info").apply {
             assertEquals(TaskOutcome.FAILED, task(":lintKotlinMain")?.outcome)
-            assertTrue(output.contains("[filename] File 'FileName.kt' contains a single top level declaration"))
+            assertTrue(output.contains("[standard:filename] File 'FileName.kt' contains a single top level declaration"))
             assertTrue(output.contains("resetting KtLint caches"))
         }
 
@@ -156,7 +156,9 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
         }
         build("formatKotlin").apply {
             assertEquals(TaskOutcome.SUCCESS, task(":formatKotlinMain")?.outcome)
-            assertTrue(output.contains("Format could not fix > [filename] File 'FileName.kt' contains a single top level declaration"))
+            assertTrue(
+                output.contains("Format could not fix > [standard:filename] File 'FileName.kt' contains a single top level declaration"),
+            )
         }
 
         projectRoot.resolve(".editorconfig") {

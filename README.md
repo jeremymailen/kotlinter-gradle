@@ -20,7 +20,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "3.14.0"
+    id("org.jmailen.kotlinter") version "3.15.0"
 }
 ```
 
@@ -31,7 +31,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "3.14.0"
+    id "org.jmailen.kotlinter" version "3.15.0"
 }
 ```
 
@@ -45,7 +45,7 @@ Root `build.gradle.kts`
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "3.14.0" apply false
+    id("org.jmailen.kotlinter") version "3.15.0" apply false
 }
 ```
 
@@ -65,7 +65,7 @@ Root `build.gradle`
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version "3.14.0" apply false
+    id 'org.jmailen.kotlinter' version "3.15.0" apply false
 }
 ```
 
@@ -81,14 +81,15 @@ plugins {
 
 ### Compatibility
 
-| kotlinter version  | min kotlin version | max kotlin version | min gradle version |
-|--------------------|--------------------|--------------------|--------------------|
-| 3.11.0+            | 1.7.0              | -                  | 7.0                |
-| 3.10.0+            | 1.6.20             | 1.6.21             | 7.0                |
-| 3.7.0+             | 1.5.31             | 1.6.10             | 7.0                |
-| 3.5.0+             | 1.5.0              | 1.5.30             | 6.8                |
-| 3.0.0+             | 1.4.0              | 1.4.30             | 6.8                |
-| 2.0.0+             | 1.3.0              | 1.3.30             | -                  |
+| kotlinter version | min kotlin version | max kotlin version | min gradle version |
+|------------------|--------------------|--------------------|--------------------|
+| 3.14.0+          | 1.8.0              | -                  | 7.6                |
+| 3.11.0+          | 1.7.0              | 1.7.22             | 7.0                |
+| 3.10.0+          | 1.6.20             | 1.6.21             | 7.0                |
+| 3.7.0+           | 1.5.31             | 1.6.10             | 7.0                |
+| 3.5.0+           | 1.5.0              | 1.5.30             | 6.8                |
+| 3.0.0+           | 1.4.0              | 1.4.30             | 6.8                |
+| 2.0.0+           | 1.3.0              | 1.3.30             | -                  |
 
 ### Features
 
@@ -282,14 +283,16 @@ buildscript {
     configurations.classpath {
         resolutionStrategy {
             force(
-                "com.pinterest.ktlint:ktlint-core:0.48.0",
-                "com.pinterest.ktlint:ktlint-reporter-checkstyle:0.48.0",
-                "com.pinterest.ktlint:ktlint-reporter-json:0.48.0",
-                "com.pinterest.ktlint:ktlint-reporter-html:0.48.0",
-                "com.pinterest.ktlint:ktlint-reporter-plain:0.48.0",
-                "com.pinterest.ktlint:ktlint-reporter-sarif:0.48.0",
-                "com.pinterest.ktlint:ktlint-ruleset-experimental:0.48.0",
-                "com.pinterest.ktlint:ktlint-ruleset-standard:0.48.0"
+                "com.pinterest.ktlint:ktlint-core:0.49.0",
+                "com.pinterest.ktlint:ktlint-rule-engine:0.49.0",
+                "com.pinterest.ktlint:ktlint-rule-engine-core:0.49.0",
+                "com.pinterest.ktlint:ktlint-cli-reporter:0.49.0",
+                "com.pinterest.ktlint:ktlint-reporter-checkstyle:0.49.0",
+                "com.pinterest.ktlint:ktlint-reporter-json:0.49.0",
+                "com.pinterest.ktlint:ktlint-reporter-html:0.49.0",
+                "com.pinterest.ktlint:ktlint-reporter-plain:0.49.0",
+                "com.pinterest.ktlint:ktlint-reporter-sarif:0.49.0",
+                "com.pinterest.ktlint:ktlint-ruleset-standard:0.49.0"
             )
         }
     }
@@ -306,14 +309,16 @@ buildscript {
     configurations.classpath {
         resolutionStrategy {
             force(
-                "com.pinterest.ktlint:ktlint-core:0.48.0",
-                "com.pinterest.ktlint:ktlint-reporter-checkstyle:0.48.0",
-                "com.pinterest.ktlint:ktlint-reporter-json:0.48.0",
-                "com.pinterest.ktlint:ktlint-reporter-html:0.48.0",
-                "com.pinterest.ktlint:ktlint-reporter-plain:0.48.0",
-                "com.pinterest.ktlint:ktlint-reporter-sarif:0.48.0",
-                "com.pinterest.ktlint:ktlint-ruleset-experimental:0.48.0",
-                "com.pinterest.ktlint:ktlint-ruleset-standard:0.48.0"
+                "com.pinterest.ktlint:ktlint-core:0.49.0",
+                "com.pinterest.ktlint:ktlint-rule-engine:0.49.0", 
+                "com.pinterest.ktlint:ktlint-rule-engine-core:0.49.0",
+                "com.pinterest.ktlint:ktlint-cli-reporter:0.49.0",
+                "com.pinterest.ktlint:ktlint-reporter-checkstyle:0.49.0",
+                "com.pinterest.ktlint:ktlint-reporter-json:0.49.0",
+                "com.pinterest.ktlint:ktlint-reporter-html:0.49.0",
+                "com.pinterest.ktlint:ktlint-reporter-plain:0.49.0",
+                "com.pinterest.ktlint:ktlint-reporter-sarif:0.49.0",
+                "com.pinterest.ktlint:ktlint-ruleset-standard:0.49.0"
             )
         }
     }

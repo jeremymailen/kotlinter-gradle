@@ -1,10 +1,12 @@
 package org.jmailen.gradle.kotlinter.support
 
-import com.pinterest.ktlint.core.Code
-import com.pinterest.ktlint.core.KtLintRuleEngine
-import com.pinterest.ktlint.core.Rule
-import com.pinterest.ktlint.core.RuleProvider
-import com.pinterest.ktlint.core.RuleSetProviderV2
+import com.pinterest.ktlint.cli.ruleset.core.api.RuleSetProviderV3
+import com.pinterest.ktlint.rule.engine.api.Code
+import com.pinterest.ktlint.rule.engine.api.KtLintRuleEngine
+import com.pinterest.ktlint.rule.engine.core.api.Rule
+import com.pinterest.ktlint.rule.engine.core.api.RuleId
+import com.pinterest.ktlint.rule.engine.core.api.RuleProvider
+import com.pinterest.ktlint.rule.engine.core.api.RuleSetId
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -20,9 +22,9 @@ class RuleSetsTest {
 
     @Test
     fun `resolveRuleSets puts standard rules first`() {
-        val standard = TestRuleSetProvider("standard", setOf(TestRule("one")))
-        val extra1 = TestRuleSetProvider("extra-one", setOf(TestRule("two")))
-        val extra2 = TestRuleSetProvider("extra-two", setOf(TestRule("three")))
+        val standard = TestRuleSetProvider("standard", setOf(TestRule("custom:one")))
+        val extra1 = TestRuleSetProvider("extra-one", setOf(TestRule("custom:two")))
+        val extra2 = TestRuleSetProvider("extra-two", setOf(TestRule("custom:three")))
 
         val result = resolveRuleProviders(providers = listOf(extra2, standard, extra1)).map { it.createNewRuleInstance() }
 
@@ -36,7 +38,7 @@ class RuleSetsTest {
         KtLintRuleEngine(
             ruleProviders = resolveRuleProviders(defaultRuleSetProviders),
         ).lint(
-            Code.CodeSnippet(
+            Code.fromSnippet(
                 """
                 package test
 
@@ -53,17 +55,8 @@ class RuleSetsTest {
     }
 }
 
-class TestRuleSetProvider(id: String, val ruleSet: Set<Rule>) : RuleSetProviderV2(
-    id = id,
-    about = About(
-        maintainer = "stub-maintainer",
-        description = "stub-description",
-        license = "stub-license",
-        repositoryUrl = "stub-repositoryUrl",
-        issueTrackerUrl = "stub-issueTrackerUrl",
-    ),
-) {
+class TestRuleSetProvider(id: String, val ruleSet: Set<Rule>) : RuleSetProviderV3(RuleSetId(id)) {
     override fun getRuleProviders() = ruleSet.map { rule -> RuleProvider(provider = { rule }) }.toSet()
 }
 
-class TestRule(id: String) : Rule(id)
+class TestRule(id: String) : Rule(RuleId(id), About("maintainer"), emptySet(), emptySet())

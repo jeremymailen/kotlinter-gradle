@@ -2,11 +2,11 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.8.10"
+    kotlin("jvm") version "1.8.21"
     id("com.gradle.plugin-publish") version "1.1.0"
     `java-gradle-plugin`
     `maven-publish`
-    id("org.jmailen.kotlinter") version "3.13.0"
+    id("org.jmailen.kotlinter") version "3.14.0"
     idea
 }
 
@@ -20,14 +20,14 @@ val githubUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "3.14.0"
+version = "3.15.0"
 group = "org.jmailen.gradle"
 description = projectDescription
 
 object Versions {
     const val androidTools = "7.3.1"
-    const val junit = "5.9.1"
-    const val ktlint = "0.48.2"
+    const val junit = "5.9.3"
+    const val ktlint = "0.49.1"
     const val mockitoKotlin = "4.1.0"
 }
 
@@ -55,12 +55,14 @@ dependencies {
 
     listOf(
         "ktlint-core",
+        "ktlint-rule-engine",
+        "ktlint-rule-engine-core",
+        "ktlint-cli-reporter",
         "ktlint-reporter-checkstyle",
         "ktlint-reporter-json",
         "ktlint-reporter-html",
         "ktlint-reporter-plain",
         "ktlint-reporter-sarif",
-        "ktlint-ruleset-experimental",
         "ktlint-ruleset-standard"
     ).forEach { module ->
         implementation("com.pinterest.ktlint:$module:${Versions.ktlint}")
@@ -68,7 +70,7 @@ dependencies {
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${Versions.junit}")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
-    testImplementation("commons-io:commons-io:2.11.0")
+    testImplementation("commons-io:commons-io:2.12.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.mockitoKotlin}")
 }
 
@@ -113,7 +115,7 @@ tasks {
     }
 
     wrapper {
-        gradleVersion = "7.6"
+        gradleVersion = "8.1.1"
     }
 }
 

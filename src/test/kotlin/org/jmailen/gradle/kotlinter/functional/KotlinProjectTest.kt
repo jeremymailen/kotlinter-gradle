@@ -45,8 +45,8 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
         )
 
         buildAndFail("lintKotlinMain").apply {
-            assertTrue(output.contains(".*$className.kt.* Lint error > \\[.*] Missing spacing before \"\\{\"".toRegex()))
-            assertTrue(output.contains(".*$className.kt.* Lint error > \\[.*] Unexpected spacing before \"\\(\"".toRegex()))
+            assertTrue(output.contains("$className.kt:2:21: Lint error > [standard:curly-spacing] Missing spacing before"))
+            assertTrue(output.contains("$className.kt:3:16: Lint error > [standard:paren-spacing] Unexpected spacing before"))
             output.lines().filter { it.contains("Lint error") }.forEach { line ->
                 val filePath = pathPattern.find(line)?.groups?.get(1)?.value.orEmpty()
                 assertTrue(File(filePath).exists())

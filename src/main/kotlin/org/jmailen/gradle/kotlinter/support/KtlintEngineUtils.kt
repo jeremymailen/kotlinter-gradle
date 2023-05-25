@@ -5,8 +5,6 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.logging.Logger
 import java.io.File
 
-// You must create a new KtLintRuleEngine per file with fresh rule providers.
-// Otherwise, KtLint errors on resolving rule enable/disable statements in .editorconfig
 internal val ktlintEngine = KtLintRuleEngine(
     ruleProviders = resolveRuleProviders(defaultRuleSetProviders),
 )

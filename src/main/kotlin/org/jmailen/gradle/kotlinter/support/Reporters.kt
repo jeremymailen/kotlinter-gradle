@@ -1,11 +1,11 @@
 package org.jmailen.gradle.kotlinter.support
 
-import com.pinterest.ktlint.core.Reporter
-import com.pinterest.ktlint.reporter.checkstyle.CheckStyleReporter
-import com.pinterest.ktlint.reporter.html.HtmlReporter
-import com.pinterest.ktlint.reporter.json.JsonReporter
-import com.pinterest.ktlint.reporter.plain.PlainReporter
-import com.pinterest.ktlint.reporter.sarif.SarifReporter
+import com.pinterest.ktlint.cli.reporter.checkstyle.CheckStyleReporter
+import com.pinterest.ktlint.cli.reporter.core.api.ReporterV2
+import com.pinterest.ktlint.cli.reporter.html.HtmlReporter
+import com.pinterest.ktlint.cli.reporter.json.JsonReporter
+import com.pinterest.ktlint.cli.reporter.plain.PlainReporter
+import com.pinterest.ktlint.cli.reporter.sarif.SarifReporter
 import java.io.File
 import java.io.PrintStream
 
@@ -19,7 +19,7 @@ enum class ReporterType(val fileExtension: String) {
 }
 /* ktlint-enable enum-entry-name-case */
 
-fun reporterFor(reporterName: String, output: File): Reporter {
+fun reporterFor(reporterName: String, output: File): ReporterV2 {
     val out = PrintStream(output)
     return SortedThreadSafeReporterWrapper(
         when (ReporterType.valueOf(reporterName)) {
@@ -32,7 +32,7 @@ fun reporterFor(reporterName: String, output: File): Reporter {
     )
 }
 
-fun reporterPathFor(reporter: Reporter, output: File, projectDir: File): String {
+fun reporterPathFor(reporter: ReporterV2, output: File, projectDir: File): String {
     val unwrappedReporter = (reporter as? SortedThreadSafeReporterWrapper)?.unwrap() ?: reporter
     return when (unwrappedReporter) {
         is SarifReporter -> output.absolutePath

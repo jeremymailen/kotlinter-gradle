@@ -1,13 +1,13 @@
 package org.jmailen.gradle.kotlinter.tasks.format
 
-import com.pinterest.ktlint.core.Code
+import com.pinterest.ktlint.rule.engine.api.Code
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.internal.logging.slf4j.DefaultContextAwareTaskLogger
 import org.gradle.workers.WorkAction
 import org.jmailen.gradle.kotlinter.support.KotlinterError
-import org.jmailen.gradle.kotlinter.support.createKtlintEngine
+import org.jmailen.gradle.kotlinter.support.ktlintEngine
 import org.jmailen.gradle.kotlinter.support.resetEditorconfigCacheIfNeeded
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import java.io.File
@@ -28,7 +28,6 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
 
         try {
             files.forEach { file ->
-                val ktLintEngine = createKtlintEngine()
 
                 val sourceText = file.readText()
                 val relativePath = file.toRelativeString(projectDirectory)
@@ -40,10 +39,10 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
                     return@forEach
                 }
 
-                val formattedText = ktLintEngine.format(Code.CodeFile(file)) { error, corrected ->
+                val formattedText = ktlintEngine.format(Code.fromFile(file)) { error, corrected ->
                     val msg = when (corrected) {
-                        true -> "${file.path}:${error.line}:${error.col}: Format fixed > [${error.ruleId}] ${error.detail}"
-                        false -> "${file.path}:${error.line}:${error.col}: Format could not fix > [${error.ruleId}] ${error.detail}"
+                        true -> "${file.path}:${error.line}:${error.col}: Format fixed > [${error.ruleId.value}] ${error.detail}"
+                        false -> "${file.path}:${error.line}:${error.col}: Format could not fix > [${error.ruleId.value}] ${error.detail}"
                     }
                     logger.warn(msg)
                     fixes.add(msg)

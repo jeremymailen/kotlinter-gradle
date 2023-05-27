@@ -1,7 +1,9 @@
 package org.jmailen.gradle.kotlinter.support
 
-import com.pinterest.ktlint.core.LintError
-import com.pinterest.ktlint.core.Reporter
+import com.pinterest.ktlint.cli.reporter.core.api.ReporterV2
+import com.pinterest.ktlint.rule.engine.api.LintError
+import com.pinterest.ktlint.rule.engine.core.api.RuleId
+import org.jmailen.gradle.kotlinter.tasks.lint.toCliError
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.verify
@@ -11,7 +13,7 @@ import org.mockito.kotlin.never
 
 class SortedThreadSafeReporterWrapperTest {
 
-    private lateinit var wrapped: Reporter
+    private lateinit var wrapped: ReporterV2
 
     private lateinit var reporter: SortedThreadSafeReporterWrapper
 
@@ -51,24 +53,25 @@ class SortedThreadSafeReporterWrapperTest {
     @Test
     fun onLintErrorIsNotDirectlyDelegated() {
         val fileName = "fileName"
-        val lintError = LintError(0, 0, "", "")
-        val corrected = false
+        val lintError = LintError(0, 0, RuleId("custom:x"), "", false)
+        val cliError = lintError.toCliError()
 
-        reporter.onLintError(fileName, lintError, corrected)
+        reporter.onLintError(fileName, cliError)
 
-        verify(wrapped, never()).onLintError(fileName, lintError, corrected)
+        verify(wrapped, never()).onLintError(fileName, cliError)
     }
 
     @Test
     fun onLintErrorIsDelegatedInAfterAll() {
         val fileName = "fileName"
-        val lintError = LintError(0, 0, "", "")
-        val corrected = false
-        reporter.onLintError(fileName, lintError, corrected)
+        val lintError = LintError(0, 0, RuleId("custom:x"), "", false)
+        val cliError = lintError.toCliError()
+
+        reporter.onLintError(fileName, cliError)
 
         reporter.afterAll()
 
-        verify(wrapped).onLintError(fileName, lintError, corrected)
+        verify(wrapped).onLintError(fileName, cliError)
     }
 
     @Test
@@ -93,32 +96,34 @@ class SortedThreadSafeReporterWrapperTest {
     @Test
     fun afterAllDelegatesInSortedOrder() {
         val firstFileName = "b"
-        val firstLintError = LintError(0, 0, "", "")
-        val firstCorrected = true
+        val firstLintError = LintError(0, 0, RuleId("custom:x"), "", true)
+            .toCliError()
         val secondFileName = "a"
-        val secondLintError = LintError(1, 0, "", "")
-        val secondLintError2 = LintError(3, 2, "", "")
-        val secondLintError3 = LintError(2, 6, "", "")
-        val secondCorrected = false
+        val secondLintError = LintError(1, 0, RuleId("custom:x"), "", false)
+            .toCliError()
+        val secondLintError2 = LintError(3, 2, RuleId("custom:x"), "", false)
+            .toCliError()
+        val secondLintError3 = LintError(2, 6, RuleId("custom:x"), "", false)
+            .toCliError()
         reporter.before(firstFileName)
-        reporter.onLintError(firstFileName, firstLintError, firstCorrected)
+        reporter.onLintError(firstFileName, firstLintError)
         reporter.after(firstFileName)
         reporter.before(secondFileName)
-        reporter.onLintError(secondFileName, secondLintError, secondCorrected)
-        reporter.onLintError(secondFileName, secondLintError2, secondCorrected)
-        reporter.onLintError(secondFileName, secondLintError3, secondCorrected)
+        reporter.onLintError(secondFileName, secondLintError)
+        reporter.onLintError(secondFileName, secondLintError2)
+        reporter.onLintError(secondFileName, secondLintError3)
         reporter.after(secondFileName)
 
         reporter.afterAll()
 
         val inOrder = inOrder(wrapped)
         inOrder.verify(wrapped).before(secondFileName)
-        inOrder.verify(wrapped).onLintError(secondFileName, secondLintError, secondCorrected)
-        inOrder.verify(wrapped).onLintError(secondFileName, secondLintError3, secondCorrected)
-        inOrder.verify(wrapped).onLintError(secondFileName, secondLintError2, secondCorrected)
+        inOrder.verify(wrapped).onLintError(secondFileName, secondLintError)
+        inOrder.verify(wrapped).onLintError(secondFileName, secondLintError3)
+        inOrder.verify(wrapped).onLintError(secondFileName, secondLintError2)
         inOrder.verify(wrapped).after(secondFileName)
         inOrder.verify(wrapped).before(firstFileName)
-        inOrder.verify(wrapped).onLintError(firstFileName, firstLintError, firstCorrected)
+        inOrder.verify(wrapped).onLintError(firstFileName, firstLintError)
         inOrder.verify(wrapped).after(firstFileName)
         inOrder.verify(wrapped).afterAll()
         inOrder.verifyNoMoreInteractions()

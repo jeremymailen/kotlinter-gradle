@@ -1,7 +1,7 @@
 package org.jmailen.gradle.kotlinter.support
 
-import com.pinterest.ktlint.core.LintError
-import com.pinterest.ktlint.core.Reporter
+import com.pinterest.ktlint.cli.reporter.core.api.KtlintCliError
+import com.pinterest.ktlint.cli.reporter.core.api.ReporterV2
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.ConcurrentSkipListSet
@@ -11,11 +11,11 @@ import java.util.concurrent.ConcurrentSkipListSet
  * As a downside, the calls to the wrapped reporter are delayed until the end of the execution.
  */
 class SortedThreadSafeReporterWrapper(
-    private val wrapped: Reporter,
-) : Reporter {
+    private val wrapped: ReporterV2,
+) : ReporterV2 {
 
     private val callsToBefore: ConcurrentMap<String, Unit> = ConcurrentHashMap()
-    private val lintErrorReports: ConcurrentMap<String, ConcurrentSkipListSet<LintErrorReport>> = ConcurrentHashMap()
+    private val lintErrorReports: ConcurrentMap<String, ConcurrentSkipListSet<KtlintCliError>> = ConcurrentHashMap()
     private val callsToAfter: ConcurrentMap<String, Unit> = ConcurrentHashMap()
 
     override fun beforeAll() {
@@ -26,9 +26,17 @@ class SortedThreadSafeReporterWrapper(
         callsToBefore[file] = Unit
     }
 
-    override fun onLintError(file: String, err: LintError, corrected: Boolean) {
-        lintErrorReports.putIfAbsent(file, ConcurrentSkipListSet())
-        lintErrorReports[file]!!.add(LintErrorReport(err, corrected))
+    override fun onLintError(file: String, ktlintCliError: KtlintCliError) {
+        lintErrorReports.putIfAbsent(
+            file,
+            ConcurrentSkipListSet() { o1, o2 ->
+                when (o1.line == o2.line) {
+                    true -> o1.col.compareTo(o2.col)
+                    false -> o1.line.compareTo(o2.line)
+                }
+            },
+        )
+        lintErrorReports[file]!!.add(ktlintCliError)
     }
 
     override fun after(file: String) {
@@ -44,7 +52,7 @@ class SortedThreadSafeReporterWrapper(
                 }
                 lintErrorReports[fileName]?.let { lintErrorReports ->
                     lintErrorReports.forEach {
-                        wrapped.onLintError(fileName, it.lintError, it.corrected)
+                        wrapped.onLintError(fileName, it)
                     }
                 }
                 if (callsToAfter.contains(fileName)) {
@@ -56,14 +64,4 @@ class SortedThreadSafeReporterWrapper(
     }
 
     fun unwrap() = wrapped
-
-    private data class LintErrorReport(
-        val lintError: LintError,
-        val corrected: Boolean,
-    ) : Comparable<LintErrorReport> {
-        override fun compareTo(other: LintErrorReport) = when (lintError.line == other.lintError.line) {
-            true -> lintError.col.compareTo(other.lintError.col)
-            false -> lintError.line.compareTo(other.lintError.line)
-        }
-    }
 }

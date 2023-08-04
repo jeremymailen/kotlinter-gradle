@@ -194,8 +194,12 @@ so you can customize includes, excludes, and source.
 <summary>Kotlin</summary>
 
 ```kotlin
-tasks.named("lintKotlinMain") {
-  source = source - fileTree("$buildDir/generated")
+tasks.withType<LintTask> {
+    this.source = this.source.minus(fileTree("src/generated")).asFileTree
+}
+
+tasks.withType<FormatTask> {
+    this.source = this.source.minus(fileTree("src/generated")).asFileTree
 }
 ```
 

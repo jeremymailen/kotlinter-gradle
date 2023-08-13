@@ -2,11 +2,11 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.8.21"
+    kotlin("jvm") version "1.8.22"
     id("com.gradle.plugin-publish") version "1.1.0"
     `java-gradle-plugin`
     `maven-publish`
-    id("org.jmailen.kotlinter") version "3.14.0"
+    id("org.jmailen.kotlinter") version "3.15.0"
     idea
 }
 
@@ -20,14 +20,14 @@ val githubUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "3.15.0"
+version = "3.16.0"
 group = "org.jmailen.gradle"
 description = projectDescription
 
 object Versions {
     const val androidTools = "7.3.1"
     const val junit = "5.9.3"
-    const val ktlint = "0.49.1"
+    const val ktlint = "0.50.0"
     const val mockitoKotlin = "4.1.0"
 }
 
@@ -54,7 +54,6 @@ dependencies {
     compileOnly("com.android.tools.build:gradle:${Versions.androidTools}")
 
     listOf(
-        "ktlint-core",
         "ktlint-rule-engine",
         "ktlint-rule-engine-core",
         "ktlint-cli-reporter",
@@ -115,7 +114,7 @@ tasks {
     }
 
     wrapper {
-        gradleVersion = "8.1.1"
+        gradleVersion = "8.2.1"
     }
 }
 

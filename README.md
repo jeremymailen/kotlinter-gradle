@@ -183,7 +183,7 @@ Kotlinter will configure itself using an `.editorconfig` file if one is present.
 
 This configuration includes code style and linting rules.
 
-See [KtLint configuration](https://pinterest.github.io/ktlint/rules/configuration-ktlint/) for details.
+See [KtLint configuration](https://pinterest.github.io/ktlint/latest/rules/configuration-ktlint/) for details.
 
 ### Customizing Tasks
 

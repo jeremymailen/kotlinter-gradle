@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:enum-entry-name-case")
+
 package org.jmailen.gradle.kotlinter.support
 
 import com.pinterest.ktlint.cli.reporter.checkstyle.CheckStyleReporter
@@ -9,7 +11,6 @@ import com.pinterest.ktlint.cli.reporter.sarif.SarifReporter
 import java.io.File
 import java.io.PrintStream
 
-/* ktlint-disable enum-entry-name-case */
 enum class ReporterType(val fileExtension: String) {
     checkstyle("xml"),
     html("html"),
@@ -17,7 +18,6 @@ enum class ReporterType(val fileExtension: String) {
     plain("txt"),
     sarif("sarif.json"),
 }
-/* ktlint-enable enum-entry-name-case */
 
 fun reporterFor(reporterName: String, output: File): ReporterV2 {
     val out = PrintStream(output)

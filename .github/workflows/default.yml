@@ -109,17 +109,6 @@ jobs:
         gradle: [ current ]
         java: [ 17 ]
         agp: ${{ fromJSON(needs.provide-agp-version-matrix.outputs.agp-versions) }}
-        exclude:
-          - gradle: current
-            java: 17
-            agp: 8.1.0-alpha01
-        include:
-          - gradle: 8.4
-            java: 11
-            agp: 4.2.2
-          - gradle: 8.0-rc-1
-            java: 17
-            agp: 8.1.0-alpha01
 
     name: '[android] Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}, AGP: ${{ matrix.agp }}'
     steps:

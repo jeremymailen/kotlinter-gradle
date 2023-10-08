@@ -77,18 +77,6 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `lintKotlinMain succeeds when experimental rules are not enabled and code contains experimental rules violations`() {
-        settingsFile()
-        buildFile()
-
-        fileWithFailingExperimentalRule()
-
-        build("lintKotlinMain").apply {
-            assertEquals(SUCCESS, task(":lintKotlinMain")?.outcome)
-        }
-    }
-
-    @Test
     fun `formatKotlin reports formatted and unformatted files`() {
         settingsFile()
         buildFile()

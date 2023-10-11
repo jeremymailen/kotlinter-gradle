@@ -7,6 +7,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.internal.logging.slf4j.DefaultContextAwareTaskLogger
 import org.gradle.workers.WorkAction
 import org.jmailen.gradle.kotlinter.support.KotlinterError
+import org.jmailen.gradle.kotlinter.support.LintFailure
 import org.jmailen.gradle.kotlinter.support.ktlintEngine
 import org.jmailen.gradle.kotlinter.support.resetEditorconfigCacheIfNeeded
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
@@ -26,6 +27,7 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
         )
         val fixes = mutableListOf<String>()
 
+        var hasError = false
         try {
             files.forEach { file ->
 
@@ -44,7 +46,12 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
                         true -> "${file.path}:${error.line}:${error.col}: Format fixed > [${error.ruleId.value}] ${error.detail}"
                         false -> "${file.path}:${error.line}:${error.col}: Format could not fix > [${error.ruleId.value}] ${error.detail}"
                     }
-                    logger.warn(msg)
+                    if (corrected) {
+                        logger.warn(msg)
+                    } else {
+                        hasError = true
+                        logger.error(msg) // TODO: is this needed?
+                    }
                     fixes.add(msg)
                 }
                 if (!formattedText.contentEquals(sourceText)) {
@@ -54,6 +61,10 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
             }
         } catch (t: Throwable) {
             throw KotlinterError("format worker execution error", t)
+        }
+
+        if (hasError) {
+            throw LintFailure("kotlin source failed lint check")
         }
 
         output?.writeText(

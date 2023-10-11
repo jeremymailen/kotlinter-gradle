@@ -93,8 +93,8 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
             """.trimIndent()
         kotlinSourceFile("KotlinClass.kt", kotlinClass)
 
-        build("formatKotlin").apply {
-            assertEquals(SUCCESS, task(":formatKotlinMain")?.outcome)
+        buildAndFail("formatKotlin").apply {
+            assertEquals(FAILED, task(":formatKotlinMain")?.outcome)
             output.lines().filter { it.contains("Format could not fix") }.forEach { line ->
                 val filePath = pathPattern.find(line)?.groups?.get(1)?.value.orEmpty()
                 assertTrue(File(filePath).exists())

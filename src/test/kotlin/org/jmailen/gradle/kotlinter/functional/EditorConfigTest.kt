@@ -155,8 +155,8 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
         projectRoot.resolve("src/main/kotlin/FileName.kt") {
             writeText(kotlinClass("DifferentClassName"))
         }
-        build("formatKotlin").apply {
-            assertEquals(TaskOutcome.SUCCESS, task(":formatKotlinMain")?.outcome)
+        buildAndFail("formatKotlin").apply {
+            assertEquals(TaskOutcome.FAILED, task(":formatKotlinMain")?.outcome)
             assertTrue(
                 output.contains("Format could not fix > [standard:filename] File 'FileName.kt' contains a single top level declaration"),
             )
@@ -171,8 +171,8 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                 """.trimIndent(),
             )
         }
-        build("formatKotlin", "--info").apply {
-            assertEquals(TaskOutcome.SUCCESS, task(":formatKotlinMain")?.outcome)
+        buildAndFail("formatKotlin", "--info").apply {
+            assertEquals(TaskOutcome.FAILED, task(":formatKotlinMain")?.outcome)
             assertTrue(output.contains("Format could not fix"))
             assertFalse(output.contains("resetting KtLint caches"))
         }

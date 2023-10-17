@@ -6,29 +6,35 @@ import org.jmailen.gradle.kotlinter.functional.utils.resolve
 import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
 
+
 class KotlinJsProjectTest : WithGradleTest.Kotlin() {
 
-    lateinit var projectRoot: File
 
-    @BeforeEach
-    fun setup() {
+    enum class KotlinterConfig {
+        DEFAULT,
+        IGNORE_FAILURES,
+        FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT
+    }
+
+
+    lateinit var projectRoot: File
+    fun setup(kotlinterConfig: KotlinterConfig) {
         projectRoot = testProjectDir.apply {
             resolve("settings.gradle") { writeText(settingsFile) }
             resolve("build.gradle") {
-                // language=groovy
-                writeText(
-                    """
+                when(kotlinterConfig){
+                    KotlinterConfig.DEFAULT -> writeText(
+                        """
                     plugins {
                         id 'org.jetbrains.kotlin.js'
                         id 'org.jmailen.kotlinter'
                     }
-                    
+
                     repositories.mavenCentral()
-                    
+
                     kotlin {
                         js(IR) {
                             browser()
@@ -36,13 +42,58 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
                         }
                     }
                     """.trimIndent(),
-                )
+                    )
+                    KotlinterConfig.IGNORE_FAILURES -> writeText(
+                        """
+                    plugins {
+                        id 'org.jetbrains.kotlin.js'
+                        id 'org.jmailen.kotlinter'
+                    }
+
+                    repositories.mavenCentral()
+
+                    kotlin {
+                        js(IR) {
+                            browser()
+                            binaries.executable()
+                        }
+                    }
+                    
+                    kotlinter {
+                        ignoreFailures = true
+                        failBuildWhenCannotAutoFormat = true
+                    }
+                    """.trimIndent(),
+                    )
+                    KotlinterConfig.FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT -> writeText(
+                        """
+                    plugins {
+                        id 'org.jetbrains.kotlin.js'
+                        id 'org.jmailen.kotlinter'
+                    }
+
+                    repositories.mavenCentral()
+
+                    kotlin {
+                        js(IR) {
+                            browser()
+                            binaries.executable()
+                        }
+                    }
+                    
+                    kotlinter {
+                        failBuildWhenCannotAutoFormat = true
+                    }
+                    """.trimIndent(),
+                    )
+                }
             }
         }
     }
 
     @Test
     fun `lintKotlin passes when on valid kotlin files`() {
+        setup(KotlinterConfig.DEFAULT)
         projectRoot.resolve("src/main/kotlin/FixtureFileName.kt") {
             writeText(kotlinClass("FixtureFileName"))
         }
@@ -58,6 +109,7 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
 
     @Test
     fun `lintKotlin fails when lint errors detected`() {
+        setup(KotlinterConfig.DEFAULT)
         projectRoot.resolve("src/main/kotlin/FixtureFileName.kt") {
             writeText(kotlinClass("DifferentClassName"))
         }
@@ -79,6 +131,7 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
 
     @Test
     fun `formatKotlin reports formatted and unformatted files`() {
+        setup(KotlinterConfig.DEFAULT)
         projectRoot.resolve("src/main/kotlin/FixtureClass.kt") {
             // language=kotlin
             val kotlinClass =
@@ -119,6 +172,7 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
 
     @Test
     fun `formatKotlin fails when lint errors not automatically fixed and failBuildWhenCannotAutoFormat enabled`() {
+        setup(KotlinterConfig.FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT)
         projectRoot.resolve("src/main/kotlin/FixtureClass.kt") {
             // language=kotlin
             val kotlinClass =
@@ -156,4 +210,5 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
             assertTrue(output.contains("FixtureTestClass.kt:1:1: Format could not fix > [standard:no-wildcard-imports] Wildcard import"))
         }
     }
+
 }

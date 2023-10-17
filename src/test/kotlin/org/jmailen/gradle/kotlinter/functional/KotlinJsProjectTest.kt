@@ -107,6 +107,46 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
                 """.trimIndent()
             writeText(kotlinClass)
         }
+        build("formatKotlin").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":formatKotlinMain")?.outcome)
+            assertTrue(output.contains("FixtureClass.kt:3:19: Format fixed > [standard:curly-spacing] Missing spacing before \"{\""))
+            assertTrue(output.contains("FixtureClass.kt:1:1: Format could not fix > [standard:no-wildcard-imports] Wildcard import"))
+            assertEquals(TaskOutcome.SUCCESS, task(":formatKotlinTest")?.outcome)
+            assertTrue(output.contains("FixtureTestClass.kt:3:23: Format fixed > [standard:curly-spacing] Missing spacing before \"{\""))
+            assertTrue(output.contains("FixtureTestClass.kt:1:1: Format could not fix > [standard:no-wildcard-imports] Wildcard import"))
+        }
+    }
+
+    @Test
+    fun `formatKotlin fails when lint errors not automatically fixed and failBuildWhenCannotAutoFormat enabled`() {
+        projectRoot.resolve("src/main/kotlin/FixtureClass.kt") {
+            // language=kotlin
+            val kotlinClass =
+                """
+                import System.*
+                
+                class FixtureClass{
+                    private fun hi() {
+                        out.println("Hello")
+                    }
+                }
+                """.trimIndent()
+            writeText(kotlinClass)
+        }
+        projectRoot.resolve("src/test/kotlin/FixtureTestClass.kt") {
+            // language=kotlin
+            val kotlinClass =
+                """
+                import System.*
+                
+                class FixtureTestClass{
+                    private fun hi() {
+                        out.println("Hello")
+                    }
+                }
+                """.trimIndent()
+            writeText(kotlinClass)
+        }
         buildAndFail("formatKotlin").apply {
             assertEquals(TaskOutcome.FAILED, task(":formatKotlinMain")?.outcome)
             assertTrue(output.contains("FixtureClass.kt:3:19: Format fixed > [standard:curly-spacing] Missing spacing before \"{\""))

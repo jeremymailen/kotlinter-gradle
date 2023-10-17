@@ -77,33 +77,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `formatKotlin fails reports formatted and unformatted files when ignoreFailures and failBuildWhenCannotAutoFormat enabled`() {
-        settingsFile()
-        buildFileIgnoreFailures()
-        // language=kotlin
-        val kotlinClass =
-            """
-            import System.*
-            
-            class KotlinClass{
-                private fun hi() {
-                    out.println("Hello")
-                }
-            }
-            """.trimIndent()
-        kotlinSourceFile("KotlinClass.kt", kotlinClass)
-
-        build("formatKotlin").apply {
-            assertEquals(SUCCESS, task(":formatKotlinMain")?.outcome)
-            output.lines().filter { it.contains("Format could not fix") }.forEach { line ->
-                val filePath = pathPattern.find(line)?.groups?.get(1)?.value.orEmpty()
-                assertTrue(File(filePath).exists())
-            }
-        }
-    }
-
-    @Test
-    fun `formatKotlin reports formatted and unformatted files when ignoreFailures and failBuildWhenCannotAutoFormat disabled`() {
+    fun `formatKotlin reports formatted and unformatted files`() {
         settingsFile()
         buildFile()
         // language=kotlin
@@ -129,7 +103,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `formatKotlin fails when lint errors not automatically fixed when ignoreFailures disabled and failBuildWhenCannotAutoFormat enabled`() {
+    fun `formatKotlin fails when lint errors not automatically fixed and failBuildWhenCannotAutoFormat enabled`() {
         settingsFile()
         buildFileFailBuildWhenCannotAutoFormat()
         // language=kotlin
@@ -154,7 +128,31 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
         }
     }
 
+    @Test
+    fun `formatKotlin fails reports formatted and unformatted files when ignoreFailures and failBuildWhenCannotAutoFormat enabled`() {
+        settingsFile()
+        buildFileIgnoreFailures()
+        // language=kotlin
+        val kotlinClass =
+            """
+            import System.*
+            
+            class KotlinClass{
+                private fun hi() {
+                    out.println("Hello")
+                }
+            }
+            """.trimIndent()
+        kotlinSourceFile("KotlinClass.kt", kotlinClass)
 
+        build("formatKotlin").apply {
+            assertEquals(SUCCESS, task(":formatKotlinMain")?.outcome)
+            output.lines().filter { it.contains("Format could not fix") }.forEach { line ->
+                val filePath = pathPattern.find(line)?.groups?.get(1)?.value.orEmpty()
+                assertTrue(File(filePath).exists())
+            }
+        }
+    }
 
     @Test
     fun `check task runs lintFormat`() {
@@ -278,7 +276,6 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
             }
             
             kotlinter {
-                ignoreFailures = false
                 failBuildWhenCannotAutoFormat = true
             }
             """.trimIndent()

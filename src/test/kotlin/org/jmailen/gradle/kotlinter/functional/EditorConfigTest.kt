@@ -24,11 +24,14 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                 // language=groovy
                 val buildScript =
                     """
-                plugins {
-                    id 'kotlin'
-                    id 'org.jmailen.kotlinter'
-                }
-                
+                    plugins {
+                        id 'kotlin'
+                        id 'org.jmailen.kotlinter'
+                    }
+                    
+                    kotlinter {
+                        failBuildWhenCannotAutoFormat = true
+                    }
                     """.trimIndent()
                 writeText(buildScript)
             }
@@ -148,6 +151,38 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
 
     @Test
     fun `editorconfig changes are ignored for format task re-runs`() {
+        projectRoot.resolve(".editorconfig") {
+            writeText(editorConfig)
+        }
+
+        projectRoot.resolve("src/main/kotlin/FileName.kt") {
+            writeText(kotlinClass("DifferentClassName"))
+        }
+        build("formatKotlin").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":formatKotlinMain")?.outcome)
+            assertTrue(
+                output.contains("Format could not fix > [standard:filename] File 'FileName.kt' contains a single top level declaration"),
+            )
+        }
+
+        projectRoot.resolve(".editorconfig") {
+            writeText(
+                // language=editorconfig
+                """
+                    [*.{kt,kts}]
+                    ktlint_standard_filename = disabled
+                """.trimIndent(),
+            )
+        }
+        build("formatKotlin", "--info").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":formatKotlinMain")?.outcome)
+            assertTrue(output.contains("Format could not fix"))
+            assertFalse(output.contains("resetting KtLint caches"))
+        }
+    }
+
+    @Test
+    fun `editorconfig changes are ignored for format task re-runs when failBuildWhenCannotAutoFormat enabled`() {
         projectRoot.resolve(".editorconfig") {
             writeText(editorConfig)
         }

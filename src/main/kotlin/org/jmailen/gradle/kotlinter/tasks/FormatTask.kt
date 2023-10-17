@@ -34,6 +34,9 @@ open class FormatTask @Inject constructor(
     @Input
     val ignoreFailures: Property<Boolean> = objectFactory.property(default = KotlinterExtension.DEFAULT_IGNORE_FAILURES)
 
+    @Input
+    val failBuildWhenCannotAutoFormat: Property<Boolean> = objectFactory.property(default = KotlinterExtension.DEFAULT_FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT)
+
     init {
         outputs.upToDateWhen { false }
     }
@@ -56,9 +59,11 @@ open class FormatTask @Inject constructor(
             throw GradleException("error formatting sources for $name")
         }
 
-        val lintFailures = result.exceptionOrNull()?.workErrorCauses<LintFailure>() ?: emptyList()
-        if (lintFailures.isNotEmpty() && !ignoreFailures.get()) {
-            throw GradleException("$name sources failed lint check")
+        if (failBuildWhenCannotAutoFormat.get()) {
+            val lintFailures = result.exceptionOrNull()?.workErrorCauses<LintFailure>() ?: emptyList()
+            if (lintFailures.isNotEmpty() && !ignoreFailures.get()) {
+                throw GradleException("$name sources failed lint check")
+            }
         }
     }
 }

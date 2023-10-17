@@ -156,6 +156,7 @@ Options are configured in the `kotlinter` extension. Defaults shown (you may omi
 ```kotlin
 kotlinter {
     ignoreFailures = false
+    failBuildWhenCannotAutoFormat = false
     reporters = arrayOf("checkstyle", "plain")
 }
 ```
@@ -168,11 +169,13 @@ kotlinter {
 ```groovy
 kotlinter {
     ignoreFailures = false
+    failBuildWhenCannotAutoFormat = false
     reporters = ['checkstyle', 'plain']
 }
 ```
 
 </details>
+Setting `failBuildWhenCannotAutoFormat` to `true` will configure the `formatKotlin` task to fail the build when auto-format is not able to fix a lint error.
 
 Options for `reporters`: `checkstyle`, `html`, `json`, `plain`, `sarif`
 

@@ -59,6 +59,8 @@ class KotlinterPlugin : Plugin<Project> {
                         FormatTask::class.java,
                     ) { formatTask ->
                         formatTask.source(resolvedSources)
+                        formatTask.ignoreFailures.set(provider { kotlinterExtension.ignoreFailures })
+                        formatTask.failBuildWhenCannotAutoFormat.set(provider { kotlinterExtension.failBuildWhenCannotAutoFormat })
                         formatTask.report.set(reportFile("$id-format.txt"))
                     }
                     formatKotlin.configure { formatTask ->

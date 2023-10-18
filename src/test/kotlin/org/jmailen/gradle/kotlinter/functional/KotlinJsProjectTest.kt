@@ -11,14 +11,11 @@ import java.io.File
 
 
 class KotlinJsProjectTest : WithGradleTest.Kotlin() {
-
-
     enum class KotlinterConfig {
         DEFAULT,
         IGNORE_FAILURES,
         FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT
     }
-
 
     lateinit var projectRoot: File
     fun setup(kotlinterConfig: KotlinterConfig) {
@@ -206,6 +203,47 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
             assertTrue(output.contains("FixtureClass.kt:3:19: Format fixed > [standard:curly-spacing] Missing spacing before \"{\""))
             assertTrue(output.contains("FixtureClass.kt:1:1: Format could not fix > [standard:no-wildcard-imports] Wildcard import"))
             assertEquals(TaskOutcome.FAILED, task(":formatKotlinTest")?.outcome)
+            assertTrue(output.contains("FixtureTestClass.kt:3:23: Format fixed > [standard:curly-spacing] Missing spacing before \"{\""))
+            assertTrue(output.contains("FixtureTestClass.kt:1:1: Format could not fix > [standard:no-wildcard-imports] Wildcard import"))
+        }
+    }
+
+    @Test
+    fun `formatKotlin fails reports formatted and unformatted files when ignoreFailures and failBuildWhenCannotAutoFormat enabled`() {
+        setup(KotlinterConfig.IGNORE_FAILURES)
+        projectRoot.resolve("src/main/kotlin/FixtureClass.kt") {
+            // language=kotlin
+            val kotlinClass =
+                """
+                import System.*
+                
+                class FixtureClass{
+                    private fun hi() {
+                        out.println("Hello")
+                    }
+                }
+                """.trimIndent()
+            writeText(kotlinClass)
+        }
+        projectRoot.resolve("src/test/kotlin/FixtureTestClass.kt") {
+            // language=kotlin
+            val kotlinClass =
+                """
+                import System.*
+                
+                class FixtureTestClass{
+                    private fun hi() {
+                        out.println("Hello")
+                    }
+                }
+                """.trimIndent()
+            writeText(kotlinClass)
+        }
+        build("formatKotlin").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":formatKotlinMain")?.outcome)
+            assertTrue(output.contains("FixtureClass.kt:3:19: Format fixed > [standard:curly-spacing] Missing spacing before \"{\""))
+            assertTrue(output.contains("FixtureClass.kt:1:1: Format could not fix > [standard:no-wildcard-imports] Wildcard import"))
+            assertEquals(TaskOutcome.SUCCESS, task(":formatKotlinTest")?.outcome)
             assertTrue(output.contains("FixtureTestClass.kt:3:23: Format fixed > [standard:curly-spacing] Missing spacing before \"{\""))
             assertTrue(output.contains("FixtureTestClass.kt:1:1: Format could not fix > [standard:no-wildcard-imports] Wildcard import"))
         }

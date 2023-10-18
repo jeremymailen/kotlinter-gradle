@@ -1,6 +1,7 @@
 package org.jmailen.gradle.kotlinter.functional
 
 import org.gradle.testkit.runner.TaskOutcome
+import org.jmailen.gradle.kotlinter.functional.utils.KotlinterConfig
 import org.jmailen.gradle.kotlinter.functional.utils.kotlinClass
 import org.jmailen.gradle.kotlinter.functional.utils.resolve
 import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
@@ -9,19 +10,14 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.io.File
 class KotlinJsProjectTest : WithGradleTest.Kotlin() {
-    enum class KotlinterConfig {
-        DEFAULT,
-        IGNORE_FAILURES,
-        FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT,
-    }
 
     lateinit var projectRoot: File
-    fun setup(kotlinterConfig: KotlinterConfig) {
+    private fun setup(kotlinterConfig: KotlinterConfig) {
         projectRoot = testProjectDir.apply {
             resolve("settings.gradle") { writeText(settingsFile) }
             resolve("build.gradle") {
-                when (kotlinterConfig) {
-                    KotlinterConfig.DEFAULT -> writeText(
+                val buildscript = when (kotlinterConfig) {
+                    KotlinterConfig.DEFAULT ->
                         """
                         plugins {
                             id 'org.jetbrains.kotlin.js'
@@ -36,9 +32,8 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
                                 binaries.executable()
                             }
                         }
-                        """.trimIndent(),
-                    )
-                    KotlinterConfig.IGNORE_FAILURES -> writeText(
+                        """.trimIndent()
+                    KotlinterConfig.IGNORE_FAILURES ->
                         """
                         plugins {
                             id 'org.jetbrains.kotlin.js'
@@ -58,9 +53,8 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
                             ignoreFailures = true
                             failBuildWhenCannotAutoFormat = true
                         }
-                        """.trimIndent(),
-                    )
-                    KotlinterConfig.FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT -> writeText(
+                        """.trimIndent()
+                    KotlinterConfig.FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT ->
                         """
                         plugins {
                             id 'org.jetbrains.kotlin.js'
@@ -79,9 +73,9 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
                         kotlinter {
                             failBuildWhenCannotAutoFormat = true
                         }
-                        """.trimIndent(),
-                    )
+                        """.trimIndent()
                 }
+                writeText(buildscript)
             }
         }
     }

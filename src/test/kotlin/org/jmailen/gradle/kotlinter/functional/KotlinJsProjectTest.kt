@@ -8,13 +8,11 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.io.File
-
-
 class KotlinJsProjectTest : WithGradleTest.Kotlin() {
     enum class KotlinterConfig {
         DEFAULT,
         IGNORE_FAILURES,
-        FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT
+        FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT,
     }
 
     lateinit var projectRoot: File
@@ -22,66 +20,66 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
         projectRoot = testProjectDir.apply {
             resolve("settings.gradle") { writeText(settingsFile) }
             resolve("build.gradle") {
-                when(kotlinterConfig){
+                when (kotlinterConfig) {
                     KotlinterConfig.DEFAULT -> writeText(
                         """
-                    plugins {
-                        id 'org.jetbrains.kotlin.js'
-                        id 'org.jmailen.kotlinter'
-                    }
-
-                    repositories.mavenCentral()
-
-                    kotlin {
-                        js(IR) {
-                            browser()
-                            binaries.executable()
+                        plugins {
+                            id 'org.jetbrains.kotlin.js'
+                            id 'org.jmailen.kotlinter'
                         }
-                    }
-                    """.trimIndent(),
+    
+                        repositories.mavenCentral()
+    
+                        kotlin {
+                            js(IR) {
+                                browser()
+                                binaries.executable()
+                            }
+                        }
+                        """.trimIndent(),
                     )
                     KotlinterConfig.IGNORE_FAILURES -> writeText(
                         """
-                    plugins {
-                        id 'org.jetbrains.kotlin.js'
-                        id 'org.jmailen.kotlinter'
-                    }
-
-                    repositories.mavenCentral()
-
-                    kotlin {
-                        js(IR) {
-                            browser()
-                            binaries.executable()
+                        plugins {
+                            id 'org.jetbrains.kotlin.js'
+                            id 'org.jmailen.kotlinter'
                         }
-                    }
-                    
-                    kotlinter {
-                        ignoreFailures = true
-                        failBuildWhenCannotAutoFormat = true
-                    }
-                    """.trimIndent(),
+    
+                        repositories.mavenCentral()
+    
+                        kotlin {
+                            js(IR) {
+                                browser()
+                                binaries.executable()
+                            }
+                        }
+                        
+                        kotlinter {
+                            ignoreFailures = true
+                            failBuildWhenCannotAutoFormat = true
+                        }
+                        """.trimIndent(),
                     )
                     KotlinterConfig.FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT -> writeText(
                         """
-                    plugins {
-                        id 'org.jetbrains.kotlin.js'
-                        id 'org.jmailen.kotlinter'
-                    }
-
-                    repositories.mavenCentral()
-
-                    kotlin {
-                        js(IR) {
-                            browser()
-                            binaries.executable()
+                        plugins {
+                            id 'org.jetbrains.kotlin.js'
+                            id 'org.jmailen.kotlinter'
                         }
-                    }
-                    
-                    kotlinter {
-                        failBuildWhenCannotAutoFormat = true
-                    }
-                    """.trimIndent(),
+    
+                        repositories.mavenCentral()
+    
+                        kotlin {
+                            js(IR) {
+                                browser()
+                                binaries.executable()
+                            }
+                        }
+                        
+                        kotlinter {
+                            failBuildWhenCannotAutoFormat = true
+                        }
+                        """.trimIndent(),
                     )
                 }
             }
@@ -209,7 +207,7 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `formatKotlin fails reports formatted and unformatted files when ignoreFailures and failBuildWhenCannotAutoFormat enabled`() {
+    fun `formatKotlin fails when lint errors not automatically fixed and failBuildWhenCannotAutoFormat enabled `() {
         setup(KotlinterConfig.IGNORE_FAILURES)
         projectRoot.resolve("src/main/kotlin/FixtureClass.kt") {
             // language=kotlin
@@ -248,5 +246,4 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
             assertTrue(output.contains("FixtureTestClass.kt:1:1: Format could not fix > [standard:no-wildcard-imports] Wildcard import"))
         }
     }
-
 }

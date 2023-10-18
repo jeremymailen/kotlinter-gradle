@@ -35,7 +35,9 @@ open class FormatTask @Inject constructor(
     val ignoreFailures: Property<Boolean> = objectFactory.property(default = KotlinterExtension.DEFAULT_IGNORE_FAILURES)
 
     @Input
-    val failBuildWhenCannotAutoFormat: Property<Boolean> = objectFactory.property(default = KotlinterExtension.DEFAULT_FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT)
+    val failBuildWhenCannotAutoFormat: Property<Boolean> = objectFactory.property(
+        default = KotlinterExtension.DEFAULT_FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT,
+    )
 
     init {
         outputs.upToDateWhen { false }

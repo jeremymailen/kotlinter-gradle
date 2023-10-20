@@ -155,8 +155,8 @@ Options are configured in the `kotlinter` extension. Defaults shown (you may omi
 
 ```kotlin
 kotlinter {
-    ignoreFailures = false
     failBuildWhenCannotAutoFormat = false
+    ignoreFailures = false
     reporters = arrayOf("checkstyle", "plain")
 }
 ```
@@ -168,8 +168,8 @@ kotlinter {
 
 ```groovy
 kotlinter {
-    ignoreFailures = false
     failBuildWhenCannotAutoFormat = false
+    ignoreFailures = false
     reporters = ['checkstyle', 'plain']
 }
 ```

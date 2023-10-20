@@ -129,7 +129,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `formatKotlin fails reports formatted and unformatted files when ignoreFailures and failBuildWhenCannotAutoFormat enabled`() {
+    fun `formatKotlin reports formatted and unformatted files when failBuildWhenCannotAutoFormat and ignoreFailures enabled`() {
         settingsFile()
         buildFileIgnoreFailures()
         // language=kotlin

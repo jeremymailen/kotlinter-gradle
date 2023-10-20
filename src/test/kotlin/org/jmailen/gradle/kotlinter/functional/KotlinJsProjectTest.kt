@@ -33,6 +33,26 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
                             }
                         }
                         """.trimIndent()
+                    KotlinterConfig.FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT ->
+                        """
+                        plugins {
+                            id 'org.jetbrains.kotlin.js'
+                            id 'org.jmailen.kotlinter'
+                        }
+    
+                        repositories.mavenCentral()
+    
+                        kotlin {
+                            js(IR) {
+                                browser()
+                                binaries.executable()
+                            }
+                        }
+                        
+                        kotlinter {
+                            failBuildWhenCannotAutoFormat = true
+                        }
+                        """.trimIndent()
                     KotlinterConfig.IGNORE_FAILURES ->
                         """
                         plugins {
@@ -51,26 +71,6 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
                         
                         kotlinter {
                             ignoreFailures = true
-                            failBuildWhenCannotAutoFormat = true
-                        }
-                        """.trimIndent()
-                    KotlinterConfig.FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT ->
-                        """
-                        plugins {
-                            id 'org.jetbrains.kotlin.js'
-                            id 'org.jmailen.kotlinter'
-                        }
-    
-                        repositories.mavenCentral()
-    
-                        kotlin {
-                            js(IR) {
-                                browser()
-                                binaries.executable()
-                            }
-                        }
-                        
-                        kotlinter {
                             failBuildWhenCannotAutoFormat = true
                         }
                         """.trimIndent()
@@ -201,7 +201,7 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `formatKotlin fails when lint errors not automatically fixed and failBuildWhenCannotAutoFormat enabled `() {
+    fun `formatKotlin reports formatted and unformatted files when failBuildWhenCannotAutoFormat and ignoreFailures enabled`() {
         setup(KotlinterConfig.IGNORE_FAILURES)
         projectRoot.resolve("src/main/kotlin/FixtureClass.kt") {
             // language=kotlin

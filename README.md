@@ -175,7 +175,8 @@ kotlinter {
 ```
 
 </details>
-Setting `failBuildWhenCannotAutoFormat` to `true` will configure the `formatKotlin` task to fail the build when auto-format is not able to fix a lint error.
+
+Setting `failBuildWhenCannotAutoFormat` to `true` will configure the `formatKotlin` task to fail the build when auto-format is not able to fix a lint error. This is overrided by setting `ignoreFailures` to `true`.
 
 Options for `reporters`: `checkstyle`, `html`, `json`, `plain`, `sarif`
 

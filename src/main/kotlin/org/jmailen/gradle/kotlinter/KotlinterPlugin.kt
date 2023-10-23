@@ -99,4 +99,4 @@ class KotlinterPlugin : Plugin<Project> {
 internal val String.id: String
     get() = split(" ").first()
 
-internal fun Project.reportFile(name: String): File = file("$buildDir/reports/ktlint/$name")
+internal fun Project.reportFile(name: String): File = file("${layout.buildDirectory}/reports/ktlint/$name")

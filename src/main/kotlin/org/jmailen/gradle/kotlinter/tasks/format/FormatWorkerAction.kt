@@ -50,7 +50,7 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
                         logger.warn(msg)
                     } else {
                         hasError = true
-                        logger.error(msg)
+                        logger.error(msg) // TODO: is this needed?
                     }
                     fixes.add(msg)
                 }

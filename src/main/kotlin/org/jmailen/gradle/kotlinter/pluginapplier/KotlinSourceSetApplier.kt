@@ -15,6 +15,5 @@ internal object KotlinSourceSetApplier : SourceSetApplier {
         }
     }
 
-    private fun getSourceSets(project: Project) =
-        project.extensions.getByType(KotlinProjectExtension::class.java).sourceSets
+    private fun getSourceSets(project: Project) = project.extensions.getByType(KotlinProjectExtension::class.java).sourceSets
 }

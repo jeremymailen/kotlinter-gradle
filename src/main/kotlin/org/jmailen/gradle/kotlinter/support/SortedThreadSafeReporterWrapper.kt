@@ -29,7 +29,7 @@ class SortedThreadSafeReporterWrapper(
     override fun onLintError(file: String, ktlintCliError: KtlintCliError) {
         lintErrorReports.putIfAbsent(
             file,
-            ConcurrentSkipListSet() { o1, o2 ->
+            ConcurrentSkipListSet { o1, o2 ->
                 when (o1.line == o2.line) {
                     true -> o1.col.compareTo(o2.col)
                     false -> o1.line.compareTo(o2.line)

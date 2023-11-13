@@ -69,19 +69,17 @@ class KotlinterPlugin : Plugin<Project> {
         }
     }
 
-    private fun Project.registerParentLintTask(): TaskProvider<Task> =
-        tasks.register("lintKotlin") {
-            it.group = "formatting"
-            it.description = "Runs lint on the Kotlin source files."
-        }.also { lintKotlin ->
-            tasks.named("check").configure { check -> check.dependsOn(lintKotlin) }
-        }
+    private fun Project.registerParentLintTask(): TaskProvider<Task> = tasks.register("lintKotlin") {
+        it.group = "formatting"
+        it.description = "Runs lint on the Kotlin source files."
+    }.also { lintKotlin ->
+        tasks.named("check").configure { check -> check.dependsOn(lintKotlin) }
+    }
 
-    private fun Project.registerParentFormatTask(): TaskProvider<Task> =
-        tasks.register("formatKotlin") {
-            it.group = "formatting"
-            it.description = "Formats the Kotlin source files."
-        }
+    private fun Project.registerParentFormatTask(): TaskProvider<Task> = tasks.register("formatKotlin") {
+        it.group = "formatting"
+        it.description = "Formats the Kotlin source files."
+    }
 
     private fun Project.registerPrePushHookTask(): TaskProvider<InstallPrePushHookTask> =
         tasks.register("installKotlinterPrePushHook", InstallPrePushHookTask::class.java) {

@@ -83,9 +83,9 @@ abstract class InstallHookTaskTest(
         File(testProjectDir, ".git/hooks/$hookFile").apply {
             writeText(
                 """
-                ${InstallHookTask.startHook}
+                ${InstallHookTask.START_HOOK}
                 $placeholder
-                ${InstallHookTask.endHook}
+                ${InstallHookTask.END_HOOK}
                 """.trimIndent(),
             )
         }

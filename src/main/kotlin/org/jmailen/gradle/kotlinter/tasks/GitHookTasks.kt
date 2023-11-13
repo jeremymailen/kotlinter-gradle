@@ -58,13 +58,13 @@ abstract class InstallHookTask(@get:Internal val hookFileName: String) : Default
             logger.info("creating hook file: $hookFile")
             hookFile.writeText(generateHook(gradleCommand, hookContent, addShebang = true))
         } else {
-            val startIndex = hookFileContent.indexOf(startHook)
+            val startIndex = hookFileContent.indexOf(START_HOOK)
             if (startIndex == -1) {
                 logger.info("adding hook to file: $hookFile")
                 hookFile.appendText(generateHook(gradleCommand, hookContent))
             } else {
                 logger.info("replacing hook in file: $hookFile")
-                val endIndex = hookFileContent.indexOf(endHook)
+                val endIndex = hookFileContent.indexOf(END_HOOK)
                 val newHookFileContent = hookFileContent.replaceRange(
                     startIndex,
                     endIndex,
@@ -113,11 +113,11 @@ abstract class InstallHookTask(@get:Internal val hookFileName: String) : Default
     companion object {
         private val version = VersionProperties().version()
 
-        internal const val startHook = "\n##### KOTLINTER HOOK START #####"
+        internal const val START_HOOK = "\n##### KOTLINTER HOOK START #####"
 
         internal val hookVersion = "##### KOTLINTER $version #####"
 
-        internal const val endHook = "##### KOTLINTER HOOK END #####\n"
+        internal const val END_HOOK = "##### KOTLINTER HOOK END #####\n"
 
         internal val shebang =
             """
@@ -135,11 +135,11 @@ abstract class InstallHookTask(@get:Internal val hookFileName: String) : Default
             includeEndHook: Boolean = true,
         ): String = (if (addShebang) shebang else "") +
             """
-                |$startHook
+                |$START_HOOK
                 |$hookVersion
                 |GRADLEW=$gradlew
                 |$hookContent
-                |${if (includeEndHook) endHook else ""}
+                |${if (includeEndHook) END_HOOK else ""}
             """.trimMargin()
     }
 }

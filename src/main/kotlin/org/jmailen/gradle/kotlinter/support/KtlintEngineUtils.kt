@@ -9,10 +9,7 @@ internal val ktlintEngine = KtLintRuleEngine(
     ruleProviders = resolveRuleProviders(defaultRuleSetProviders),
 )
 
-internal fun resetEditorconfigCacheIfNeeded(
-    changedEditorconfigFiles: ConfigurableFileCollection,
-    logger: Logger,
-) {
+internal fun resetEditorconfigCacheIfNeeded(changedEditorconfigFiles: ConfigurableFileCollection, logger: Logger) {
     val changedFiles = changedEditorconfigFiles.files
     if (changedFiles.any()) {
         logger.info("Editorconfig changed, resetting KtLint caches")

@@ -17,16 +17,16 @@ internal class GenerateHookTest {
     fun testGenerateHook_HasAllContent() {
         val hook = InstallHookTask.generateHook(gradlew, hookContent, true)
         assertTrue(hook.contains(InstallHookTask.shebang))
-        assertTrue(hook.contains(InstallHookTask.startHook))
+        assertTrue(hook.contains(InstallHookTask.START_HOOK))
         assertTrue(hook.contains("GRADLEW=$gradlew"))
         assertTrue(hook.contains(hookContent))
-        assertTrue(hook.contains(InstallHookTask.endHook))
+        assertTrue(hook.contains(InstallHookTask.END_HOOK))
     }
 
     @Test
     fun testGenerateHook_IncludesStartHook() {
         val hook = InstallHookTask.generateHook(gradlew, hookContent)
-        assertTrue(hook.contains(InstallHookTask.startHook))
+        assertTrue(hook.contains(InstallHookTask.START_HOOK))
     }
 
     @Test
@@ -38,13 +38,13 @@ internal class GenerateHookTest {
     @Test
     fun testGenerateHook_IncludesEndHook() {
         val hook = InstallHookTask.generateHook(gradlew, hookContent)
-        assertTrue(hook.contains(InstallHookTask.endHook))
+        assertTrue(hook.contains(InstallHookTask.END_HOOK))
     }
 
     @Test
     fun testGenerateHook_DoesNotIncludeEndHook() {
         val hook = InstallHookTask.generateHook(gradlew, hookContent, includeEndHook = false)
-        assertFalse(hook.contains(InstallHookTask.endHook))
+        assertFalse(hook.contains(InstallHookTask.END_HOOK))
     }
 
     @Test

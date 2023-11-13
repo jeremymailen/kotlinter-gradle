@@ -1,11 +1,10 @@
 package org.jmailen.gradle.kotlinter.functional.utils
 
 // language=kotlin
-internal fun kotlinClass(className: String) =
-    """
+internal fun kotlinClass(className: String) = """
     object $className
     
-    """.trimIndent()
+""".trimIndent()
 
 // language=groovy
 internal val settingsFile =

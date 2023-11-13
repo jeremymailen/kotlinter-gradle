@@ -39,7 +39,8 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
     fun `lintTask uses default indentation if editorconfig absent`() {
         projectRoot.resolve("src/main/kotlin/FourSpacesByDefault.kt") {
             writeText(
-                """ |
+                """ |package com.example
+                    |
                     |object FourSpacesByDefault {
                     |    val text: String
                     |}

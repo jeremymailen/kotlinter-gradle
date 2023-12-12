@@ -3,6 +3,8 @@ package org.jmailen.gradle.kotlinter
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jmailen.gradle.kotlinter.pluginapplier.AndroidSourceSetApplier
 import org.jmailen.gradle.kotlinter.pluginapplier.KotlinSourceSetApplier
@@ -11,7 +13,6 @@ import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.InstallPreCommitHookTask
 import org.jmailen.gradle.kotlinter.tasks.InstallPrePushHookTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
-import java.io.File
 
 class KotlinterPlugin : Plugin<Project> {
 
@@ -45,7 +46,7 @@ class KotlinterPlugin : Plugin<Project> {
                         lintTask.reports.set(
                             provider {
                                 kotlinterExtension.reporters.associateWith { reporter ->
-                                    reportFile("$id-lint.${reporterFileExtension(reporter)}")
+                                    reportFile("$id-lint.${reporterFileExtension(reporter)}").get().asFile
                                 }
                             },
                         )
@@ -99,4 +100,4 @@ class KotlinterPlugin : Plugin<Project> {
 internal val String.id: String
     get() = split(" ").first()
 
-internal fun Project.reportFile(name: String): File = file("$buildDir/reports/ktlint/$name")
+internal fun Project.reportFile(name: String): Provider<RegularFile> = layout.buildDirectory.file("reports/ktlint/$name")

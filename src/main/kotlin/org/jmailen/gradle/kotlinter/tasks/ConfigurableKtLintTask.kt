@@ -28,11 +28,8 @@ abstract class ConfigurableKtLintTask(
         from(projectLayout.findApplicableEditorConfigFiles().toList())
     }
 
-    protected fun getChangedEditorconfigFiles(inputChanges: InputChanges) = if (inputChanges.isIncremental) {
+    protected fun getChangedEditorconfigFiles(inputChanges: InputChanges) =
         inputChanges.getFileChanges(editorconfigFiles).map(FileChange::getFile)
-    } else {
-        emptyList()
-    }
 }
 
 internal inline fun <reified T> ObjectFactory.property(default: T? = null): Property<T> = property(T::class.java).apply {

@@ -131,7 +131,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `editorconfig changes are taken into account on lint task re-runs`() {
+    fun `editorconfig changes are taken into account when adds lint issues`() {
         setup(KotlinterConfig.DEFAULT)
         projectRoot.resolve(".editorconfig") {
             writeText(
@@ -173,7 +173,36 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `editorconfig changes are ignored for format task re-runs`() {
+    fun `editorconfig changes are taken into account when removes lint issues`() {
+        setup(KotlinterConfig.DEFAULT)
+        projectRoot.resolve(".editorconfig") {
+            writeText(editorConfig)
+        }
+        projectRoot.resolve("src/main/kotlin/FileName.kt") {
+            writeText(kotlinClass("DifferentClassName"))
+        }
+        buildAndFail("lintKotlin").apply {
+            assertEquals(TaskOutcome.FAILED, task(":lintKotlinMain")?.outcome)
+            assertTrue(output.contains("[standard:filename] File 'FileName.kt' contains a single top level declaration"))
+        }
+
+        projectRoot.resolve(".editorconfig") {
+            writeText(
+                // language=editorconfig
+                """
+                    [*.{kt,kts}]
+                    ktlint_standard_filename = disabled
+                """.trimIndent(),
+            )
+        }
+        build("lintKotlin", "--info").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":lintKotlinMain")?.outcome)
+            assertTrue(output.contains("resetting KtLint caches"))
+        }
+    }
+
+    @Test
+    fun `editorconfig changes are taken for format task re-runs`() {
         setup(KotlinterConfig.DEFAULT)
         projectRoot.resolve(".editorconfig") {
             writeText(editorConfig)
@@ -200,13 +229,12 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
         }
         build("formatKotlin", "--info").apply {
             assertEquals(TaskOutcome.SUCCESS, task(":formatKotlinMain")?.outcome)
-            assertTrue(output.contains("Format could not fix"))
-            assertFalse(output.contains("resetting KtLint caches"))
+            assertFalse(output.contains("Format could not fix"))
         }
     }
 
     @Test
-    fun `editorconfig changes are ignored for format task re-runs when failBuildWhenCannotAutoFormat enabled`() {
+    fun `editorconfig changes are taken for format task re-runs when failBuildWhenCannotAutoFormat configured`() {
         setup(KotlinterConfig.FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT)
         projectRoot.resolve(".editorconfig") {
             writeText(editorConfig)
@@ -231,10 +259,8 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                 """.trimIndent(),
             )
         }
-        buildAndFail("formatKotlin", "--info").apply {
-            assertEquals(TaskOutcome.FAILED, task(":formatKotlinMain")?.outcome)
-            assertTrue(output.contains("Format could not fix"))
-            assertFalse(output.contains("resetting KtLint caches"))
+        build("formatKotlin", "--info").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":formatKotlinMain")?.outcome)
         }
     }
 }

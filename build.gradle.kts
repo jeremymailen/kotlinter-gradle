@@ -6,7 +6,7 @@ plugins {
     id("com.gradle.plugin-publish") version "1.1.0"
     `java-gradle-plugin`
     `maven-publish`
-    id("org.jmailen.kotlinter") version "4.0.1"
+    id("org.jmailen.kotlinter") version "4.1.0"
     idea
 }
 
@@ -20,7 +20,7 @@ val githubUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "4.1.0"
+version = "4.1.1"
 group = "org.jmailen.gradle"
 description = projectDescription
 

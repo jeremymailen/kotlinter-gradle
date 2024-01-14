@@ -20,15 +20,15 @@ val githubUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "4.1.2"
+version = "4.2.0"
 group = "org.jmailen.gradle"
 description = projectDescription
 
 object Versions {
-    const val androidTools = "7.3.1"
-    const val junit = "5.10.1"
-    const val ktlint = "1.1.1"
-    const val mockitoKotlin = "4.1.0"
+    const val ANDROID_TOOLS = "7.3.1"
+    const val JUNIT = "5.10.1"
+    const val KTLINT = "1.1.1"
+    const val MOCKITO_KOTLIN = "4.1.0"
 }
 
 configurations {
@@ -51,7 +51,7 @@ configurations {
 
 dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin")
-    compileOnly("com.android.tools.build:gradle:${Versions.androidTools}")
+    compileOnly("com.android.tools.build:gradle:${Versions.ANDROID_TOOLS}")
 
     listOf(
         "ktlint-rule-engine",
@@ -62,16 +62,16 @@ dependencies {
         "ktlint-cli-reporter-html",
         "ktlint-cli-reporter-plain",
         "ktlint-cli-reporter-sarif",
-        "ktlint-ruleset-standard"
+        "ktlint-ruleset-standard",
     ).forEach { module ->
-        implementation("com.pinterest.ktlint:$module:${Versions.ktlint}")
+        implementation("com.pinterest.ktlint:$module:${Versions.KTLINT}")
     }
 
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${Versions.junit}")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:${Versions.junit}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${Versions.JUNIT}")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.JUNIT}")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:${Versions.JUNIT}")
     testImplementation("commons-io:commons-io:2.15.1")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.mockitoKotlin}")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.MOCKITO_KOTLIN}")
 }
 
 kotlin {

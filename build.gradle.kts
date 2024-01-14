@@ -2,11 +2,11 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.9.20"
+    kotlin("jvm") version "1.9.22"
     id("com.gradle.plugin-publish") version "1.1.0"
     `java-gradle-plugin`
     `maven-publish`
-    id("org.jmailen.kotlinter") version "4.1.0"
+    id("org.jmailen.kotlinter") version "4.1.1"
     idea
 }
 
@@ -20,14 +20,14 @@ val githubUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "4.1.1"
+version = "4.1.2"
 group = "org.jmailen.gradle"
 description = projectDescription
 
 object Versions {
     const val androidTools = "7.3.1"
-    const val junit = "5.9.3"
-    const val ktlint = "1.0.1"
+    const val junit = "5.10.1"
+    const val ktlint = "1.1.1"
     const val mockitoKotlin = "4.1.0"
 }
 
@@ -70,12 +70,12 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${Versions.junit}")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
     testImplementation("org.junit.jupiter:junit-jupiter-params:${Versions.junit}")
-    testImplementation("commons-io:commons-io:2.12.0")
+    testImplementation("commons-io:commons-io:2.15.1")
     testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.mockitoKotlin}")
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
 
 tasks {
@@ -115,7 +115,7 @@ tasks {
     }
 
     wrapper {
-        gradleVersion = "8.4"
+        gradleVersion = "8.5"
     }
 }
 

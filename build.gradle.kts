@@ -2,11 +2,11 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.9.20"
+    kotlin("jvm") version "1.9.22"
     id("com.gradle.plugin-publish") version "1.1.0"
     `java-gradle-plugin`
     `maven-publish`
-    id("org.jmailen.kotlinter") version "4.1.0"
+    id("org.jmailen.kotlinter") version "4.1.1"
     idea
 }
 
@@ -20,15 +20,15 @@ val githubUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "4.1.1"
+version = "4.2.0"
 group = "org.jmailen.gradle"
 description = projectDescription
 
 object Versions {
-    const val androidTools = "7.3.1"
-    const val junit = "5.9.3"
-    const val ktlint = "1.0.1"
-    const val mockitoKotlin = "4.1.0"
+    const val ANDROID_TOOLS = "7.3.1"
+    const val JUNIT = "5.10.1"
+    const val KTLINT = "1.1.1"
+    const val MOCKITO_KOTLIN = "4.1.0"
 }
 
 configurations {
@@ -51,7 +51,7 @@ configurations {
 
 dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin")
-    compileOnly("com.android.tools.build:gradle:${Versions.androidTools}")
+    compileOnly("com.android.tools.build:gradle:${Versions.ANDROID_TOOLS}")
 
     listOf(
         "ktlint-rule-engine",
@@ -62,20 +62,20 @@ dependencies {
         "ktlint-cli-reporter-html",
         "ktlint-cli-reporter-plain",
         "ktlint-cli-reporter-sarif",
-        "ktlint-ruleset-standard"
+        "ktlint-ruleset-standard",
     ).forEach { module ->
-        implementation("com.pinterest.ktlint:$module:${Versions.ktlint}")
+        implementation("com.pinterest.ktlint:$module:${Versions.KTLINT}")
     }
 
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${Versions.junit}")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:${Versions.junit}")
-    testImplementation("commons-io:commons-io:2.12.0")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.mockitoKotlin}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${Versions.JUNIT}")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.JUNIT}")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:${Versions.JUNIT}")
+    testImplementation("commons-io:commons-io:2.15.1")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.MOCKITO_KOTLIN}")
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
 
 tasks {
@@ -115,7 +115,7 @@ tasks {
     }
 
     wrapper {
-        gradleVersion = "8.4"
+        gradleVersion = "8.5"
     }
 }
 

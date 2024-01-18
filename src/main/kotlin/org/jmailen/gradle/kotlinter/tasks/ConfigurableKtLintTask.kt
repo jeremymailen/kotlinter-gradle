@@ -6,6 +6,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -14,6 +15,7 @@ import org.gradle.internal.exceptions.MultiCauseException
 import org.gradle.work.FileChange
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
+import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_IGNORE_FAILURES
 import org.jmailen.gradle.kotlinter.support.findApplicableEditorConfigFiles
 
 abstract class ConfigurableKtLintTask(
@@ -27,6 +29,9 @@ abstract class ConfigurableKtLintTask(
     internal val editorconfigFiles: FileCollection = objectFactory.fileCollection().apply {
         from(projectLayout.findApplicableEditorConfigFiles().toList())
     }
+
+    @Input
+    open val ignoreFailures: Property<Boolean> = objectFactory.property(default = DEFAULT_IGNORE_FAILURES)
 
     protected fun getChangedEditorconfigFiles(inputChanges: InputChanges) =
         inputChanges.getFileChanges(editorconfigFiles).map(FileChange::getFile)

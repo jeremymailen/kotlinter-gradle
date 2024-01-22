@@ -32,9 +32,6 @@ open class FormatTask @Inject constructor(
     val report: RegularFileProperty = objectFactory.fileProperty()
 
     @Input
-    val ignoreFailures: Property<Boolean> = objectFactory.property(default = KotlinterExtension.DEFAULT_IGNORE_FAILURES)
-
-    @Input
     val failBuildWhenCannotAutoFormat: Property<Boolean> = objectFactory.property(
         default = KotlinterExtension.DEFAULT_FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT,
     )

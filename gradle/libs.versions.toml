@@ -1,0 +1,30 @@
+[versions]
+kotlin = "1.9.22"
+ktlint = "1.1.1"
+android-tools = "7.3.1"
+junit = "5.10.1"
+mockito = "4.1.0"
+commons-io = "2.15.1"
+
+[libraries]
+ktlint-rule-engine = { group = "com.pinterest.ktlint", name = "ktlint-rule-engine", version.ref = "ktlint" }
+ktlint-rule-engine-core = { group = "com.pinterest.ktlint", name = "ktlint-rule-engine-core", version.ref = "ktlint" }
+ktlint-cli-reporter-core = { group = "com.pinterest.ktlint", name = "ktlint-cli-reporter-core", version.ref = "ktlint" }
+ktlint-cli-reporter-plain = { group = "com.pinterest.ktlint", name = "ktlint-cli-reporter-plain", version.ref = "ktlint" }
+ktlint-cli-reporter-html = { group = "com.pinterest.ktlint", name = "ktlint-cli-reporter-html", version.ref = "ktlint" }
+ktlint-cli-reporter-checkstyle = { group = "com.pinterest.ktlint", name = "ktlint-cli-reporter-checkstyle", version.ref = "ktlint" }
+ktlint-cli-reporter-json = { group = "com.pinterest.ktlint", name = "ktlint-cli-reporter-json", version.ref = "ktlint" }
+ktlint-cli-reporter-sarif = { group = "com.pinterest.ktlint", name = "ktlint-cli-reporter-sarif", version.ref = "ktlint" }
+ktlint-ruleset-standard = { group = "com.pinterest.ktlint", name = "ktlint-ruleset-standard", version.ref = "ktlint" }
+android-tools-gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "android-tools" }
+junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit" }
+junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit" }
+junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit" }
+mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito" }
+commons-io = { group = "commons-io", name = "commons-io", version.ref = "commons-io" }
+
+[bundles]
+ktlint-engine = ["ktlint-rule-engine", "ktlint-rule-engine-core"]
+ktlint-reporters = ["ktlint-cli-reporter-core", "ktlint-cli-reporter-plain", "ktlint-cli-reporter-html", "ktlint-cli-reporter-checkstyle", "ktlint-cli-reporter-json", "ktlint-cli-reporter-sarif"]
+ktlint-rulesets = ["ktlint-ruleset-standard"]
+junit-jupiter = ["junit-jupiter-engine", "junit-jupiter-api", "junit-jupiter-params"]

@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.9.22"
+    kotlin("jvm") version libs.versions.kotlin
     id("com.gradle.plugin-publish") version "1.1.0"
     `java-gradle-plugin`
     `maven-publish`
@@ -24,12 +24,6 @@ version = "4.2.0"
 group = "org.jmailen.gradle"
 description = projectDescription
 
-object Versions {
-    const val ANDROID_TOOLS = "7.3.1"
-    const val JUNIT = "5.10.1"
-    const val KTLINT = "1.1.1"
-    const val MOCKITO_KOTLIN = "4.1.0"
-}
 
 configurations {
     register("testRuntimeDependencies") {
@@ -51,27 +45,15 @@ configurations {
 
 dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin")
-    compileOnly("com.android.tools.build:gradle:${Versions.ANDROID_TOOLS}")
+    compileOnly(libs.android.tools.gradle)
 
-    listOf(
-        "ktlint-rule-engine",
-        "ktlint-rule-engine-core",
-        "ktlint-cli-reporter-core",
-        "ktlint-cli-reporter-checkstyle",
-        "ktlint-cli-reporter-json",
-        "ktlint-cli-reporter-html",
-        "ktlint-cli-reporter-plain",
-        "ktlint-cli-reporter-sarif",
-        "ktlint-ruleset-standard",
-    ).forEach { module ->
-        implementation("com.pinterest.ktlint:$module:${Versions.KTLINT}")
-    }
+    implementation(libs.bundles.ktlint.engine)
+    implementation(libs.bundles.ktlint.reporters)
+    implementation(libs.bundles.ktlint.rulesets)
 
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${Versions.JUNIT}")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.JUNIT}")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:${Versions.JUNIT}")
-    testImplementation("commons-io:commons-io:2.15.1")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.MOCKITO_KOTLIN}")
+    testImplementation(libs.bundles.junit.jupiter)
+    testImplementation(libs.commons.io)
+    testImplementation(libs.mockito.kotlin)
 }
 
 kotlin {

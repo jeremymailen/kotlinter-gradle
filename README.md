@@ -286,54 +286,43 @@ tasks.register('ktFormat', FormatTask) {
 If you need to use a different version of `ktlint` you can override the dependency.
 
 <details open>
-<summary>Kotlin</summary>
+<summary>Kotlin or Groovy</summary>
 
 ```kotlin
 buildscript {
     configurations.classpath {
         resolutionStrategy {
             force(
-                "com.pinterest.ktlint:ktlint-rule-engine:1.0.0",
-                "com.pinterest.ktlint:ktlint-rule-engine-core:1.0.0",
-                "com.pinterest.ktlint:ktlint-cli-reporter-core:1.0.0",
-                "com.pinterest.ktlint:ktlint-cli-reporter-checkstyle:1.0.0",
-                "com.pinterest.ktlint:ktlint-cli-reporter-json:1.0.0",
-                "com.pinterest.ktlint:ktlint-cli-reporter-html:1.0.0",
-                "com.pinterest.ktlint:ktlint-cli-reporter-plain:1.0.0",
-                "com.pinterest.ktlint:ktlint-cli-reporter-sarif:1.0.0",
-                "com.pinterest.ktlint:ktlint-ruleset-standard:1.0.0"
+                "com.pinterest.ktlint:ktlint-rule-engine:1.2.1",
+                "com.pinterest.ktlint:ktlint-rule-engine-core:1.2.1",
+                "com.pinterest.ktlint:ktlint-cli-reporter-core:1.2.1",
+                "com.pinterest.ktlint:ktlint-cli-reporter-checkstyle:1.2.1",
+                "com.pinterest.ktlint:ktlint-cli-reporter-json:1.2.1",
+                "com.pinterest.ktlint:ktlint-cli-reporter-html:1.2.1",
+                "com.pinterest.ktlint:ktlint-cli-reporter-plain:1.2.1",
+                "com.pinterest.ktlint:ktlint-cli-reporter-sarif:1.2.1",
+                "com.pinterest.ktlint:ktlint-ruleset-standard:1.2.1"
             )
         }
     }
 }
+
 ```
 
 </details>
 
-<details>
-<summary>Groovy</summary>
+Alternatively, if you have a custom build convention plugin that utilizes kotlinter, you can enforce a newer KtLint version through a `platform` directive:
 
-```groovy
-buildscript {
-    configurations.classpath {
-        resolutionStrategy {
-            force(
-                "com.pinterest.ktlint:ktlint-rule-engine:1.0.0",
-                "com.pinterest.ktlint:ktlint-rule-engine-core:1.0.0",
-                "com.pinterest.ktlint:ktlint-cli-reporter-core:1.0.0",
-                "com.pinterest.ktlint:ktlint-cli-reporter-checkstyle:1.0.0",
-                "com.pinterest.ktlint:ktlint-cli-reporter-json:1.0.0",
-                "com.pinterest.ktlint:ktlint-cli-reporter-html:1.0.0",
-                "com.pinterest.ktlint:ktlint-cli-reporter-plain:1.0.0",
-                "com.pinterest.ktlint:ktlint-cli-reporter-sarif:1.0.0",
-                "com.pinterest.ktlint:ktlint-ruleset-standard:1.0.0"
-            )
-        }
-    }
+<details open>
+<summary>Kotlin or Groovy</summary>
+
+```kotlin
+dependencies {
+    implementation(platform("com.pinterest.ktlint:ktlint-bom:1.2.1"))
+    implementation("org.jmailen.gradle:kotlinter-gradle:4.2.0")
 }
-```
 
-</details>
+```
 
 ### Custom Rules
 

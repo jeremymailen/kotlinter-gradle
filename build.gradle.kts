@@ -2,12 +2,12 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version libs.versions.kotlin
-    id("com.gradle.plugin-publish") version "1.1.0"
     `java-gradle-plugin`
     `maven-publish`
-    id("org.jmailen.kotlinter") version "4.1.1"
     idea
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.gradle.publish)
+    alias(libs.plugins.kotlinter)
 }
 
 repositories {
@@ -20,7 +20,7 @@ val githubUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "4.2.0"
+version = "4.3.0"
 group = "org.jmailen.gradle"
 description = projectDescription
 

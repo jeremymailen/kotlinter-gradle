@@ -1,10 +1,12 @@
 [versions]
-kotlin = "1.9.22"
-ktlint = "1.1.1"
+kotlin = "1.9.23"
+ktlint = "1.2.1"
 android-tools = "7.3.1"
 junit = "5.10.1"
 mockito = "4.1.0"
 commons-io = "2.15.1"
+gradle-publish = "1.1.0"
+kotlinter-check = "4.2.0"
 
 [libraries]
 ktlint-rule-engine = { group = "com.pinterest.ktlint", name = "ktlint-rule-engine", version.ref = "ktlint" }
@@ -28,3 +30,8 @@ ktlint-engine = ["ktlint-rule-engine", "ktlint-rule-engine-core"]
 ktlint-reporters = ["ktlint-cli-reporter-core", "ktlint-cli-reporter-plain", "ktlint-cli-reporter-html", "ktlint-cli-reporter-checkstyle", "ktlint-cli-reporter-json", "ktlint-cli-reporter-sarif"]
 ktlint-rulesets = ["ktlint-ruleset-standard"]
 junit-jupiter = ["junit-jupiter-engine", "junit-jupiter-api", "junit-jupiter-params"]
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+gradle-publish = { id = "com.gradle.plugin-publish", version.ref = "gradle-publish" }
+kotlinter = { id = "org.jmailen.kotlinter", version.ref = "kotlinter-check" }

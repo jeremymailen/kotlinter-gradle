@@ -35,6 +35,12 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                             id 'org.jmailen.kotlinter'
                         }
 
+                        kotlin {
+                            js {
+                                nodejs()
+                            }
+                        }
+
                         kotlinter {
                             failBuildWhenCannotAutoFormat = true
                         }
@@ -44,6 +50,12 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                         plugins {
                             id 'org.jetbrains.kotlin.js'
                             id 'org.jmailen.kotlinter'
+                        }
+
+                        kotlin {
+                            js {
+                                nodejs()
+                            }
                         }
 
                         kotlinter {

@@ -12,10 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
 
-abstract class InstallHookTaskTest(
-    private val taskName: String,
-    private val hookFile: String,
-) : WithGradleTest.Kotlin() {
+abstract class InstallHookTaskTest(private val taskName: String, private val hookFile: String) : WithGradleTest.Kotlin() {
     private lateinit var projectRoot: File
 
     @BeforeEach

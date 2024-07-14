@@ -35,10 +35,8 @@ abstract class WithGradleTest {
 
     abstract class Android : WithGradleTest() {
 
-        override fun gradleRunnerFor(vararg args: String): GradleRunner {
-            return defaultRunner(*args)
-                .withPluginClasspath()
-        }
+        override fun gradleRunnerFor(vararg args: String): GradleRunner = defaultRunner(*args)
+            .withPluginClasspath()
     }
 
     abstract class Kotlin : WithGradleTest() {

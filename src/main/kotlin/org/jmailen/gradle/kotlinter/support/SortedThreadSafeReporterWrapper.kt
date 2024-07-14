@@ -10,9 +10,7 @@ import java.util.concurrent.ConcurrentSkipListSet
  * A wrapper for a Reporter that guarantees thread safety and consistent ordering of all the calls to the reporter.
  * As a downside, the calls to the wrapped reporter are delayed until the end of the execution.
  */
-class SortedThreadSafeReporterWrapper(
-    private val wrapped: ReporterV2,
-) : ReporterV2 {
+class SortedThreadSafeReporterWrapper(private val wrapped: ReporterV2) : ReporterV2 {
 
     private val callsToBefore: ConcurrentMap<String, Unit> = ConcurrentHashMap()
     private val lintErrorReports: ConcurrentMap<String, ConcurrentSkipListSet<KtlintCliError>> = ConcurrentHashMap()

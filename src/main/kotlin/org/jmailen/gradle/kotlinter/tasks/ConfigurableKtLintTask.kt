@@ -18,10 +18,7 @@ import org.gradle.work.InputChanges
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_IGNORE_FAILURES
 import org.jmailen.gradle.kotlinter.support.findApplicableEditorConfigFiles
 
-abstract class ConfigurableKtLintTask(
-    projectLayout: ProjectLayout,
-    objectFactory: ObjectFactory,
-) : SourceTask() {
+abstract class ConfigurableKtLintTask(projectLayout: ProjectLayout, objectFactory: ObjectFactory) : SourceTask() {
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -51,12 +48,10 @@ internal inline fun <reified K, reified V> ObjectFactory.mapProperty(default: Ma
         set(default)
     }
 
-inline fun <reified T : Throwable> Throwable.workErrorCauses(): List<Throwable> {
-    return when (this) {
-        is MultiCauseException -> this.causes.map { it.cause }
-        else -> listOf(this.cause)
-    }.filter {
-        // class instance comparison doesn't work due to different classloaders
-        it?.javaClass?.canonicalName == T::class.java.canonicalName
-    }.filterNotNull()
-}
+inline fun <reified T : Throwable> Throwable.workErrorCauses(): List<Throwable> = when (this) {
+    is MultiCauseException -> this.causes.map { it.cause }
+    else -> listOf(this.cause)
+}.filter {
+    // class instance comparison doesn't work due to different classloaders
+    it?.javaClass?.canonicalName == T::class.java.canonicalName
+}.filterNotNull()

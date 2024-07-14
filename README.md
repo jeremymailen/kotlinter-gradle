@@ -20,7 +20,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "4.4.0"
+    id("org.jmailen.kotlinter") version "4.4.1"
 }
 ```
 
@@ -31,7 +31,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "4.4.0"
+    id "org.jmailen.kotlinter" version "4.4.1"
 }
 ```
 
@@ -45,7 +45,7 @@ Root `build.gradle.kts`
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "4.4.0" apply false
+    id("org.jmailen.kotlinter") version "4.4.1" apply false
 }
 ```
 
@@ -65,7 +65,7 @@ Root `build.gradle`
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version "4.4.0" apply false
+    id 'org.jmailen.kotlinter' version "4.4.1" apply false
 }
 ```
 
@@ -319,7 +319,7 @@ Alternatively, if you have a custom build convention plugin that utilizes kotlin
 ```kotlin
 dependencies {
     implementation(platform("com.pinterest.ktlint:ktlint-bom:1.2.1"))
-    implementation("org.jmailen.gradle:kotlinter-gradle:4.4.0")
+    implementation("org.jmailen.gradle:kotlinter-gradle:4.4.1")
 }
 
 ```

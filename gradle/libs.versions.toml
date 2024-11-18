@@ -1,7 +1,7 @@
 [versions]
 kotlin = "2.0.21"
 ktlint = "1.4.1"
-android-tools = "7.3.1"
+android-tools = "8.7.2"
 junit = "5.11.3"
 mockito = "4.1.0"
 commons-io = "2.17.0"

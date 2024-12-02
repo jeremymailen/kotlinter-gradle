@@ -1,5 +1,8 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     `java-gradle-plugin`
@@ -13,6 +16,7 @@ plugins {
 repositories {
     mavenCentral()
     google()
+    maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
 }
 
 val pluginId = "org.jmailen.kotlinter"
@@ -20,7 +24,7 @@ val githubUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "4.5.0"
+version = "4.6.0"
 group = "org.jmailen.gradle"
 description = projectDescription
 
@@ -75,15 +79,14 @@ tasks {
         dependsOn(generateVersionProperties)
     }
 
-    val targetJavaVersion = JavaVersion.VERSION_1_8
     withType<JavaCompile>().configureEach {
-        options.release.set(targetJavaVersion.majorVersion.toInt())
+        options.release.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
     }
-    withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            apiVersion = "1.8"
-            languageVersion = "1.8"
-            jvmTarget = targetJavaVersion.toString()
+    withType<KotlinJvmCompile>().configureEach {
+        compilerOptions {
+            apiVersion.set(KotlinVersion.KOTLIN_2_0)
+            languageVersion.set(KotlinVersion.KOTLIN_1_8)
+            jvmTarget.set(JvmTarget.JVM_1_8)
         }
     }
     withType<Test>().configureEach {
@@ -96,7 +99,7 @@ tasks {
     }
 
     wrapper {
-        gradleVersion = "8.11"
+        gradleVersion = "8.11.1"
     }
 }
 

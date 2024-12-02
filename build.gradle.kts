@@ -1,7 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
@@ -10,7 +9,8 @@ plugins {
     idea
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.gradle.publish)
-    alias(libs.plugins.kotlinter)
+    // Remove temporarily until 2.1.0 compatibility is released
+    // alias(libs.plugins.kotlinter)
 }
 
 repositories {
@@ -84,7 +84,7 @@ tasks {
     }
     withType<KotlinJvmCompile>().configureEach {
         compilerOptions {
-            apiVersion.set(KotlinVersion.KOTLIN_2_0)
+            apiVersion.set(KotlinVersion.KOTLIN_1_8)
             languageVersion.set(KotlinVersion.KOTLIN_1_8)
             jvmTarget.set(JvmTarget.JVM_1_8)
         }

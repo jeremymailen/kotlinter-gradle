@@ -20,7 +20,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "4.6.0"
+    id("org.jmailen.kotlinter") version "4.5.0"
 }
 ```
 
@@ -31,7 +31,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "4.6.0"
+    id "org.jmailen.kotlinter" version "4.5.0"
 }
 ```
 
@@ -45,7 +45,7 @@ Root `build.gradle.kts`
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "4.6.0" apply false
+    id("org.jmailen.kotlinter") version "4.5.0" apply false
 }
 ```
 
@@ -65,7 +65,7 @@ Root `build.gradle`
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version "4.6.0" apply false
+    id 'org.jmailen.kotlinter' version "4.5.0" apply false
 }
 ```
 
@@ -83,7 +83,6 @@ plugins {
 
 | kotlinter version | min kotlin version | max kotlin version | min gradle version |
 |-------------------|--------------------|--------------------|--------------------|
-| 4.6.0+            | 2.1.0              | -                  | 8.4                |
 | 4.5.0+            | 2.0.0              | 2.0.21             | 8.4                |
 | 4.2.0+            | 1.9.20             | 1.9.25             | 8.4                |
 | 4.0.0+            | 1.9.0              | 1.9.25             | 7.6                |
@@ -320,8 +319,8 @@ Alternatively, if you have a custom build convention plugin that utilizes kotlin
 
 ```kotlin
 dependencies {
-    implementation(platform("com.pinterest.ktlint:ktlint-bom:1.4.1"))
-    implementation("org.jmailen.gradle:kotlinter-gradle:4.6.0")
+    implementation(platform("com.pinterest.ktlint:ktlint-bom:1.4.0"))
+    implementation("org.jmailen.gradle:kotlinter-gradle:4.5.0")
 }
 
 ```

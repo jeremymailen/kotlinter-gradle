@@ -16,7 +16,6 @@ plugins {
 repositories {
     mavenCentral()
     google()
-    maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
 }
 
 val pluginId = "org.jmailen.kotlinter"

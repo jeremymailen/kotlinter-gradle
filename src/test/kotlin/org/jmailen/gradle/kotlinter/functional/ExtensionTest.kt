@@ -2,6 +2,7 @@ package org.jmailen.gradle.kotlinter.functional
 
 import org.gradle.testkit.runner.TaskOutcome
 import org.jmailen.gradle.kotlinter.functional.utils.kotlinClass
+import org.jmailen.gradle.kotlinter.functional.utils.repositories
 import org.jmailen.gradle.kotlinter.functional.utils.resolve
 import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -22,11 +23,11 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
                 // language=groovy
                 val buildScript =
                     """
-                plugins {
-                    id 'kotlin'
-                    id 'org.jmailen.kotlinter'
-                }
-                
+                    plugins {
+                        id 'kotlin'
+                        id 'org.jmailen.kotlinter'
+                    }
+                    $repositories
                     """.trimIndent()
                 writeText(buildScript)
             }
@@ -87,6 +88,7 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
                     id 'kotlin'
                     id 'org.jmailen.kotlinter'
                 }
+                $repositories
                 
                 tasks.whenTaskAdded {
                     // configure all tasks eagerly

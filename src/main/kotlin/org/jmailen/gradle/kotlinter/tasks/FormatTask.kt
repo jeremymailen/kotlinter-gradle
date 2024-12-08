@@ -42,7 +42,10 @@ open class FormatTask @Inject constructor(
 
     @TaskAction
     fun run(inputChanges: InputChanges) {
-        val result = with(workerExecutor.noIsolation()) {
+        val workQueue = workerExecutor.classLoaderIsolation { config ->
+            config.classpath.setFrom(ktlintClasspath)
+        }
+        val result = with(workQueue) {
             submit(FormatWorkerAction::class.java) { p ->
                 p.name.set(name)
                 p.files.from(source)

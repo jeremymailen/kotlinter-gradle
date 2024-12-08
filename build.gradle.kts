@@ -20,7 +20,7 @@ val githubUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "4.5.0"
+version = "5.0.0-M1"
 group = "org.jmailen.gradle"
 description = projectDescription
 
@@ -46,10 +46,13 @@ dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin")
     compileOnly(libs.android.tools.gradle)
 
-    implementation(libs.bundles.ktlint.engine)
-    implementation(libs.bundles.ktlint.reporters)
-    implementation(libs.bundles.ktlint.rulesets)
+    compileOnly(libs.bundles.ktlint.engine)
+    compileOnly(libs.bundles.ktlint.reporters)
+    compileOnly(libs.bundles.ktlint.rulesets)
 
+    testImplementation(libs.bundles.ktlint.engine)
+    testImplementation(libs.bundles.ktlint.reporters)
+    testImplementation(libs.bundles.ktlint.rulesets)
     testImplementation(libs.bundles.junit.jupiter)
     testImplementation(libs.commons.io)
     testImplementation(libs.mockito.kotlin)
@@ -67,7 +70,12 @@ tasks {
         outputs.file(propertiesFile)
 
         doLast {
-            propertiesFile.writeText("version = $projectVersion")
+            propertiesFile.writeText(
+                """
+                version = $projectVersion
+                ktlintVersion = ${libs.versions.ktlint.get()}
+                """.trimIndent()
+            )
         }
     }
 

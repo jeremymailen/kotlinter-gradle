@@ -1,20 +1,25 @@
 package org.jmailen.gradle.kotlinter
 
+import com.pinterest.ktlint.cli.reporter.core.api.ktlintVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jmailen.gradle.kotlinter.pluginapplier.AndroidSourceSetApplier
 import org.jmailen.gradle.kotlinter.pluginapplier.KotlinSourceSetApplier
 import org.jmailen.gradle.kotlinter.support.reporterFileExtension
+import org.jmailen.gradle.kotlinter.tasks.ConfigurableKtLintTask
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
-import org.jmailen.gradle.kotlinter.tasks.InstallPreCommitHookTask
 import org.jmailen.gradle.kotlinter.tasks.InstallPrePushHookTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
 
 class KotlinterPlugin : Plugin<Project> {
+    companion object {
+        const val KTLINT_CONFIGURATION_NAME = "ktlint"
+    }
 
     private val extendablePlugins = mapOf(
         "org.jetbrains.kotlin.jvm" to KotlinSourceSetApplier,
@@ -35,38 +40,13 @@ class KotlinterPlugin : Plugin<Project> {
             pluginManager.withPlugin(pluginId) {
                 val lintKotlin = registerParentLintTask()
                 val formatKotlin = registerParentFormatTask()
+                val ktlintConfiguration = createKtLintConfiguration(kotlinterExtension)
 
-                sourceResolver.applyToAll(this) { id, resolvedSources ->
-                    val lintTaskPerSourceSet = tasks.register(
-                        "lintKotlin${id.replaceFirstChar(Char::titlecase)}",
-                        LintTask::class.java,
-                    ) { lintTask ->
-                        lintTask.source(resolvedSources)
-                        lintTask.ignoreFailures.set(provider { kotlinterExtension.ignoreFailures })
-                        lintTask.reports.set(
-                            provider {
-                                kotlinterExtension.reporters.associateWith { reporter ->
-                                    reportFile("$id-lint.${reporterFileExtension(reporter)}").get().asFile
-                                }
-                            },
-                        )
-                    }
-                    lintKotlin.configure { lintTask ->
-                        lintTask.dependsOn(lintTaskPerSourceSet)
-                    }
+                registerSourceSetTasks(kotlinterExtension, sourceResolver, lintKotlin, formatKotlin)
 
-                    val formatKotlinPerSourceSet = tasks.register(
-                        "formatKotlin${id.replaceFirstChar(Char::titlecase)}",
-                        FormatTask::class.java,
-                    ) { formatTask ->
-                        formatTask.source(resolvedSources)
-                        formatTask.failBuildWhenCannotAutoFormat.set(provider { kotlinterExtension.failBuildWhenCannotAutoFormat })
-                        formatTask.ignoreFailures.set(provider { kotlinterExtension.ignoreFailures })
-                        formatTask.report.set(reportFile("$id-format.txt"))
-                    }
-                    formatKotlin.configure { formatTask ->
-                        formatTask.dependsOn(formatKotlinPerSourceSet)
-                    }
+                // Configure all tasks including custom user tasks
+                tasks.withType(ConfigurableKtLintTask::class.java).configureEach { task ->
+                    task.ktlintClasspath.from(ktlintConfiguration)
                 }
             }
         }
@@ -84,16 +64,66 @@ class KotlinterPlugin : Plugin<Project> {
         it.description = "Formats the Kotlin source files."
     }
 
+    private fun Project.createKtLintConfiguration(kotlinterExtension: KotlinterExtension): Configuration {
+        val configuration = configurations.maybeCreate(KTLINT_CONFIGURATION_NAME).apply {
+            isCanBeResolved = true
+            isCanBeConsumed = false
+            isVisible = false
+
+            val dependencyProvider = provider {
+                // Even though we don't use CLI, it bundles all the runtime dependencies we need.
+                val ktlintVersion = kotlinterExtension.ktlintVersion
+                this@createKtLintConfiguration.dependencies.create("com.pinterest.ktlint:ktlint-cli:$ktlintVersion")
+            }
+            dependencies.addLater(dependencyProvider)
+        }
+        return configuration
+    }
+
+    private fun Project.registerSourceSetTasks(
+        kotlinterExtension: KotlinterExtension,
+        sourceResolver: SourceSetApplier,
+        parentLintTask: TaskProvider<Task>,
+        parentFormatTask: TaskProvider<Task>,
+    ) {
+        sourceResolver.applyToAll(this) { id, resolvedSources ->
+            val lintSourceSetTask = tasks.register(
+                "lintKotlin${id.replaceFirstChar(Char::titlecase)}",
+                LintTask::class.java,
+            ) { lintTask ->
+                lintTask.source(resolvedSources)
+                lintTask.ignoreFailures.set(provider { kotlinterExtension.ignoreFailures })
+                lintTask.reports.set(
+                    provider {
+                        kotlinterExtension.reporters.associateWith { reporter ->
+                            reportFile("$id-lint.${reporterFileExtension(reporter)}").get().asFile
+                        }
+                    },
+                )
+            }
+            parentLintTask.configure { lintTask ->
+                lintTask.dependsOn(lintSourceSetTask)
+            }
+
+            val formatSourceSetTask = tasks.register(
+                "formatKotlin${id.replaceFirstChar(Char::titlecase)}",
+                FormatTask::class.java,
+            ) { formatTask ->
+                formatTask.source(resolvedSources)
+                formatTask.failBuildWhenCannotAutoFormat.set(provider { kotlinterExtension.failBuildWhenCannotAutoFormat })
+                formatTask.ignoreFailures.set(provider { kotlinterExtension.ignoreFailures })
+                formatTask.report.set(reportFile("$id-format.txt"))
+            }
+            parentFormatTask.configure { formatTask ->
+                formatTask.dependsOn(formatSourceSetTask)
+            }
+        }
+    }
+
     private fun Project.registerPrePushHookTask(): TaskProvider<InstallPrePushHookTask> =
         tasks.register("installKotlinterPrePushHook", InstallPrePushHookTask::class.java) {
             it.group = "build setup"
             it.description = "Installs Kotlinter Git pre-push hook"
-        }
-
-    private fun Project.registerPreCommitHookTask(): TaskProvider<InstallPreCommitHookTask> =
-        tasks.register("installKotlinterPreCommitHook", InstallPreCommitHookTask::class.java) {
-            it.group = "build setup"
-            it.description = "Installs Kotlinter Git pre-commit hook"
         }
 }
 

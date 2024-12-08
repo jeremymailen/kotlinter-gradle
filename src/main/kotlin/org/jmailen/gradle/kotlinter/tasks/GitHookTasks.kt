@@ -5,7 +5,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import org.jmailen.gradle.kotlinter.support.VersionProperties
+import org.jmailen.gradle.kotlinter.support.versionProperties
 import java.io.File
 
 abstract class InstallPreCommitHookTask : InstallHookTask("pre-commit") {
@@ -111,11 +111,9 @@ abstract class InstallHookTask(@get:Internal val hookFileName: String) : Default
     }
 
     companion object {
-        private val version = VersionProperties().version()
-
         internal const val START_HOOK = "\n##### KOTLINTER HOOK START #####"
 
-        internal val hookVersion = "##### KOTLINTER $version #####"
+        internal val hookVersion = "##### KOTLINTER ${versionProperties.version()} #####"
 
         internal const val END_HOOK = "##### KOTLINTER HOOK END #####\n"
 

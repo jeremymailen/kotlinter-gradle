@@ -3,6 +3,7 @@ package org.jmailen.gradle.kotlinter.functional
 import org.gradle.testkit.runner.TaskOutcome
 import org.jmailen.gradle.kotlinter.functional.utils.editorConfig
 import org.jmailen.gradle.kotlinter.functional.utils.kotlinClass
+import org.jmailen.gradle.kotlinter.functional.utils.repositories
 import org.jmailen.gradle.kotlinter.functional.utils.resolve
 import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
 import org.junit.jupiter.api.Assertions.assertArrayEquals
@@ -28,7 +29,7 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                         id 'kotlin'
                         id 'org.jmailen.kotlinter'
                     }
-                
+                    $repositories
                     """.trimIndent()
                 writeText(buildScript)
             }

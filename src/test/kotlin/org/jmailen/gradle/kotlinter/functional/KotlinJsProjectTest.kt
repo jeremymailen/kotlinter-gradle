@@ -33,7 +33,7 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
                             }
                         }
                         """.trimIndent()
-                    KotlinterConfig.FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT ->
+                    KotlinterConfig.FAIL_FORMAT_FAILURES ->
                         """
                         plugins {
                             id 'org.jetbrains.kotlin.js'
@@ -50,10 +50,10 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
                         }
                         
                         kotlinter {
-                            failBuildWhenCannotAutoFormat = true
+                            ignoreFormatFailures = false
                         }
                         """.trimIndent()
-                    KotlinterConfig.IGNORE_FAILURES ->
+                    KotlinterConfig.IGNORE_LINT_FAILURES ->
                         """
                         plugins {
                             id 'org.jetbrains.kotlin.js'
@@ -70,8 +70,7 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
                         }
                         
                         kotlinter {
-                            ignoreFailures = true
-                            failBuildWhenCannotAutoFormat = true
+                            ignoreLintFailures = true
                         }
                         """.trimIndent()
                 }
@@ -160,8 +159,8 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `formatKotlin fails when lint errors not automatically fixed and failBuildWhenCannotAutoFormat enabled`() {
-        setup(KotlinterConfig.FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT)
+    fun `formatKotlin fails when lint errors not automatically fixed and ignoreFormatFailures false`() {
+        setup(KotlinterConfig.FAIL_FORMAT_FAILURES)
         projectRoot.resolve("src/main/kotlin/FixtureClass.kt") {
             // language=kotlin
             val kotlinClass =
@@ -195,47 +194,6 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
             assertTrue(output.contains("FixtureClass.kt:3:19: Format fixed > [standard:curly-spacing] Missing spacing before \"{\""))
             assertTrue(output.contains("FixtureClass.kt:1:1: Format could not fix > [standard:no-wildcard-imports] Wildcard import"))
             assertEquals(TaskOutcome.FAILED, task(":formatKotlinTest")?.outcome)
-            assertTrue(output.contains("FixtureTestClass.kt:3:23: Format fixed > [standard:curly-spacing] Missing spacing before \"{\""))
-            assertTrue(output.contains("FixtureTestClass.kt:1:1: Format could not fix > [standard:no-wildcard-imports] Wildcard import"))
-        }
-    }
-
-    @Test
-    fun `formatKotlin reports formatted and unformatted files when failBuildWhenCannotAutoFormat and ignoreFailures enabled`() {
-        setup(KotlinterConfig.IGNORE_FAILURES)
-        projectRoot.resolve("src/main/kotlin/FixtureClass.kt") {
-            // language=kotlin
-            val kotlinClass =
-                """
-                import System.*
-                
-                class FixtureClass{
-                    private fun hi() {
-                        out.println("Hello")
-                    }
-                }
-                """.trimIndent()
-            writeText(kotlinClass)
-        }
-        projectRoot.resolve("src/test/kotlin/FixtureTestClass.kt") {
-            // language=kotlin
-            val kotlinClass =
-                """
-                import System.*
-                
-                class FixtureTestClass{
-                    private fun hi() {
-                        out.println("Hello")
-                    }
-                }
-                """.trimIndent()
-            writeText(kotlinClass)
-        }
-        build("formatKotlin").apply {
-            assertEquals(TaskOutcome.SUCCESS, task(":formatKotlinMain")?.outcome)
-            assertTrue(output.contains("FixtureClass.kt:3:19: Format fixed > [standard:curly-spacing] Missing spacing before \"{\""))
-            assertTrue(output.contains("FixtureClass.kt:1:1: Format could not fix > [standard:no-wildcard-imports] Wildcard import"))
-            assertEquals(TaskOutcome.SUCCESS, task(":formatKotlinTest")?.outcome)
             assertTrue(output.contains("FixtureTestClass.kt:3:23: Format fixed > [standard:curly-spacing] Missing spacing before \"{\""))
             assertTrue(output.contains("FixtureTestClass.kt:1:1: Format could not fix > [standard:no-wildcard-imports] Wildcard import"))
         }

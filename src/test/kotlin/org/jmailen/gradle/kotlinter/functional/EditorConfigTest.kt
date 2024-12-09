@@ -4,6 +4,7 @@ import org.gradle.testkit.runner.TaskOutcome
 import org.jmailen.gradle.kotlinter.functional.utils.KotlinterConfig
 import org.jmailen.gradle.kotlinter.functional.utils.editorConfig
 import org.jmailen.gradle.kotlinter.functional.utils.kotlinClass
+import org.jmailen.gradle.kotlinter.functional.utils.repositories
 import org.jmailen.gradle.kotlinter.functional.utils.resolve
 import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -27,13 +28,15 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                             id 'kotlin'
                             id 'org.jmailen.kotlinter'
                         }
+                        $repositories
                         """.trimIndent()
-                    KotlinterConfig.FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT ->
+                    KotlinterConfig.FAIL_FORMAT_FAILURES ->
                         """
                         plugins {
                             id 'org.jetbrains.kotlin.js'
                             id 'org.jmailen.kotlinter'
                         }
+                        $repositories
 
                         kotlin {
                             js {
@@ -42,15 +45,16 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                         }
 
                         kotlinter {
-                            failBuildWhenCannotAutoFormat = true
+                            ignoreFormatFailures = false
                         }
                         """.trimIndent()
-                    KotlinterConfig.IGNORE_FAILURES ->
+                    KotlinterConfig.IGNORE_LINT_FAILURES ->
                         """
                         plugins {
                             id 'org.jetbrains.kotlin.js'
                             id 'org.jmailen.kotlinter'
                         }
+                        $repositories
 
                         kotlin {
                             js {
@@ -59,8 +63,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                         }
 
                         kotlinter {
-                            ignoreFailures = true
-                            failBuildWhenCannotAutoFormat = true
+                            ignoreLintFailures = true
                         }
                         """.trimIndent()
                 }
@@ -246,8 +249,8 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `editorconfig changes are taken for format task re-runs when failBuildWhenCannotAutoFormat configured`() {
-        setup(KotlinterConfig.FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT)
+    fun `editorconfig changes are taken for format task re-runs when ignoreFormatFailures false`() {
+        setup(KotlinterConfig.FAIL_FORMAT_FAILURES)
         projectRoot.resolve(".editorconfig") {
             writeText(editorConfig)
         }

@@ -25,3 +25,11 @@ internal val editorConfig =
     [*.kt]
     
     """
+
+internal val repositories =
+    """
+    repositories {
+        mavenCentral()
+    }
+
+    """.trimIndent()

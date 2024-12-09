@@ -13,11 +13,11 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SourceTask
-import org.gradle.internal.exceptions.MultiCauseException
 import org.gradle.work.FileChange
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
-import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_IGNORE_FAILURES
+import org.gradle.workers.WorkerExecutionException
+import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_IGNORE_LINT_FAILURES
 import org.jmailen.gradle.kotlinter.support.findApplicableEditorConfigFiles
 
 abstract class ConfigurableKtLintTask(projectLayout: ProjectLayout, objectFactory: ObjectFactory) : SourceTask() {
@@ -30,7 +30,7 @@ abstract class ConfigurableKtLintTask(projectLayout: ProjectLayout, objectFactor
     }
 
     @Input
-    open val ignoreFailures: Property<Boolean> = objectFactory.property(default = DEFAULT_IGNORE_FAILURES)
+    open val ignoreLintFailures: Property<Boolean> = objectFactory.property(default = DEFAULT_IGNORE_LINT_FAILURES)
 
     @Classpath
     val ktlintClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
@@ -53,10 +53,8 @@ internal inline fun <reified K, reified V> ObjectFactory.mapProperty(default: Ma
         set(default)
     }
 
-inline fun <reified T : Throwable> Throwable.workErrorCauses(): List<Throwable> = when (this) {
-    is MultiCauseException -> this.causes.map { it.cause }
-    else -> listOf(this.cause)
-}.filter {
-    // class instance comparison doesn't work due to different classloaders
-    it?.javaClass?.canonicalName == T::class.java.canonicalName
-}.filterNotNull()
+fun WorkerExecutionException.hasRootCause(type: Class<*>): Boolean {
+    // this is lame, but serialized across worker boundaries exceptions are not comparable
+    // and recursive cause checking runs into serialized placeholder exceptions
+    return this.stackTraceToString().contains(type.canonicalName)
+}

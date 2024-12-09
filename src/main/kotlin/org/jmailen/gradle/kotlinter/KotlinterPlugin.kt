@@ -1,6 +1,5 @@
 package org.jmailen.gradle.kotlinter
 
-import com.pinterest.ktlint.cli.reporter.core.api.ktlintVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -92,7 +91,7 @@ class KotlinterPlugin : Plugin<Project> {
                 LintTask::class.java,
             ) { lintTask ->
                 lintTask.source(resolvedSources)
-                lintTask.ignoreFailures.set(provider { kotlinterExtension.ignoreFailures })
+                lintTask.ignoreLintFailures.set(provider { kotlinterExtension.ignoreLintFailures })
                 lintTask.reports.set(
                     provider {
                         kotlinterExtension.reporters.associateWith { reporter ->
@@ -110,8 +109,8 @@ class KotlinterPlugin : Plugin<Project> {
                 FormatTask::class.java,
             ) { formatTask ->
                 formatTask.source(resolvedSources)
-                formatTask.failBuildWhenCannotAutoFormat.set(provider { kotlinterExtension.failBuildWhenCannotAutoFormat })
-                formatTask.ignoreFailures.set(provider { kotlinterExtension.ignoreFailures })
+                formatTask.ignoreFormatFailures.set(provider { kotlinterExtension.ignoreFormatFailures })
+                formatTask.ignoreLintFailures.set(provider { kotlinterExtension.ignoreLintFailures })
                 formatTask.report.set(reportFile("$id-format.txt"))
             }
             parentFormatTask.configure { formatTask ->

@@ -103,9 +103,9 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `formatKotlin fails when lint errors not automatically fixed and failBuildWhenCannotAutoFormat enabled`() {
+    fun `formatKotlin fails when lint errors not automatically fixed and ignoreFormatFailures false`() {
         settingsFile()
-        buildFileFailBuildWhenCannotAutoFormat()
+        buildFileIgnoreFormatFailuresFalse()
         // language=kotlin
         val kotlinClass =
             """
@@ -121,32 +121,6 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
 
         buildAndFail("formatKotlin").apply {
             assertEquals(FAILED, task(":formatKotlinMain")?.outcome)
-            output.lines().filter { it.contains("Format could not fix") }.forEach { line ->
-                val filePath = pathPattern.find(line)?.groups?.get(1)?.value.orEmpty()
-                assertTrue(File(filePath).exists())
-            }
-        }
-    }
-
-    @Test
-    fun `formatKotlin reports formatted and unformatted files when failBuildWhenCannotAutoFormat and ignoreFailures enabled`() {
-        settingsFile()
-        buildFileIgnoreFailures()
-        // language=kotlin
-        val kotlinClass =
-            """
-            import System.*
-            
-            class KotlinClass{
-                private fun hi() {
-                    out.println("Hello")
-                }
-            }
-            """.trimIndent()
-        kotlinSourceFile("KotlinClass.kt", kotlinClass)
-
-        build("formatKotlin").apply {
-            assertEquals(SUCCESS, task(":formatKotlinMain")?.outcome)
             output.lines().filter { it.contains("Format could not fix") }.forEach { line ->
                 val filePath = pathPattern.find(line)?.groups?.get(1)?.value.orEmpty()
                 assertTrue(File(filePath).exists())
@@ -262,7 +236,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
         writeText(buildscript)
     }
 
-    private fun buildFileFailBuildWhenCannotAutoFormat() = buildFile.apply {
+    private fun buildFileIgnoreFormatFailuresFalse() = buildFile.apply {
         // language=groovy
         val buildscript =
             """
@@ -276,28 +250,7 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
             }
             
             kotlinter {
-                failBuildWhenCannotAutoFormat = true
-            }
-            """.trimIndent()
-        writeText(buildscript)
-    }
-
-    private fun buildFileIgnoreFailures() = buildFile.apply {
-        // language=groovy
-        val buildscript =
-            """
-            plugins {
-                id 'org.jetbrains.kotlin.jvm'
-                id 'org.jmailen.kotlinter'
-            }
-
-            repositories {
-                mavenCentral()
-            }
-            
-            kotlinter {
-                ignoreFailures = true
-                failBuildWhenCannotAutoFormat = true
+                ignoreFormatFailures = false
             }
             """.trimIndent()
         writeText(buildscript)

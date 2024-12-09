@@ -35,13 +35,13 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `extension configures ignoreFailures`() {
+    fun `extension configures ignoreLintFailures`() {
         projectRoot.resolve("build.gradle") {
             // language=groovy
             val script =
                 """
                 kotlinter {
-                    ignoreFailures = true
+                    ignoreLintFailures = true
                 }
                 """.trimIndent()
             appendText(script)
@@ -95,7 +95,7 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
                 }
                 
                 kotlinter {
-                    ignoreFailures = true
+                    ignoreLintFailures = true
                 }
                 
                 """.trimIndent()

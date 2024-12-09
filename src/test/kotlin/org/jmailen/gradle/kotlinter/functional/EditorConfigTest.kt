@@ -30,7 +30,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                         }
                         $repositories
                         """.trimIndent()
-                    KotlinterConfig.FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT ->
+                    KotlinterConfig.FAIL_FORMAT_FAILURES ->
                         """
                         plugins {
                             id 'org.jetbrains.kotlin.js'
@@ -45,10 +45,10 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                         }
 
                         kotlinter {
-                            failBuildWhenCannotAutoFormat = true
+                            ignoreFormatFailures = false
                         }
                         """.trimIndent()
-                    KotlinterConfig.IGNORE_FAILURES ->
+                    KotlinterConfig.IGNORE_LINT_FAILURES ->
                         """
                         plugins {
                             id 'org.jetbrains.kotlin.js'
@@ -63,8 +63,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                         }
 
                         kotlinter {
-                            ignoreFailures = true
-                            failBuildWhenCannotAutoFormat = true
+                            ignoreLintFailures = true
                         }
                         """.trimIndent()
                 }
@@ -250,8 +249,8 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
     }
 
     @Test
-    fun `editorconfig changes are taken for format task re-runs when failBuildWhenCannotAutoFormat configured`() {
-        setup(KotlinterConfig.FAIL_BUILD_WHEN_CANNOT_AUTO_FORMAT)
+    fun `editorconfig changes are taken for format task re-runs when ignoreFormatFailures false`() {
+        setup(KotlinterConfig.FAIL_FORMAT_FAILURES)
         projectRoot.resolve(".editorconfig") {
             writeText(editorConfig)
         }

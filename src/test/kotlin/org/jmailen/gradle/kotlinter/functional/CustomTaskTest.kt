@@ -112,7 +112,7 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
                 task customizedLintTask(type: LintTask) {
                     source files('src')
                     reports = ['plain': file('build/lint-report.txt')]
-                    ignoreFailures = true
+                    ignoreLintFailures = true
                 }
                 
                 """.trimIndent()

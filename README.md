@@ -83,7 +83,7 @@ plugins {
 
 | kotlinter version | min kotlin version | max kotlin version | min gradle version |
 |-------------------|--------------------|--------------------|--------------------|
-| 4.5.0+            | 2.0.0              | -                  | 8.4                |
+| 4.5.0+            | 2.0.0              | 2.0.21             | 8.4                |
 | 4.2.0+            | 1.9.20             | 1.9.25             | 8.4                |
 | 4.0.0+            | 1.9.0              | 1.9.25             | 7.6                |
 | 3.14.0+           | 1.8.0              | 1.8.22             | 7.6                |
@@ -319,7 +319,7 @@ Alternatively, if you have a custom build convention plugin that utilizes kotlin
 
 ```kotlin
 dependencies {
-    implementation(platform("com.pinterest.ktlint:ktlint-bom:1.2.1"))
+    implementation(platform("com.pinterest.ktlint:ktlint-bom:1.4.0"))
     implementation("org.jmailen.gradle:kotlinter-gradle:4.5.0")
 }
 

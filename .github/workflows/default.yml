@@ -72,8 +72,8 @@ jobs:
 
       - name: Assert fixes
         run: |
-          cd test-project/build/reports/ktlint
-          grep 'no-empty-class-body' main-format.txt | grep -q 'EmptyClassBodyClass.kt:3:27'
+          cd test-project/service/build/reports/ktlint
+          grep 'kotlinter-test-rules:no-var' main-lint.txt | grep -q 'CustomNoVar.kt:4:5'
           grep 'op-spacing' test-format.txt | grep -q 'OpSpacing.kt:5:16'
 
       - name: Upload reports

@@ -6,3 +6,7 @@ plugins {
 dependencies {
     ktlint(project(":rules"))
 }
+
+kotlinter {
+    ignoreLintFailures = true
+}

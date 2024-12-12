@@ -1,4 +1,3 @@
 plugins {
-    kotlin("jvm") version "2.1.0"
-    id("org.jmailen.kotlinter")
+    kotlin("jvm") version "2.1.0" apply false
 }

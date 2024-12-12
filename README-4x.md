@@ -1,18 +1,12 @@
-# Kotlinter Gradle
+# Kotlinter Gradle 4.x and Earlier
 
-[![Build Status](https://github.com/jeremymailen/kotlinter-gradle/workflows/Build%20Project/badge.svg)](https://github.com/jeremymailen/kotlinter-gradle/actions)
-[![Latest Version](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/org/jmailen/gradle/kotlinter-gradle/maven-metadata.xml?label=gradle)](https://plugins.gradle.org/plugin/org.jmailen.kotlinter)
+For current version see [README.md](README.md).
 
 Painless Gradle plugin for linting and formatting Kotlin source files using the awesome [ktlint](https://ktlint.github.io) engine.
 
 It aims to be easy to set up with _zero_ required configuration and behaves as you'd expect out of the box.
 
 It's also fast because it integrates the ktlint _engine_ directly with Gradle's incremental build and uses the Worker API to parallelize work.
-
-### Versions
-
-This documentation is for version 5+.
-For documentation on version 4x and earlier, see [README-4x.md](README-4x.md).
 
 ### Installation
 
@@ -25,7 +19,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "5.0.0"
+    id("org.jmailen.kotlinter") version "4.5.0"
 }
 ```
 
@@ -36,7 +30,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "5.0.0"
+    id "org.jmailen.kotlinter" version "4.5.0"
 }
 ```
 
@@ -50,7 +44,7 @@ Root `build.gradle.kts`
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "5.0.0" apply false
+    id("org.jmailen.kotlinter") version "4.5.0" apply false
 }
 ```
 
@@ -70,7 +64,7 @@ Root `build.gradle`
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version "5.0.0" apply false
+    id 'org.jmailen.kotlinter' version "4.5.0" apply false
 }
 ```
 
@@ -86,9 +80,18 @@ plugins {
 
 ### Compatibility
 
-- Kotlin -- generally compatible so long as the language features are supported by the version of ktlint selected
-- Gradle 8.4+
-- Ktlint 1.0+
+| kotlinter version | min kotlin version | max kotlin version | min gradle version |
+|-------------------|--------------------|--------------------|--------------------|
+| 4.5.0+            | 2.0.0              | 2.0.21             | 8.4                |
+| 4.2.0+            | 1.9.20             | 1.9.25             | 8.4                |
+| 4.0.0+            | 1.9.0              | 1.9.25             | 7.6                |
+| 3.14.0+           | 1.8.0              | 1.8.22             | 7.6                |
+| 3.11.0+           | 1.7.0              | 1.7.22             | 7.0                |
+| 3.10.0+           | 1.6.20             | 1.6.21             | 7.0                |
+| 3.7.0+            | 1.5.31             | 1.6.10             | 7.0                |
+| 3.5.0+            | 1.5.0              | 1.5.30             | 6.8                |
+| 3.0.0+            | 1.4.0              | 1.4.30             | 6.8                |
+| 2.0.0+            | 1.3.0              | 1.3.30             | -                  |
 
 ### Features
 
@@ -146,17 +149,16 @@ tasks.named('check') {
 
 
 ### Configuration
-Options are configured in the `kotlinter` extension. Defaults shown (you may omit the configuration block entirely if you want the defaults).
+Options are configured in the `kotlinter` extension. Defaults shown (you may omit the configuration block entirely if you want these defaults).
 
 <details open>
 <summary>Kotlin</summary>
 
 ```kotlin
 kotlinter {
-    ktlintVersion = "1.5.0"
-    ignoreFormatFailures = true
-    ignoreLintFailures = false
-    reporters = arrayOf("checkstyle")
+    failBuildWhenCannotAutoFormat = false
+    ignoreFailures = false
+    reporters = arrayOf("checkstyle", "plain")
 }
 ```
 
@@ -167,19 +169,15 @@ kotlinter {
 
 ```groovy
 kotlinter {
-    ktlintVersion = "1.5.0"
-    ignoreFormatFailures = true
-    ignoreLintFailures = false
-    reporters = ['checkstyle']
+    failBuildWhenCannotAutoFormat = false
+    ignoreFailures = false
+    reporters = ['checkstyle', 'plain']
 }
 ```
 
 </details>
 
-The `ktlintVersion` property allows you to override the default version of `ktlint` used by the plugin.
-Compatibility will generally be good, but ktlint consumer API changes may break compatibility in some rare cases.
-
-Setting `ignoreFormatFailures` to `false` will configure the `formatKotlin` task to fail the build when auto-format is not able to fix a lint error.
+Setting `failBuildWhenCannotAutoFormat` to `true` will configure the `formatKotlin` task to fail the build when auto-format is not able to fix a lint error. This is overrided by setting `ignoreFailures` to `true`.
 
 Options for `reporters`: `checkstyle`, `html`, `json`, `plain`, `sarif`
 
@@ -197,9 +195,6 @@ See [KtLint configuration](https://pinterest.github.io/ktlint/latest/rules/confi
 
 The `formatKotlin`*`SourceSet`* and `lintKotlin`*`SourceSet`* tasks inherit from [SourceTask](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.SourceTask.html)
 so you can customize includes, excludes, and source.
-
-Note that `exclude` paths are relative to the package root.
-If you need to exclude at the src directory level, you can use a syntax like the below:
 
 <details open>
 <summary>Kotlin</summary>
@@ -226,6 +221,8 @@ tasks.named("lintKotlinMain") {
 ```
 
 </details>
+
+Note that exclude paths are relative to the package root.
 
 ### Custom Tasks
 
@@ -284,17 +281,62 @@ tasks.register('ktFormat', FormatTask) {
 
 </details>
 
+### Custom ktlint version
+
+If you need to use a different version of `ktlint` you can override the dependency.
+
+<details open>
+<summary>Kotlin or Groovy</summary>
+
+```kotlin
+buildscript {
+    configurations.classpath {
+        resolutionStrategy {
+            force(
+                "com.pinterest.ktlint:ktlint-rule-engine:1.2.1",
+                "com.pinterest.ktlint:ktlint-rule-engine-core:1.2.1",
+                "com.pinterest.ktlint:ktlint-cli-reporter-core:1.2.1",
+                "com.pinterest.ktlint:ktlint-cli-reporter-checkstyle:1.2.1",
+                "com.pinterest.ktlint:ktlint-cli-reporter-json:1.2.1",
+                "com.pinterest.ktlint:ktlint-cli-reporter-html:1.2.1",
+                "com.pinterest.ktlint:ktlint-cli-reporter-plain:1.2.1",
+                "com.pinterest.ktlint:ktlint-cli-reporter-sarif:1.2.1",
+                "com.pinterest.ktlint:ktlint-ruleset-standard:1.2.1"
+            )
+        }
+    }
+}
+
+```
+
+</details>
+
+Alternatively, if you have a custom build convention plugin that utilizes kotlinter, you can enforce a newer KtLint version through a `platform` directive:
+
+<details open>
+<summary>Kotlin or Groovy</summary>
+
+```kotlin
+dependencies {
+    implementation(platform("com.pinterest.ktlint:ktlint-bom:1.4.0"))
+    implementation("org.jmailen.gradle:kotlinter-gradle:4.5.0")
+}
+
+```
+
 ### Custom Rules
 
-You can add custom ktlint RuleSets using the `ktlint` dependency configuration:
+You can add custom ktlint RuleSets using the `buildscript` classpath:
 
 <details open>
 <summary>Kotlin</summary>
 
 ```kotlin
-dependencies {
-  ktlint(project(":extra-rules"))
-  ktlint("org.other.ktlint:custom-rules:1.0")
+buildscript {
+    dependencies {
+        classpath(files("libs/my-custom-ktlint-rules.jar"))
+        classpath("org.other.ktlint:custom-rules:1.0")
+    }
 }
 ```
 
@@ -304,9 +346,11 @@ dependencies {
 <summary>Groovy</summary>
 
 ```groovy
-dependencies {
-  ktlint project(':extra-rules')
-  ktlint 'org.other.ktlint:custom-rules:1.0'
+buildscript {
+    dependencies {
+        classpath files('libs/my-custom-ktlint-rules.jar')
+        classpath 'org.other.ktlint:custom-rules:1.0'
+    }
 }
 ```
 

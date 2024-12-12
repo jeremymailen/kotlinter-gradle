@@ -29,6 +29,7 @@ class KotlinterPlugin : Plugin<Project> {
 
     override fun apply(project: Project) = with(project) {
         val kotlinterExtension = extensions.create("kotlinter", KotlinterExtension::class.java)
+        val ktlintConfiguration = createKtLintConfiguration(kotlinterExtension)
 
         if (this == rootProject) {
             registerPrePushHookTask()
@@ -39,7 +40,6 @@ class KotlinterPlugin : Plugin<Project> {
             pluginManager.withPlugin(pluginId) {
                 val lintKotlin = registerParentLintTask()
                 val formatKotlin = registerParentFormatTask()
-                val ktlintConfiguration = createKtLintConfiguration(kotlinterExtension)
 
                 registerSourceSetTasks(kotlinterExtension, sourceResolver, lintKotlin, formatKotlin)
 

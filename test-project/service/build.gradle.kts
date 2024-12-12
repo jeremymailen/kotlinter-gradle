@@ -8,5 +8,6 @@ dependencies {
 }
 
 kotlinter {
+    reporters = arrayOf("plain", "checkstyle")
     ignoreLintFailures = true
 }

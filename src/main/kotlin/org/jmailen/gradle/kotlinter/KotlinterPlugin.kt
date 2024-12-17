@@ -3,6 +3,7 @@ package org.jmailen.gradle.kotlinter
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.attributes.Bundling
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
@@ -42,12 +43,12 @@ class KotlinterPlugin : Plugin<Project> {
                 val formatKotlin = registerParentFormatTask()
 
                 registerSourceSetTasks(kotlinterExtension, sourceResolver, lintKotlin, formatKotlin)
-
-                // Configure all tasks including custom user tasks
-                tasks.withType(ConfigurableKtLintTask::class.java).configureEach { task ->
-                    task.ktlintClasspath.from(ktlintConfiguration)
-                }
             }
+        }
+
+        // Configure all tasks including custom user tasks
+        tasks.withType(ConfigurableKtLintTask::class.java).configureEach { task ->
+            task.ktlintClasspath.from(ktlintConfiguration)
         }
     }
 
@@ -68,6 +69,8 @@ class KotlinterPlugin : Plugin<Project> {
             isCanBeResolved = true
             isCanBeConsumed = false
             isVisible = false
+
+            attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling::class.java, Bundling.EXTERNAL))
 
             val dependencyProvider = provider {
                 // Even though we don't use CLI, it bundles all the runtime dependencies we need.

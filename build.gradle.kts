@@ -9,8 +9,7 @@ plugins {
     idea
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.gradle.publish)
-    // Remove temporarily until 2.1.0 compatibility is released
-    // alias(libs.plugins.kotlinter)
+    alias(libs.plugins.kotlinter)
 }
 
 repositories {
@@ -77,7 +76,7 @@ tasks {
                 """
                 version = $projectVersion
                 ktlintVersion = ${libs.versions.ktlint.get()}
-                """.trimIndent()
+                """.trimIndent(),
             )
         }
     }

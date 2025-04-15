@@ -9,28 +9,27 @@ import org.jmailen.gradle.kotlinter.functional.utils.settingsFile
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import java.io.File
 
 class CustomTaskTest : WithGradleTest.Kotlin() {
 
     lateinit var projectRoot: File
 
-    @BeforeEach
-    fun setUp() {
+    private fun setup(testType: String) {
         projectRoot = testProjectDir.apply {
             resolve("settings.gradle") { writeText(settingsFile) }
             resolve("build.gradle") {
-                // language=groovy
-                val buildScript =
-                    """
-                    plugins {
-                        id 'kotlin'
-                        id 'org.jmailen.kotlinter'
+                val buildScript = buildString {
+                    appendLine("plugins {")
+                    if (testType == WITH_KOTLIN_PLUGIN) {
+                        appendLine("id 'kotlin'")
                     }
-                    $repositories
-                    """.trimIndent()
+                    appendLine("id 'org.jmailen.kotlinter'")
+                    appendLine("}")
+                    appendLine(repositories)
+                }
                 writeText(buildScript)
             }
         }
@@ -39,8 +38,11 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
         }
     }
 
-    @Test
-    fun `ktLint custom task succeeds when no lint errors detected`() {
+    @ParameterizedTest
+    @ValueSource(strings = [WITH_NO_PLUGINS, WITH_KOTLIN_PLUGIN])
+    fun `ktLint custom task succeeds when no lint errors detected`(testType: String) {
+        setup(testType)
+
         projectRoot.resolve(".editorconfig") {
             writeText(editorConfig)
         }
@@ -77,8 +79,11 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
         }
     }
 
-    @Test
-    fun `ktLint custom task succeeds with default configuration`() {
+    @ParameterizedTest
+    @ValueSource(strings = [WITH_NO_PLUGINS, WITH_KOTLIN_PLUGIN])
+    fun `ktLint custom task succeeds with default configuration`(testType: String) {
+        setup(testType)
+
         projectRoot.resolve("build.gradle") {
             // language=groovy
             val buildScript =
@@ -98,8 +103,11 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
         }
     }
 
-    @Test
-    fun `ktLint custom task succeeds with fully provided configuration`() {
+    @ParameterizedTest
+    @ValueSource(strings = [WITH_NO_PLUGINS, WITH_KOTLIN_PLUGIN])
+    fun `ktLint custom task succeeds with fully provided configuration`(testType: String) {
+        setup(testType)
+
         projectRoot.resolve(".editorconfig") {
             writeText(editorConfig)
         }
@@ -124,8 +132,11 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
         }
     }
 
-    @Test
-    fun `ktLintFormat custom task succeeds with fully provided configuration`() {
+    @ParameterizedTest
+    @ValueSource(strings = [WITH_NO_PLUGINS, WITH_KOTLIN_PLUGIN])
+    fun `ktLintFormat custom task succeeds with fully provided configuration`(testType: String) {
+        setup(testType)
+
         projectRoot.resolve(".editorconfig") {
             writeText(editorConfig)
         }
@@ -148,8 +159,11 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
         }
     }
 
-    @Test
-    fun `ktLint custom task skips reports generation if reports not configured`() {
+    @ParameterizedTest
+    @ValueSource(strings = [WITH_NO_PLUGINS, WITH_KOTLIN_PLUGIN])
+    fun `ktLint custom task skips reports generation if reports not configured`(testType: String) {
+        setup(testType)
+
         projectRoot.resolve("src/main/kotlin/MissingNewLine.kt") {
             // language=kotlin
             val validClass =
@@ -189,8 +203,11 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
         }
     }
 
-    @Test
-    fun `ktLint custom task became up-to-date on second run if reports not configured`() {
+    @ParameterizedTest
+    @ValueSource(strings = [WITH_NO_PLUGINS, WITH_KOTLIN_PLUGIN])
+    fun `ktLint custom task became up-to-date on second run if reports not configured`(testType: String) {
+        setup(testType)
+
         projectRoot.resolve("build.gradle") {
             // language=groovy
             val buildScript =
@@ -224,8 +241,11 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
         }
     }
 
-    @Test
-    fun `ktLint custom task treats reports as input parameter`() {
+    @ParameterizedTest
+    @ValueSource(strings = [WITH_NO_PLUGINS, WITH_KOTLIN_PLUGIN])
+    fun `ktLint custom task treats reports as input parameter`(testType: String) {
+        setup(testType)
+
         projectRoot.resolve("build.gradle") {
             // language=groovy
             val buildScript =
@@ -255,5 +275,10 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
             assertEquals(TaskOutcome.SUCCESS, task(":ktLintWithReports")?.outcome)
             assertTrue(projectRoot.resolve("build/lint-report.txt").exists())
         }
+    }
+
+    companion object {
+        const val WITH_NO_PLUGINS = "with-no-plugins"
+        const val WITH_KOTLIN_PLUGIN = "with-kotlin-plugin"
     }
 }

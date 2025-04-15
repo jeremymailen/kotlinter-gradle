@@ -25,7 +25,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "5.0.1"
+    id("org.jmailen.kotlinter") version "5.0.2"
 }
 ```
 
@@ -36,7 +36,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "5.0.1"
+    id "org.jmailen.kotlinter" version "5.0.2"
 }
 ```
 
@@ -50,7 +50,7 @@ Root `build.gradle.kts`
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "5.0.1" apply false
+    id("org.jmailen.kotlinter") version "5.0.2" apply false
 }
 ```
 
@@ -70,7 +70,7 @@ Root `build.gradle`
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version "5.0.1" apply false
+    id 'org.jmailen.kotlinter' version "5.0.2" apply false
 }
 ```
 

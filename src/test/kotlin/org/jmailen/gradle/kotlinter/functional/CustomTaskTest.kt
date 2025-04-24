@@ -1,5 +1,6 @@
 package org.jmailen.gradle.kotlinter.functional
 
+import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.jmailen.gradle.kotlinter.functional.utils.editorConfig
 import org.jmailen.gradle.kotlinter.functional.utils.kotlinClass
@@ -255,5 +256,50 @@ class CustomTaskTest : WithGradleTest.Kotlin() {
             assertEquals(TaskOutcome.SUCCESS, task(":ktLintWithReports")?.outcome)
             assertTrue(projectRoot.resolve("build/lint-report.txt").exists())
         }
+    }
+
+    @Test
+    fun `ktLint custom task works without kotlin plugin applied`() {
+        // Create a new project directory without the kotlin plugin
+        val noKotlinProjectDir = File(testProjectDir.parentFile, "no-kotlin-project").apply {
+            mkdirs()
+        }
+
+        noKotlinProjectDir.resolve("settings.gradle") {
+            writeText(settingsFile)
+        }
+
+        noKotlinProjectDir.resolve("build.gradle") {
+            // language=groovy
+            val buildScript =
+                """
+                plugins {
+                    // No kotlin plugin applied
+                    id 'org.jmailen.kotlinter'
+                }
+                $repositories
+                
+                import org.jmailen.gradle.kotlinter.tasks.FormatTask
+                
+                task customFormatTask(type: FormatTask) {
+                    source files('src')
+                }
+                """
+            writeText(buildScript)
+        }
+
+        noKotlinProjectDir.resolve("src/main/kotlin/Simple.kt") {
+            writeText(kotlinClass("Simple"))
+        }
+
+        // Create a custom Gradle runner for this specific test
+        val runner = GradleRunner.create()
+            .withProjectDir(noKotlinProjectDir)
+            .withArguments("customFormatTask", "--stacktrace")
+            .withPluginClasspath()
+            .forwardOutput()
+
+        val result = runner.build()
+        assertEquals(TaskOutcome.SUCCESS, result.task(":customFormatTask")?.outcome)
     }
 }

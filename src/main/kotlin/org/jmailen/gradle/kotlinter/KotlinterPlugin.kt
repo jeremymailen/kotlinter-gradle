@@ -35,6 +35,12 @@ class KotlinterPlugin : Plugin<Project> {
             registerPrePushHookTask()
         }
 
+        // Configure all tasks including custom user tasks regardless of which plugins are applied
+        // This ensures that custom tasks work even without a Kotlin plugin
+        tasks.withType(ConfigurableKtLintTask::class.java).configureEach { task ->
+            task.ktlintClasspath.from(ktlintConfiguration)
+        }
+
         // for known kotlin plugins, register tasks by convention.
         extendablePlugins.forEach { (pluginId, sourceResolver) ->
             pluginManager.withPlugin(pluginId) {
@@ -42,11 +48,6 @@ class KotlinterPlugin : Plugin<Project> {
                 val formatKotlin = registerParentFormatTask()
 
                 registerSourceSetTasks(kotlinterExtension, sourceResolver, lintKotlin, formatKotlin)
-
-                // Configure all tasks including custom user tasks
-                tasks.withType(ConfigurableKtLintTask::class.java).configureEach { task ->
-                    task.ktlintClasspath.from(ktlintConfiguration)
-                }
             }
         }
     }
@@ -69,12 +70,21 @@ class KotlinterPlugin : Plugin<Project> {
             isCanBeConsumed = false
             isVisible = false
 
-            val dependencyProvider = provider {
-                // Even though we don't use CLI, it bundles all the runtime dependencies we need.
-                val ktlintVersion = kotlinterExtension.ktlintVersion
-                this@createKtLintConfiguration.dependencies.create("com.pinterest.ktlint:ktlint-cli:$ktlintVersion")
+            // Use individual ktlint dependencies rather than the CLI to avoid variant selection issues
+            val ktlintVersion = kotlinterExtension.ktlintVersion
+            val deps = listOf(
+                "com.pinterest.ktlint:ktlint-rule-engine:$ktlintVersion",
+                "com.pinterest.ktlint:ktlint-ruleset-standard:$ktlintVersion",
+                "com.pinterest.ktlint:ktlint-cli-reporter-core:$ktlintVersion",
+                "com.pinterest.ktlint:ktlint-cli-reporter-plain:$ktlintVersion",
+                "com.pinterest.ktlint:ktlint-cli-reporter-html:$ktlintVersion",
+                "com.pinterest.ktlint:ktlint-cli-reporter-checkstyle:$ktlintVersion",
+                "com.pinterest.ktlint:ktlint-cli-reporter-json:$ktlintVersion",
+                "com.pinterest.ktlint:ktlint-cli-reporter-sarif:$ktlintVersion",
+            )
+            deps.forEach { dep ->
+                dependencies.add(project.dependencies.create(dep))
             }
-            dependencies.addLater(dependencyProvider)
         }
         return configuration
     }

@@ -17,6 +17,7 @@ tasks.register("customFormatTask", org.jmailen.gradle.kotlinter.tasks.FormatTask
     group = "formatting"
     description = "Format Kotlin code with a custom task"
     source(fileTree("src"))
+    report.set(layout.buildDirectory.file("reports/ktlint/custom-format.txt"))
 }
 
 // Create a custom lint task
@@ -27,8 +28,7 @@ tasks.register("customLintTask", org.jmailen.gradle.kotlinter.tasks.LintTask::cl
     ignoreLintFailures.set(true) // Ignore failures to ensure report is generated
     reports.set(
         mapOf(
-            "plain" to layout.buildDirectory.file("reports/ktlint/custom-lint.txt").get().asFile,
-            "checkstyle" to layout.buildDirectory.file("reports/ktlint/custom-lint.xml").get().asFile
+            "plain" to layout.buildDirectory.file("reports/ktlint/custom-lint.txt").get().asFile
         )
     )
 }

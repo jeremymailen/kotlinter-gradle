@@ -174,13 +174,13 @@ jobs:
           cd test-project-no-kotlin-plugin/build/reports/ktlint
           # Debug: Show file content to diagnose test issues
           echo "--- custom-lint.txt content ---"
-          cat custom-lint.txt || echo "File does not exist"
+          cat custom-format.txt || echo "File does not exist"
           echo "--- Directory listing ---"
           ls -la
           # Verify specific issues were found/fixed
-          grep 'op-spacing' custom-lint.txt | grep -q 'TestClass.kt:7'
-          grep 'no-multi-spaces' custom-lint.txt | grep -q 'TestClass.kt:7'
-          grep 'paren-spacing' custom-lint.txt | grep -q 'TestClass.kt:10'
+          grep 'op-spacing' custom-format.txt | grep -q 'TestClass.kt:7'
+          grep 'no-multi-spaces' custom-format.txt | grep -q 'TestClass.kt:7'
+          grep 'paren-spacing' custom-format.txt | grep -q 'TestClass.kt:10'
 
       - name: Upload reports
         if: ${{ failure() }}

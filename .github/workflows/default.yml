@@ -172,6 +172,11 @@ jobs:
       - name: Assert fixes
         run: |
           cd test-project-no-kotlin-plugin/build/reports/ktlint
+          # Debug: Show file content to diagnose test issues
+          echo "--- custom-lint.txt content ---"
+          cat custom-lint.txt || echo "File does not exist"
+          echo "--- Directory listing ---"
+          ls -la
           # Verify specific issues were found/fixed
           grep 'op-spacing' custom-lint.txt | grep -q 'TestClass.kt:7'
           grep 'no-multi-spaces' custom-lint.txt | grep -q 'TestClass.kt:7'

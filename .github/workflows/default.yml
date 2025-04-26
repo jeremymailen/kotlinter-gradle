@@ -141,3 +141,44 @@ jobs:
         with:
           name: "test-project-android-reports-${{ matrix.gradle }}-${{ matrix.java }}-${{ matrix.agp }}"
           path: "${{ github.workspace }}/**/build/reports/ktlint"
+
+  integration-tests-no-kotlin-plugin:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+        gradle: [ current ]
+        java: [ 21 ]
+
+    name: '[${{ matrix.os }}] No Kotlin Plugin, Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: ${{ matrix.java }}
+
+      - uses: gradle/gradle-build-action@v3
+        with:
+          build-root-directory: test-project-no-kotlin-plugin
+          gradle-version: ${{ matrix.gradle }}
+          arguments: customFormatTask customLintTask
+
+      - name: Assert fixes
+        run: |
+          cd test-project-no-kotlin-plugin/build/reports/ktlint
+          grep 'op-spacing' custom-format.txt | grep -q 'TestClass.kt:7'
+          grep 'no-multi-spaces' custom-format.txt | grep -q 'TestClass.kt:7'
+          grep 'paren-spacing' custom-format.txt | grep -q 'TestClass.kt:10'
+
+      - name: Upload reports
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: "test-project-no-kotlin-plugin-reports-${{ matrix.os }}-${{ matrix.gradle }}-${{ matrix.java }}"
+          path: "${{ github.workspace }}/**/build/reports/ktlint"

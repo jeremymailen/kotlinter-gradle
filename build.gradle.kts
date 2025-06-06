@@ -65,9 +65,9 @@ kotlin {
 }
 
 tasks {
-    val generateVersionProperties = register("generateVersionProperties") {
+    val generateKotlinterProperties = register("generateKotlinterProperties") {
         val projectVersion = version
-        val propertiesFile = File(sourceSets.main.get().output.resourcesDir, "version.properties")
+        val propertiesFile = File(sourceSets.main.get().output.resourcesDir, "kotlinter.properties")
         inputs.property("projectVersion", projectVersion)
         outputs.file(propertiesFile)
 
@@ -82,7 +82,7 @@ tasks {
     }
 
     processResources {
-        dependsOn(generateVersionProperties)
+        dependsOn(generateKotlinterProperties)
     }
 
     withType<JavaCompile>().configureEach {

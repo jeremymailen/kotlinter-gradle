@@ -6,7 +6,7 @@ val versionProperties by lazy { VersionProperties() }
 
 class VersionProperties : Properties() {
     init {
-        load(this.javaClass.getResourceAsStream("/version.properties"))
+        load(this.javaClass.getResourceAsStream("/kotlinter.properties"))
     }
 
     fun version(): String = getProperty("version")

@@ -52,12 +52,14 @@ dependencies {
     compileOnly(libs.bundles.ktlint.reporters)
     compileOnly(libs.bundles.ktlint.rulesets)
 
+    testImplementation(libs.commons.io)
+    testImplementation(libs.mockito.kotlin)
+
     testImplementation(libs.bundles.ktlint.engine)
     testImplementation(libs.bundles.ktlint.reporters)
     testImplementation(libs.bundles.ktlint.rulesets)
-    testImplementation(libs.bundles.junit.jupiter)
-    testImplementation(libs.commons.io)
-    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.junit.jupiter)
+    testRuntimeOnly(libs.junit.jupiter.platform)
 }
 
 kotlin {

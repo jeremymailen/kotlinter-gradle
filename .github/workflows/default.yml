@@ -49,7 +49,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, windows-latest ]
-        gradle: [ 8.4, current, release-candidate ]
+        gradle: [ 8.4, current ] # excluding release-candidate since 9.x drops support for Java < 17
         java: [ 11, 17, 21 ]
 
     name: '[${{ matrix.os }}] Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}'

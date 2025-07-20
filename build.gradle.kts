@@ -88,13 +88,13 @@ tasks {
     }
 
     withType<JavaCompile>().configureEach {
-        options.release.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
+        options.release.set(JavaVersion.VERSION_11.majorVersion.toInt())
     }
     withType<KotlinJvmCompile>().configureEach {
         compilerOptions {
-            apiVersion.set(KotlinVersion.KOTLIN_1_8)
-            languageVersion.set(KotlinVersion.KOTLIN_1_8)
-            jvmTarget.set(JvmTarget.JVM_1_8)
+            apiVersion.set(KotlinVersion.KOTLIN_2_0)
+            languageVersion.set(KotlinVersion.KOTLIN_2_0)
+            jvmTarget.set(JvmTarget.JVM_11)
         }
     }
     withType<Test>().configureEach {

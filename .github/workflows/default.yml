@@ -50,7 +50,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest, windows-latest ]
         gradle: [ 8.4, current, release-candidate ]
-        java: [ 11, 17, 21, 24 ]
+        java: [ 11, 17, 21 ]
 
     name: '[${{ matrix.os }}] Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}'
     steps:

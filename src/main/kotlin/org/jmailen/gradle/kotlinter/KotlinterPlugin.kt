@@ -29,25 +29,34 @@ class KotlinterPlugin : Plugin<Project> {
 
     override fun apply(project: Project) = with(project) {
         val kotlinterExtension = extensions.create("kotlinter", KotlinterExtension::class.java)
-        val ktlintConfiguration = createKtLintConfiguration(kotlinterExtension)
-
-        if (this == rootProject) {
-            registerPrePushHookTask()
+        val ktlintConfiguration = configurations.maybeCreate(KTLINT_CONFIGURATION_NAME).apply {
+            isCanBeResolved = true
+            isCanBeConsumed = false
+            isVisible = false
         }
 
-        // Configure all tasks including custom user tasks regardless of which plugins are applied
-        // This ensures that custom tasks work even without a Kotlin plugin
-        tasks.withType(ConfigurableKtLintTask::class.java).configureEach { task ->
-            task.ktlintClasspath.from(ktlintConfiguration)
-        }
+        afterEvaluate {
+            // kotlinterExtension settings are now resolved
+            it.configureKtLintConfiguration(ktlintConfiguration, kotlinterExtension.ktlintVersion)
 
-        // for known kotlin plugins, register tasks by convention.
-        extendablePlugins.forEach { (pluginId, sourceResolver) ->
-            pluginManager.withPlugin(pluginId) {
-                val lintKotlin = registerParentLintTask()
-                val formatKotlin = registerParentFormatTask()
+            if (this == rootProject) {
+                registerPrePushHookTask()
+            }
 
-                registerSourceSetTasks(kotlinterExtension, sourceResolver, lintKotlin, formatKotlin)
+            // for known kotlin plugins, register tasks by convention.
+            extendablePlugins.forEach { (pluginId, sourceResolver) ->
+                pluginManager.withPlugin(pluginId) {
+                    val lintKotlin = registerParentLintTask()
+                    val formatKotlin = registerParentFormatTask()
+
+                    registerSourceSetTasks(kotlinterExtension, sourceResolver, lintKotlin, formatKotlin)
+                }
+            }
+
+            // Configure all tasks including custom user tasks regardless of which plugins are applied
+            // This ensures that custom tasks work even without a Kotlin plugin
+            tasks.withType(ConfigurableKtLintTask::class.java).configureEach { task ->
+                task.ktlintClasspath.from(ktlintConfiguration)
             }
         }
     }
@@ -64,29 +73,21 @@ class KotlinterPlugin : Plugin<Project> {
         it.description = "Formats the Kotlin source files."
     }
 
-    private fun Project.createKtLintConfiguration(kotlinterExtension: KotlinterExtension): Configuration {
-        val configuration = configurations.maybeCreate(KTLINT_CONFIGURATION_NAME).apply {
-            isCanBeResolved = true
-            isCanBeConsumed = false
-            isVisible = false
-
-            // Use individual ktlint dependencies rather than the CLI to avoid variant selection issues
-            val ktlintVersion = kotlinterExtension.ktlintVersion
-            val deps = listOf(
-                "com.pinterest.ktlint:ktlint-rule-engine:$ktlintVersion",
-                "com.pinterest.ktlint:ktlint-ruleset-standard:$ktlintVersion",
-                "com.pinterest.ktlint:ktlint-cli-reporter-core:$ktlintVersion",
-                "com.pinterest.ktlint:ktlint-cli-reporter-plain:$ktlintVersion",
-                "com.pinterest.ktlint:ktlint-cli-reporter-html:$ktlintVersion",
-                "com.pinterest.ktlint:ktlint-cli-reporter-checkstyle:$ktlintVersion",
-                "com.pinterest.ktlint:ktlint-cli-reporter-json:$ktlintVersion",
-                "com.pinterest.ktlint:ktlint-cli-reporter-sarif:$ktlintVersion",
-            )
-            deps.forEach { dep ->
-                dependencies.add(project.dependencies.create(dep))
-            }
+    private fun Project.configureKtLintConfiguration(ktlintConfiguration: Configuration, ktlintVersion: String) {
+        // Use individual ktlint dependencies rather than the CLI to avoid variant selection issues
+        val deps = listOf(
+            "com.pinterest.ktlint:ktlint-rule-engine:$ktlintVersion",
+            "com.pinterest.ktlint:ktlint-ruleset-standard:$ktlintVersion",
+            "com.pinterest.ktlint:ktlint-cli-reporter-core:$ktlintVersion",
+            "com.pinterest.ktlint:ktlint-cli-reporter-plain:$ktlintVersion",
+            "com.pinterest.ktlint:ktlint-cli-reporter-html:$ktlintVersion",
+            "com.pinterest.ktlint:ktlint-cli-reporter-checkstyle:$ktlintVersion",
+            "com.pinterest.ktlint:ktlint-cli-reporter-json:$ktlintVersion",
+            "com.pinterest.ktlint:ktlint-cli-reporter-sarif:$ktlintVersion",
+        )
+        deps.forEach { dep ->
+            ktlintConfiguration.dependencies.add(project.dependencies.create(dep))
         }
-        return configuration
     }
 
     private fun Project.registerSourceSetTasks(

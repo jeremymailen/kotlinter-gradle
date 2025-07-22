@@ -10,4 +10,5 @@ dependencies {
 kotlinter {
     reporters = arrayOf("plain", "checkstyle")
     ignoreLintFailures = true
+    ktlintVersion = "1.6.0"
 }

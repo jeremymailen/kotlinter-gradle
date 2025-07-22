@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.2.0"
-ktlint = "1.6.0"
+ktlint = "1.7.1"
 android-tools = "7.4.2"
 junit = "5.13.3"
 mockito = "4.1.0"

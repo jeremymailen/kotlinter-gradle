@@ -44,6 +44,8 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
                         }
                         
                         android {
+                            namespace = "com.example"
+                        
                             compileSdkVersion 31
                             defaultConfig {
                                 minSdkVersion 23
@@ -72,16 +74,16 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
                 resolve("src/main/AndroidManifest.xml") {
                     writeText(androidManifest)
                 }
-                resolve("src/main/kotlin/MainSourceSet.kt") {
+                resolve("src/main/kotlin/com/example/MainSourceSet.kt") {
                     writeText(kotlinClass("MainSourceSet"))
                 }
-                resolve("src/debug/kotlin/DebugSourceSet.kt") {
+                resolve("src/debug/kotlin/com/example/DebugSourceSet.kt") {
                     writeText(kotlinClass("DebugSourceSet"))
                 }
-                resolve("src/test/kotlin/TestSourceSet.kt") {
+                resolve("src/test/kotlin/com/example/TestSourceSet.kt") {
                     writeText(kotlinClass("TestSourceSet"))
                 }
-                resolve("src/customFolder/kotlin/CustomSourceSet.kt") {
+                resolve("src/customFolder/kotlin/com/example/CustomSourceSet.kt") {
                     writeText(kotlinClass("CustomSourceSet"))
                 }
             }

@@ -49,7 +49,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, windows-latest ]
-        gradle: [ 8.4, current ] # excluding release-candidate since 9.x drops support for Java < 17
+        gradle: [ 8.4, 8.14.3 ] # excluding 9.x which does not support for Java < 17
         java: [ 11, 17, 21 ]
 
     name: '[${{ matrix.os }}] Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}'
@@ -88,7 +88,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        gradle: [ current ]
+        gradle: [ 8.14.3 ]
         java: [ 21 ]
         agp: [7.4.2, 8.5.2, 8.11.1]
 
@@ -130,7 +130,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, windows-latest ]
-        gradle: [ current ]
+        gradle: [ 8.14.3 ]
         java: [ 21 ]
 
     name: '[${{ matrix.os }}] No Kotlin Plugin, Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}'

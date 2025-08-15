@@ -2,6 +2,8 @@ package org.jmailen.gradle.kotlinter.functional.utils
 
 // language=kotlin
 internal fun kotlinClass(className: String) = """
+    package com.example
+
     object $className
     
 """.trimIndent()

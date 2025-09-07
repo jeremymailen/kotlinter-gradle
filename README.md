@@ -206,11 +206,11 @@ If you need to exclude at the src directory level, you can use a syntax like the
 
 ```kotlin
 tasks.withType<LintTask> {
-    this.source = this.source.minus(fileTree("src/generated")).asFileTree
+    exclude { it.file.path.contains("/src/generated") }
 }
 
 tasks.withType<FormatTask> {
-    this.source = this.source.minus(fileTree("src/generated")).asFileTree
+    exclude { it.file.path.contains("/src/generated") }
 }
 ```
 

@@ -20,5 +20,5 @@ tasks.withType<LintTask> {
 }
 
 tasks.withType<FormatTask> {
-    exclude { it.file.path.contains("src/main/kotlin/generated") }
+    exclude { it.file.path.contains("/src/main/kotlin/generated") }
 }

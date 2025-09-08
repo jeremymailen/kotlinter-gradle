@@ -221,7 +221,7 @@ tasks.withType<FormatTask> {
 
 ```groovy
 tasks.named("lintKotlinMain") {
-  source = source - fileTree("$buildDir/generated")
+    exclude { it.file.path.contains("/src/generated") }
 }
 ```
 

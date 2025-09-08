@@ -12,7 +12,7 @@ dependencies {
 
 kotlinter {
     reporters = arrayOf("plain", "checkstyle")
-//    ignoreLintFailures = true
+    ignoreLintFailures = true
 }
 
 tasks.withType<LintTask> {

@@ -19,7 +19,7 @@ jobs:
           java-version: 21
 
       - name: Gradle wrapper validation
-        uses: gradle/actions/wrapper-validation@v4
+        uses: gradle/actions/wrapper-validation@v5
 
       - name: ./gradlew publishPlugins
         uses: gradle/gradle-build-action@v3

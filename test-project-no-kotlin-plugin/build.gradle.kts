@@ -6,7 +6,7 @@ plugins {
 
 // Configure Kotlinter
 configure<org.jmailen.gradle.kotlinter.KotlinterExtension> {
-    ktlintVersion = "1.5.0"
+    ktlintVersion = "1.7.1"
     ignoreFormatFailures = true
     ignoreLintFailures = false
     reporters = arrayOf("plain", "checkstyle")

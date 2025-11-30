@@ -15,7 +15,7 @@ jobs:
         os: [ ubuntu-latest, windows-latest ]
     name: '[${{ matrix.os }}] build plugin'
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Set up Java
         uses: actions/setup-java@v5
@@ -54,7 +54,7 @@ jobs:
 
     name: '[${{ matrix.os }}] Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}'
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -94,7 +94,7 @@ jobs:
 
     name: '[android] Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}, AGP: ${{ matrix.agp }}'
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -135,7 +135,7 @@ jobs:
 
     name: '[${{ matrix.os }}] No Kotlin Plugin, Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}'
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 

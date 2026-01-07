@@ -2,7 +2,7 @@
 kotlin = "2.3.0"
 ktlint = "1.8.0"
 android-tools = "8.13.2"
-junit = "5.13.4"
+junit = "6.0.2"
 mockito = "6.1.0"
 commons-io = "2.21.0"
 gradle-publish = "2.0.0"

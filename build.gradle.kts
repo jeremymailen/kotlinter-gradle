@@ -22,7 +22,7 @@ val githubUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
 
-version = "5.3.0"
+version = "5.4.0"
 group = "org.jmailen.gradle"
 description = projectDescription
 
@@ -46,7 +46,7 @@ configurations {
 
 dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin")
-    compileOnly(libs.android.tools.gradle)
+    compileOnly(libs.android.tools.gradle.api)
 
     compileOnly(libs.bundles.ktlint.engine)
     compileOnly(libs.bundles.ktlint.reporters)

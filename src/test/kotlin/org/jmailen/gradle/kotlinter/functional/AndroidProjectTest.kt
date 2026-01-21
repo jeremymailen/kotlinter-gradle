@@ -31,6 +31,14 @@ internal class AndroidProjectTest : WithGradleTest.Android() {
                     """.trimIndent()
                 writeText(buildScript)
             }
+            resolve("gradle.properties") {
+                writeText(
+                    """
+                    android.builtInKotlin=false
+                    android.newDsl=false
+                    """.trimIndent(),
+                )
+            }
             androidModuleRoot = resolve("androidproject") {
                 resolve("build.gradle") {
                     // language=groovy

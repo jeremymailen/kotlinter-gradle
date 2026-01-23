@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/jeremymailen/kotlinter-gradle/workflows/Build%20Project/badge.svg)](https://github.com/jeremymailen/kotlinter-gradle/actions)
 
-![Current release](https://img.shields.io/github/v/release/jeremymailen/kotlinter-gradle)
+[![Current release](https://img.shields.io/github/v/release/jeremymailen/kotlinter-gradle)](https://github.com/jeremymailen/kotlinter-gradle/releases)
 
 Painless Gradle plugin for linting and formatting Kotlin source files using the awesome [ktlint](https://ktlint.github.io) engine.
 

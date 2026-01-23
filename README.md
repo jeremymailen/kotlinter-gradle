@@ -1,7 +1,8 @@
 # Kotlinter Gradle
 
 [![Build Status](https://github.com/jeremymailen/kotlinter-gradle/workflows/Build%20Project/badge.svg)](https://github.com/jeremymailen/kotlinter-gradle/actions)
-[![Latest Version](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/org/jmailen/gradle/kotlinter-gradle/maven-metadata.xml?label=gradle)](https://plugins.gradle.org/plugin/org.jmailen.kotlinter)
+
+![Current release](https://img.shields.io/github/v/release/jeremymailen/kotlinter-gradle)
 
 Painless Gradle plugin for linting and formatting Kotlin source files using the awesome [ktlint](https://ktlint.github.io) engine.
 
@@ -18,6 +19,8 @@ For documentation on version 4x and earlier, see [README-4x.md](README-4x.md).
 
 Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jmailen.kotlinter
 
+Fill `<release>` below with the current release value or your desired version.
+
 #### Single module
 
 <details open>
@@ -25,7 +28,7 @@ Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jm
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "5.3.0"
+    id("org.jmailen.kotlinter") version "<release>"
 }
 ```
 
@@ -36,7 +39,7 @@ plugins {
 
 ```groovy
 plugins {
-    id "org.jmailen.kotlinter" version "5.3.0"
+    id "org.jmailen.kotlinter" version "<release>"
 }
 ```
 
@@ -50,7 +53,7 @@ Root `build.gradle.kts`
 
 ```kotlin
 plugins {
-    id("org.jmailen.kotlinter") version "5.3.0" apply false
+    id("org.jmailen.kotlinter") version "<release>" apply false
 }
 ```
 
@@ -70,7 +73,7 @@ Root `build.gradle`
 
 ```groovy
 plugins {
-    id 'org.jmailen.kotlinter' version "5.3.0" apply false
+    id 'org.jmailen.kotlinter' version "<release>" apply false
 }
 ```
 

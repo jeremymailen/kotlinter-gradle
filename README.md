@@ -19,7 +19,7 @@ For documentation on version 4x and earlier, see [README-4x.md](README-4x.md).
 
 Available on the Gradle Plugins Portal: https://plugins.gradle.org/plugin/org.jmailen.kotlinter
 
-Fill `<release>` below with the current release value or your desired version.
+Replace `<release>` in the examples below with the [current release](https://github.com/jeremymailen/kotlinter-gradle/releases/latest) version or your desired version.
 
 #### Single module
 

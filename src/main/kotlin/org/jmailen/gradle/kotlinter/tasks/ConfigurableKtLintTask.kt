@@ -39,16 +39,16 @@ abstract class ConfigurableKtLintTask(projectLayout: ProjectLayout, objectFactor
         inputChanges.getFileChanges(editorconfigFiles).map(FileChange::getFile)
 }
 
-internal inline fun <reified T> ObjectFactory.property(default: T? = null): Property<T> = property(T::class.java).apply {
+internal inline fun <reified T : Any> ObjectFactory.property(default: T? = null): Property<T> = property(T::class.java).apply {
     set(default)
 }
 
-internal inline fun <reified T> ObjectFactory.listProperty(default: Iterable<T> = emptyList()): ListProperty<T> =
+internal inline fun <reified T : Any> ObjectFactory.listProperty(default: Iterable<T> = emptyList()): ListProperty<T> =
     listProperty(T::class.java).apply {
         set(default)
     }
 
-internal inline fun <reified K, reified V> ObjectFactory.mapProperty(default: Map<K, V> = emptyMap()): MapProperty<K, V> =
+internal inline fun <reified K : Any, reified V : Any> ObjectFactory.mapProperty(default: Map<K, V> = emptyMap()): MapProperty<K, V> =
     mapProperty(K::class.java, V::class.java).apply {
         set(default)
     }

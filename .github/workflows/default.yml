@@ -88,9 +88,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        gradle: [ 8.14.3 ]
+        gradle: [ 9.3.0 ] # AGP 9 requires Gradle 9.1.0 or newer
         java: [ 21 ]
-        agp: [7.4.2, 8.5.2, 8.11.1]
+        agp: [ 8.5.2, 8.13.2, 9.0.0 ]
 
     name: '[android] Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}, AGP: ${{ matrix.agp }}'
     steps:

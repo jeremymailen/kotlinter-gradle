@@ -9,10 +9,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
 
-internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
+internal class AndroidProjectWithBuiltInKotlinTest : WithGradleTest.Android() {
 
     private lateinit var androidModuleRoot: File
-    private lateinit var kotlinModuleRoot: File
 
     @BeforeEach
     fun setUp() {
@@ -32,14 +31,6 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
                     """.trimIndent()
                 writeText(buildScript)
             }
-            resolve("gradle.properties") {
-                writeText(
-                    """
-                    android.builtInKotlin=false
-                    android.newDsl=false
-                    """.trimIndent(),
-                )
-            }
             androidModuleRoot = resolve("androidproject") {
                 resolve("build.gradle") {
                     // language=groovy
@@ -47,22 +38,15 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
                         """
                         plugins {
                             id 'com.android.library'
-                            id 'kotlin-android'
                             id 'org.jmailen.kotlinter'
                         }
                         
                         android {
                             namespace = "com.example"
-                        
+                             
                             compileSdkVersion 31
                             defaultConfig {
                                 minSdkVersion 23
-                            }
-                            sourceSets {
-                                main.java.srcDirs += "src/main/kotlin"
-                                test.java.srcDirs += "src/test/kotlin"
-                                debug.java.srcDirs += "src/debug/kotlin"
-                                flavorOne.java.srcDirs = ['src/customFolder/kotlin']
                             }
                             
                             flavorDimensions 'customFlavor'
@@ -91,69 +75,21 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
                 resolve("src/test/kotlin/com/example/TestSourceSet.kt") {
                     writeText(kotlinClass("TestSourceSet"))
                 }
-                resolve("src/customFolder/kotlin/com/example/CustomSourceSet.kt") {
-                    writeText(kotlinClass("CustomSourceSet"))
-                }
-            }
-            kotlinModuleRoot = resolve("kotlinproject") {
-                resolve("build.gradle") {
-                    // language=groovy
-                    val kotlinBuildScript =
-                        """
-                        plugins {
-                            id 'kotlin'
-                            id 'org.jmailen.kotlinter'
-                        }
-                        
-                        sourceSets {
-                            main.kotlin.srcDirs += "random/path"
-                            individuallyCustomized {
-                                java.srcDirs = ["src/debug/kotlin"]
-                            }
-                        }
-                        """.trimIndent()
-                    writeText(kotlinBuildScript)
-                }
-                resolve("random/path/MainSourceSet.kt") {
-                    writeText(kotlinClass("MainSourceSet"))
-                }
-                resolve("src/test/kotlin/TestSourceSet.kt") {
-                    writeText(kotlinClass("TestSourceSet"))
-                }
-                resolve("src/individuallyCustomized/kotlin/CustomSourceSet.kt") {
-                    writeText(kotlinClass("CustomSourceSet"))
+                resolve("src/flavorOne/kotlin/com/example/FlavorSourceSet.kt") {
+                    writeText(kotlinClass("FlavorSourceSet"))
                 }
             }
         }
     }
 
     @Test
-    fun `kotlinter detects sources in all sourcesets`() {
+    fun runsOnAndroidProject() {
         build("lintKotlin").apply {
             assertEquals(TaskOutcome.SUCCESS, task(":androidproject:lintKotlinMain")?.outcome)
             assertEquals(TaskOutcome.SUCCESS, task(":androidproject:lintKotlinDebug")?.outcome)
             assertEquals(TaskOutcome.SUCCESS, task(":androidproject:lintKotlinTest")?.outcome)
             assertEquals(TaskOutcome.SUCCESS, task(":androidproject:lintKotlinFlavorOne")?.outcome)
             assertEquals(TaskOutcome.SUCCESS, task(":androidproject:lintKotlin")?.outcome)
-            assertEquals(TaskOutcome.SUCCESS, task(":kotlinproject:lintKotlinMain")?.outcome)
-            assertEquals(TaskOutcome.SUCCESS, task(":kotlinproject:lintKotlinTest")?.outcome)
-            assertEquals(TaskOutcome.SUCCESS, task(":kotlinproject:lintKotlinIndividuallyCustomized")?.outcome)
-        }
-    }
-
-    @Test
-    fun `kotlinter becomes up-to-date on second run`() {
-        build("lintKotlin")
-
-        build("lintKotlin").apply {
-            assertEquals(TaskOutcome.UP_TO_DATE, task(":androidproject:lintKotlinMain")?.outcome)
-            assertEquals(TaskOutcome.UP_TO_DATE, task(":androidproject:lintKotlinDebug")?.outcome)
-            assertEquals(TaskOutcome.UP_TO_DATE, task(":androidproject:lintKotlinTest")?.outcome)
-            assertEquals(TaskOutcome.UP_TO_DATE, task(":androidproject:lintKotlinFlavorOne")?.outcome)
-            assertEquals(TaskOutcome.UP_TO_DATE, task(":androidproject:lintKotlin")?.outcome)
-            assertEquals(TaskOutcome.UP_TO_DATE, task(":kotlinproject:lintKotlinMain")?.outcome)
-            assertEquals(TaskOutcome.UP_TO_DATE, task(":kotlinproject:lintKotlinTest")?.outcome)
-            assertEquals(TaskOutcome.UP_TO_DATE, task(":kotlinproject:lintKotlinIndividuallyCustomized")?.outcome)
         }
     }
 
@@ -161,6 +97,6 @@ internal class ModifiedSourceSetsTest : WithGradleTest.Android() {
     private val settingsFile =
         """
         rootProject.name = 'kotlinter'
-        include 'androidproject', 'kotlinproject'
+        include 'androidproject'
         """.trimIndent()
 }

@@ -1,7 +1,7 @@
 [versions]
 kotlin = "2.3.0"
 ktlint = "1.8.0"
-android-tools = "8.13.2"
+android-tools = "9.0.0"
 junit = "5.13.4"
 mockito = "6.2.1"
 commons-io = "2.21.0"
@@ -18,7 +18,7 @@ ktlint-cli-reporter-checkstyle = { group = "com.pinterest.ktlint", name = "ktlin
 ktlint-cli-reporter-json = { group = "com.pinterest.ktlint", name = "ktlint-cli-reporter-json", version.ref = "ktlint" }
 ktlint-cli-reporter-sarif = { group = "com.pinterest.ktlint", name = "ktlint-cli-reporter-sarif", version.ref = "ktlint" }
 ktlint-ruleset-standard = { group = "com.pinterest.ktlint", name = "ktlint-ruleset-standard", version.ref = "ktlint" }
-android-tools-gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "android-tools" }
+android-tools-gradle-api = { group = "com.android.tools.build", name = "gradle-api", version.ref = "android-tools" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit" }
 junit-jupiter-platform = { group = "org.junit.platform", name= "junit-platform-launcher" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito" }

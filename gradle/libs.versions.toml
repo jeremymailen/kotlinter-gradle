@@ -6,7 +6,7 @@ junit = "5.13.4"
 mockito = "6.2.3"
 commons-io = "2.21.0"
 gradle-publish = "2.0.0"
-kotlinter-check = "5.4.0"
+kotlinter-check = "5.4.2"
 
 [libraries]
 ktlint-rule-engine = { group = "com.pinterest.ktlint", name = "ktlint-rule-engine", version.ref = "ktlint" }

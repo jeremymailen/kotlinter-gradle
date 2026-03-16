@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.3.10"
+kotlin = "2.3.20"
 ktlint = "1.8.0"
 android-tools = "9.1.0"
 junit = "5.13.4"

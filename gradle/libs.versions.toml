@@ -5,7 +5,7 @@ android-tools = "9.1.1"
 junit = "5.13.4"
 mockito = "6.3.0"
 commons-io = "2.21.0"
-gradle-publish = "2.1.0"
+gradle-publish = "2.1.1"
 kotlinter-check = "5.4.2"
 
 [libraries]

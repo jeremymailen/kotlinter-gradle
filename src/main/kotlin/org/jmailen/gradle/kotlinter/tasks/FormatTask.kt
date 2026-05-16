@@ -16,7 +16,7 @@ import org.jmailen.gradle.kotlinter.support.LintFailure
 import org.jmailen.gradle.kotlinter.tasks.format.FormatWorkerAction
 import javax.inject.Inject
 
-open class FormatTask @Inject constructor(
+abstract class FormatTask @Inject constructor(
     private val workerExecutor: WorkerExecutor,
     objectFactory: ObjectFactory,
     private val projectLayout: ProjectLayout,

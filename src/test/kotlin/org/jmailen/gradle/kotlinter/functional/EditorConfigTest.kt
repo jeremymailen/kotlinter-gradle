@@ -30,6 +30,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                         }
                         $repositories
                         """.trimIndent()
+
                     KotlinterConfig.FAIL_FORMAT_FAILURES ->
                         """
                         plugins {
@@ -48,6 +49,7 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                             ignoreFormatFailures = false
                         }
                         """.trimIndent()
+
                     KotlinterConfig.IGNORE_LINT_FAILURES ->
                         """
                         plugins {

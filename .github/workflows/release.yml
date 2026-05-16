@@ -10,7 +10,7 @@ jobs:
     name: Publish plugin
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Set up Java
         uses: actions/setup-java@v5
@@ -19,7 +19,7 @@ jobs:
           java-version: 21
 
       - name: Gradle wrapper validation
-        uses: gradle/actions/wrapper-validation@v5
+        uses: gradle/actions/wrapper-validation@v6
 
       - name: ./gradlew publishPlugins
         uses: gradle/gradle-build-action@v3

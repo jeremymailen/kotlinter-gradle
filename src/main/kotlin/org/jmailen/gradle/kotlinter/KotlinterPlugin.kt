@@ -24,7 +24,7 @@ class KotlinterPlugin : Plugin<Project> {
         "org.jetbrains.kotlin.jvm" to KotlinSourceSetApplier,
         "org.jetbrains.kotlin.multiplatform" to KotlinSourceSetApplier,
         "org.jetbrains.kotlin.js" to KotlinSourceSetApplier,
-        "kotlin-android" to AndroidSourceSetApplier,
+        "com.android.base" to AndroidSourceSetApplier,
     )
 
     override fun apply(project: Project) = with(project) {
@@ -32,7 +32,6 @@ class KotlinterPlugin : Plugin<Project> {
         val ktlintConfiguration = configurations.maybeCreate(KTLINT_CONFIGURATION_NAME).apply {
             isCanBeResolved = true
             isCanBeConsumed = false
-            isVisible = false
         }
 
         afterEvaluate {

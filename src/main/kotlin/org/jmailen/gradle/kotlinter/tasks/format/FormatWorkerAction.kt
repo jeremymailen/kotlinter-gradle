@@ -1,6 +1,7 @@
 package org.jmailen.gradle.kotlinter.tasks.format
 
 import com.pinterest.ktlint.rule.engine.api.Code
+import com.pinterest.ktlint.rule.engine.core.api.AutocorrectDecision
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
@@ -41,18 +42,19 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
                     return@forEach
                 }
 
-                val formattedText = ktlintEngine.format(Code.fromFile(file)) { error, corrected ->
-                    val msg = when (corrected) {
+                val formattedText = ktlintEngine.format(Code.fromFile(file)) { error ->
+                    val msg = when (error.canBeAutoCorrected) {
                         true -> "${file.path}:${error.line}:${error.col}: Format fixed > [${error.ruleId.value}] ${error.detail}"
                         false -> "${file.path}:${error.line}:${error.col}: Format could not fix > [${error.ruleId.value}] ${error.detail}"
                     }
-                    if (corrected) {
+                    if (error.canBeAutoCorrected) {
                         logger.warn(msg)
                     } else {
                         hasError = true
                         logger.error(msg)
                     }
                     fixes.add(msg)
+                    AutocorrectDecision.ALLOW_AUTOCORRECT
                 }
                 if (!formattedText.contentEquals(sourceText)) {
                     logger.warn("${file.path}: Format fixed")

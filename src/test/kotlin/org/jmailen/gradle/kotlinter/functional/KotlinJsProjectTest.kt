@@ -33,6 +33,7 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
                             }
                         }
                         """.trimIndent()
+
                     KotlinterConfig.FAIL_FORMAT_FAILURES ->
                         """
                         plugins {
@@ -53,6 +54,7 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
                             ignoreFormatFailures = false
                         }
                         """.trimIndent()
+
                     KotlinterConfig.IGNORE_LINT_FAILURES ->
                         """
                         plugins {

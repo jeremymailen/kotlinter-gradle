@@ -62,10 +62,6 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.platform)
 }
 
-kotlin {
-    jvmToolchain(21)
-}
-
 tasks {
     val generateKotlinterProperties = register("generateKotlinterProperties") {
         val projectVersion = version

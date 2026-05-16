@@ -5,9 +5,11 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 import org.jmailen.gradle.kotlinter.support.versionProperties
 import java.io.File
 
+@DisableCachingByDefault(because = "Installs a Git hook file outside of Gradle's output tracking")
 abstract class InstallPreCommitHookTask : InstallHookTask("pre-commit") {
     override val hookContent =
         """
@@ -18,6 +20,7 @@ abstract class InstallPreCommitHookTask : InstallHookTask("pre-commit") {
         """.trimIndent()
 }
 
+@DisableCachingByDefault(because = "Installs a Git hook file outside of Gradle's output tracking")
 abstract class InstallPrePushHookTask : InstallHookTask("pre-push") {
     override val hookContent =
         """
@@ -32,6 +35,7 @@ abstract class InstallPrePushHookTask : InstallHookTask("pre-push") {
 /**
  * Install or update a kotlinter-gradle hook.
  */
+@DisableCachingByDefault(because = "Installs a Git hook file outside of Gradle's output tracking")
 abstract class InstallHookTask(@get:Internal val hookFileName: String) : DefaultTask() {
 
     @Input

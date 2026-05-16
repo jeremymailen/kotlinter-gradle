@@ -13,6 +13,7 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SourceTask
+import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.FileChange
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
@@ -20,6 +21,7 @@ import org.gradle.workers.WorkerExecutionException
 import org.jmailen.gradle.kotlinter.KotlinterExtension.Companion.DEFAULT_IGNORE_LINT_FAILURES
 import org.jmailen.gradle.kotlinter.support.findApplicableEditorConfigFiles
 
+@DisableCachingByDefault(because = "Base class for lint and format task implementations")
 abstract class ConfigurableKtLintTask(projectLayout: ProjectLayout, objectFactory: ObjectFactory) : SourceTask() {
 
     @get:InputFiles

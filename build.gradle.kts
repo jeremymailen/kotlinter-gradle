@@ -1,3 +1,4 @@
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
@@ -62,8 +63,10 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.platform)
 }
 
-kotlin {
-    jvmToolchain(21)
+if (GradleVersion.current() >= GradleVersion.version("9.1")) {
+    kotlin {
+        jvmToolchain(25)
+    }
 }
 
 tasks {
@@ -107,7 +110,7 @@ tasks {
     }
 
     wrapper {
-        gradleVersion = "8.14.3"
+        gradleVersion = "9.5.1"
     }
 }
 

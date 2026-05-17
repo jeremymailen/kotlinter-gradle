@@ -8,6 +8,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.InputChanges
 import org.gradle.workers.WorkerExecutionException
 import org.gradle.workers.WorkerExecutor
@@ -16,6 +17,7 @@ import org.jmailen.gradle.kotlinter.support.LintFailure
 import org.jmailen.gradle.kotlinter.tasks.format.FormatWorkerAction
 import javax.inject.Inject
 
+@DisableCachingByDefault(because = "Formats source files in place")
 abstract class FormatTask @Inject constructor(
     private val workerExecutor: WorkerExecutor,
     objectFactory: ObjectFactory,

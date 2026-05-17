@@ -1,3 +1,4 @@
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
@@ -62,6 +63,12 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.platform)
 }
 
+if (GradleVersion.current() >= GradleVersion.version("9.1")) {
+    kotlin {
+        jvmToolchain(25)
+    }
+}
+
 tasks {
     val generateKotlinterProperties = register("generateKotlinterProperties") {
         val projectVersion = version
@@ -103,7 +110,7 @@ tasks {
     }
 
     wrapper {
-        gradleVersion = "9.5.0"
+        gradleVersion = "9.5.1"
     }
 }
 

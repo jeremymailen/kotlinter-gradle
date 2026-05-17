@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: 'adopt'
-          java-version: 21
+          java-version: 25
 
       - name: Gradle wrapper validation
         uses: gradle/actions/wrapper-validation@v6
@@ -48,9 +48,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, windows-latest ]
-        gradle: [ 8.4, 8.14.3 ] # excluding 9.x which does not support for Java < 17
-        java: [ 11, 17, 21 ]
+        include:
+          - os: ubuntu-latest
+            gradle: 8.14.3
+            java: 21
+          - os: windows-latest
+            gradle: 8.14.3
+            java: 21
+          - os: ubuntu-latest
+            gradle: 9.5.1
+            java: 25
+          - os: windows-latest
+            gradle: 9.5.1
+            java: 25
 
     name: '[${{ matrix.os }}] Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}'
     steps:
@@ -88,9 +98,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        gradle: [ 9.3.0 ] # AGP 9 requires Gradle 9.1.0 or newer
-        java: [ 21 ]
-        agp: [ 8.5.2, 8.13.2, 9.0.0 ]
+        include:
+          - gradle: 8.14.3
+            java: 21
+            agp: 8.13.2
+          - gradle: 9.5.1
+            java: 25
+            agp: 9.2.1
 
     name: '[android] Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}, AGP: ${{ matrix.agp }}'
     steps:
@@ -129,9 +143,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, windows-latest ]
-        gradle: [ 8.14.3 ]
-        java: [ 21 ]
+        include:
+          - os: ubuntu-latest
+            gradle: 8.14.3
+            java: 21
+          - os: windows-latest
+            gradle: 8.14.3
+            java: 21
+          - os: ubuntu-latest
+            gradle: 9.5.1
+            java: 25
+          - os: windows-latest
+            gradle: 9.5.1
+            java: 25
 
     name: '[${{ matrix.os }}] No Kotlin Plugin, Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}'
     steps:

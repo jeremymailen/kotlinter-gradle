@@ -15,6 +15,7 @@ import org.jmailen.gradle.kotlinter.support.reporterFor
 import org.jmailen.gradle.kotlinter.support.reporterPathFor
 import org.jmailen.gradle.kotlinter.support.resetEditorconfigCacheIfNeeded
 import org.jmailen.gradle.kotlinter.tasks.LintTask
+import org.jmailen.gradle.kotlinter.tasks.workerErrorMessage
 import java.io.File
 
 abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
@@ -33,9 +34,11 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
         )
         var hasError = false
 
+        var currentFile: File? = null
         try {
             reporters.onEach { it.beforeAll() }
             files.forEach { file ->
+                currentFile = file
 
                 val relativePath = file.toRelativeString(projectDirectory)
                 reporters.onEach { it.before(relativePath) }
@@ -59,7 +62,7 @@ abstract class LintWorkerAction : WorkAction<LintWorkerParameters> {
             }
             reporters.onEach { it.afterAll() }
         } catch (t: Throwable) {
-            throw KotlinterError("lint worker execution error", t)
+            throw KotlinterError(workerErrorMessage("lint", currentFile, t), t)
         }
 
         if (hasError) {

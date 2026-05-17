@@ -56,6 +56,28 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
     }
 
     @Test
+    fun `lintKotlinMain reports file path when Kotlin parsing fails`() {
+        settingsFile()
+        buildFile()
+
+        val sourceFile = kotlinSourceFile(
+            "BrokenKotlinClass.kt",
+            """
+            class BrokenKotlinClass {
+                private val =
+            }
+
+            """.trimIndent(),
+        )
+
+        buildAndFail("lintKotlinMain").apply {
+            assertTrue(output.contains("lint worker execution error while processing ${sourceFile.canonicalPath}"))
+            assertTrue(output.contains("Expecting property name or receiver type"))
+            assertEquals(FAILED, task(":lintKotlinMain")?.outcome)
+        }
+    }
+
+    @Test
     fun `lintKotlinMain succeeds when no lint errors detected`() {
         settingsFile()
         buildFile()
@@ -99,6 +121,28 @@ internal class KotlinProjectTest : WithGradleTest.Kotlin() {
                 val filePath = pathPattern.find(line)?.groups?.get(1)?.value.orEmpty()
                 assertTrue(File(filePath).exists())
             }
+        }
+    }
+
+    @Test
+    fun `formatKotlin reports file path when Kotlin parsing fails`() {
+        settingsFile()
+        buildFile()
+
+        val sourceFile = kotlinSourceFile(
+            "BrokenKotlinClass.kt",
+            """
+            class BrokenKotlinClass {
+                private val =
+            }
+
+            """.trimIndent(),
+        )
+
+        buildAndFail("formatKotlin").apply {
+            assertTrue(output.contains("format worker execution error while processing ${sourceFile.canonicalPath}"))
+            assertTrue(output.contains("Expecting property name or receiver type"))
+            assertEquals(FAILED, task(":formatKotlinMain")?.outcome)
         }
     }
 

@@ -12,6 +12,7 @@ import org.jmailen.gradle.kotlinter.support.LintFailure
 import org.jmailen.gradle.kotlinter.support.ktlintEngine
 import org.jmailen.gradle.kotlinter.support.resetEditorconfigCacheIfNeeded
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
+import org.jmailen.gradle.kotlinter.tasks.workerErrorMessage
 import java.io.File
 
 abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
@@ -29,8 +30,10 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
         val fixes = mutableListOf<String>()
 
         var hasError = false
+        var currentFile: File? = null
         try {
             files.forEach { file ->
+                currentFile = file
 
                 val sourceText = file.readText()
                 val relativePath = file.toRelativeString(projectDirectory)
@@ -62,7 +65,7 @@ abstract class FormatWorkerAction : WorkAction<FormatWorkerParameters> {
                 }
             }
         } catch (t: Throwable) {
-            throw KotlinterError("format worker execution error", t)
+            throw KotlinterError(workerErrorMessage("format", currentFile, t), t)
         }
 
         if (hasError) {

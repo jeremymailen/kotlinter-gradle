@@ -20,7 +20,7 @@ ktlint-cli-reporter-sarif = { group = "com.pinterest.ktlint", name = "ktlint-cli
 ktlint-ruleset-standard = { group = "com.pinterest.ktlint", name = "ktlint-ruleset-standard", version.ref = "ktlint" }
 android-tools-gradle-api = { group = "com.android.tools.build", name = "gradle-api", version.ref = "android-tools" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit" }
-junit-jupiter-platform = { group = "org.junit.platform", name= "junit-platform-launcher" }
+junit-jupiter-platform = { group = "org.junit.platform", name= "junit-platform-launcher", version.ref = "junit" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito" }
 commons-io = { group = "commons-io", name = "commons-io", version.ref = "commons-io" }
 

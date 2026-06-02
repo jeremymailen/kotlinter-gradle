@@ -100,6 +100,14 @@ tasks {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
+    compileTestKotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
+    }
+    compileTestJava {
+        options.release.set(JavaVersion.VERSION_17.majorVersion.toInt())
+    }
     withType<Test>().configureEach {
         useJUnitPlatform()
     }

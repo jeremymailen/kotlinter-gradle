@@ -2,7 +2,7 @@
 kotlin = "2.3.21"
 ktlint = "1.8.0"
 android-tools = "9.2.1"
-junit = "5.13.4"
+junit = "6.1.0"
 mockito = "6.3.0"
 commons-io = "2.22.0"
 gradle-publish = "2.1.1"
@@ -20,7 +20,7 @@ ktlint-cli-reporter-sarif = { group = "com.pinterest.ktlint", name = "ktlint-cli
 ktlint-ruleset-standard = { group = "com.pinterest.ktlint", name = "ktlint-ruleset-standard", version.ref = "ktlint" }
 android-tools-gradle-api = { group = "com.android.tools.build", name = "gradle-api", version.ref = "android-tools" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit" }
-junit-jupiter-platform = { group = "org.junit.platform", name= "junit-platform-launcher" }
+junit-jupiter-platform = { group = "org.junit.platform", name= "junit-platform-launcher", version.ref = "junit" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito" }
 commons-io = { group = "commons-io", name = "commons-io", version.ref = "commons-io" }
 

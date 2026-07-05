@@ -34,16 +34,10 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                     KotlinterConfig.FAIL_FORMAT_FAILURES ->
                         """
                         plugins {
-                            id 'org.jetbrains.kotlin.js'
+                            id 'kotlin'
                             id 'org.jmailen.kotlinter'
                         }
                         $repositories
-
-                        kotlin {
-                            js {
-                                nodejs()
-                            }
-                        }
 
                         kotlinter {
                             ignoreFormatFailures = false
@@ -53,16 +47,10 @@ internal class EditorConfigTest : WithGradleTest.Kotlin() {
                     KotlinterConfig.IGNORE_LINT_FAILURES ->
                         """
                         plugins {
-                            id 'org.jetbrains.kotlin.js'
+                            id 'kotlin'
                             id 'org.jmailen.kotlinter'
                         }
                         $repositories
-
-                        kotlin {
-                            js {
-                                nodejs()
-                            }
-                        }
 
                         kotlinter {
                             ignoreLintFailures = true

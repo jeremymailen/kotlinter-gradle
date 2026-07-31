@@ -230,6 +230,36 @@ tasks.named("lintKotlinMain") {
 
 </details>
 
+#### Worker JVM arguments
+
+Lint and format tasks run ktlint in a worker process. Its JVM arguments can be customized with `workerJvmArgs`:
+
+<details open>
+<summary>Kotlin</summary>
+
+```kotlin
+tasks.withType<ConfigurableKtLintTask> {
+    workerJvmArgs.add("-Xmx1g")
+}
+```
+
+</details>
+
+<details>
+<summary>Groovy</summary>
+
+```groovy
+tasks.withType(ConfigurableKtLintTask).configureEach {
+    workerJvmArgs.add '-Xmx1g'
+}
+```
+
+</details>
+
+On JDK 24+ this defaults to `--sun-misc-unsafe-memory-access=allow`, which suppresses the `sun.misc.Unsafe`
+deprecation warning printed by the Kotlin compiler embedded in ktlint. Use `add` to keep that default, or `set` to
+replace it.
+
 ### Custom Tasks
 
 If you aren't using autoconfiguration from a supported plugin or otherwise need to handle additional source code, you can create custom tasks:

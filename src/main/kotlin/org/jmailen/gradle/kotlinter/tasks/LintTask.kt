@@ -37,9 +37,7 @@ abstract class LintTask @Inject constructor(
 
     @TaskAction
     fun run(inputChanges: InputChanges) {
-        val workQueue = workerExecutor.processIsolation { config ->
-            config.classpath.setFrom(ktlintClasspath)
-        }
+        val workQueue = workerExecutor.ktlintWorkQueue()
         workQueue.submit(LintWorkerAction::class.java) { p ->
             p.name.set(name)
             p.files.from(source)

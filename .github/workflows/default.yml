@@ -24,7 +24,7 @@ jobs:
           java-version: 25
 
       - name: Gradle wrapper validation
-        uses: gradle/actions/wrapper-validation@v6.2.0
+        uses: gradle/actions/wrapper-validation@v6.3.0
 
       - name: ./gradlew assemble
         uses: gradle/gradle-build-action@v3

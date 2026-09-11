@@ -15,7 +15,7 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v6
         with:
-          distribution: 'adopt'
+          distribution: 'temurin'
           java-version: 25
 
       - name: Gradle wrapper validation

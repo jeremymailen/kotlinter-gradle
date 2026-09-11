@@ -20,7 +20,7 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v6
         with:
-          distribution: 'adopt'
+          distribution: 'temurin'
           java-version: 25
 
       - name: Gradle wrapper validation
@@ -71,7 +71,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v6
         with:
-          distribution: 'adopt'
+          distribution: 'temurin'
           java-version: ${{ matrix.java }}
 
       - uses: gradle/gradle-build-action@v3
@@ -115,7 +115,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v6
         with:
-          distribution: 'adopt'
+          distribution: 'temurin'
           java-version: ${{ matrix.java }}
 
       - uses: gradle/gradle-build-action@v3
@@ -166,7 +166,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v6
         with:
-          distribution: 'adopt'
+          distribution: 'temurin'
           java-version: ${{ matrix.java }}
 
       - uses: gradle/gradle-build-action@v3

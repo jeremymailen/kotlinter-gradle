@@ -91,6 +91,7 @@ plugins {
 
 - Kotlin -- generally compatible so long as the language features are supported by the version of ktlint selected
 - Gradle 8.4+
+- Java 17+ to run Gradle
 - Ktlint 1.0+
 
 ### Features

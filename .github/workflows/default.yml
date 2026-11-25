@@ -105,6 +105,9 @@ jobs:
           - gradle: 9.5.1
             java: 25
             agp: 9.2.1
+          - gradle: 9.9.2
+            java: 25
+            agp: 9.5.2
 
     name: '[android] Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}, AGP: ${{ matrix.agp }}'
     steps:
@@ -144,6 +147,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - os: ubuntu-latest
+            gradle: 8.4
+            java: 17
           - os: ubuntu-latest
             gradle: 8.14.3
             java: 21

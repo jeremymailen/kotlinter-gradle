@@ -22,6 +22,7 @@ val pluginId = "org.jmailen.kotlinter"
 val githubUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
+val targetJavaVersion = JavaVersion.VERSION_17
 
 version = "5.7.0"
 group = "org.jmailen.gradle"
@@ -91,22 +92,14 @@ tasks {
     }
 
     withType<JavaCompile>().configureEach {
-        options.release.set(JavaVersion.VERSION_11.majorVersion.toInt())
+        options.release.set(targetJavaVersion.majorVersion.toInt())
     }
     withType<KotlinJvmCompile>().configureEach {
         compilerOptions {
             apiVersion.set(KotlinVersion.KOTLIN_2_0)
             languageVersion.set(KotlinVersion.KOTLIN_2_0)
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.fromTarget(targetJavaVersion.majorVersion))
         }
-    }
-    compileTestKotlin {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
-        }
-    }
-    compileTestJava {
-        options.release.set(JavaVersion.VERSION_17.majorVersion.toInt())
     }
     withType<Test>().configureEach {
         useJUnitPlatform()
@@ -137,6 +130,8 @@ gradlePlugin {
 }
 
 java {
+    sourceCompatibility = targetJavaVersion
+    targetCompatibility = targetJavaVersion
     withSourcesJar()
 }
 

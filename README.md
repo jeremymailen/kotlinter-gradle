@@ -90,8 +90,9 @@ plugins {
 ### Compatibility
 
 - Kotlin -- generally compatible so long as the language features are supported by the version of ktlint selected
-- Gradle 8.4+
-- Ktlint 1.0+
+- Gradle 9.0+
+- Java 17+ to run Gradle
+- Ktlint 2.0+
 
 ### Features
 
@@ -156,7 +157,7 @@ Options are configured in the `kotlinter` extension. Defaults shown (you may omi
 
 ```kotlin
 kotlinter {
-    ktlintVersion = "1.5.0"
+    ktlintVersion = "2.0.0-ALPHA-5"
     ignoreFormatFailures = true
     ignoreLintFailures = false
     reporters = arrayOf("checkstyle")
@@ -170,7 +171,7 @@ kotlinter {
 
 ```groovy
 kotlinter {
-    ktlintVersion = "1.5.0"
+    ktlintVersion = "2.0.0-ALPHA-5"
     ignoreFormatFailures = true
     ignoreLintFailures = false
     reporters = ['checkstyle']
@@ -180,7 +181,15 @@ kotlinter {
 </details>
 
 The `ktlintVersion` property allows you to override the default version of `ktlint` used by the plugin.
-Compatibility will generally be good, but ktlint consumer API changes may break compatibility in some rare cases.
+The default is `2.0.0-ALPHA-5`. KtLint 1.x is no longer supported; the 2.x modules use the Maven group
+`io.github.ktlint.core`. Gradle version selectors may be used for compatible 2.x releases.
+KtLint 2.x is currently a prerelease and includes a Kotlin compiler release candidate. Rules and APIs can change between
+versions, and later releases may not be compatible.
+
+Custom rulesets can use the native 2.x API. Compatible 1.x rulesets can also be loaded through KtLint's temporary
+compatibility bridge, but **2.0.0-ALPHA-5 can omit non-autocorrectable legacy rule violations**. Migrate legacy rules
+to 2.x rather than relying on the bridge. Some compiled 1.x rules use shaded IntelliJ types and cannot link with the
+bridge at all. See the [KtLint migration guide](https://ktlint.github.io/ktlint/dev-snapshot/api/migrate-to-ktlint-2.x/).
 
 Setting `ignoreFormatFailures` to `false` will configure the `formatKotlin` task to fail the build when auto-format is not able to fix a lint error.
 

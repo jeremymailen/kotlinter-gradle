@@ -1,7 +1,7 @@
 package org.jmailen.gradle.kotlinter.support
 
-import com.pinterest.ktlint.cli.reporter.core.api.KtlintCliError
-import com.pinterest.ktlint.cli.reporter.core.api.ReporterV2
+import io.github.ktlint.core.cli.reporter.core.api.KtlintCliError
+import io.github.ktlint.core.cli.reporter.core.api.ReporterV2
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.ConcurrentSkipListSet

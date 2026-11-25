@@ -2,12 +2,12 @@
 
 package org.jmailen.gradle.kotlinter.support
 
-import com.pinterest.ktlint.cli.reporter.checkstyle.CheckStyleReporter
-import com.pinterest.ktlint.cli.reporter.core.api.ReporterV2
-import com.pinterest.ktlint.cli.reporter.html.HtmlReporter
-import com.pinterest.ktlint.cli.reporter.json.JsonReporter
-import com.pinterest.ktlint.cli.reporter.plain.PlainReporter
-import com.pinterest.ktlint.cli.reporter.sarif.SarifReporter
+import io.github.ktlint.core.cli.reporter.checkstyle.CheckStyleReporter
+import io.github.ktlint.core.cli.reporter.core.api.ReporterV2
+import io.github.ktlint.core.cli.reporter.html.HtmlReporter
+import io.github.ktlint.core.cli.reporter.json.JsonReporter
+import io.github.ktlint.core.cli.reporter.plain.PlainReporter
+import io.github.ktlint.core.cli.reporter.sarif.SarifReporter
 import java.io.File
 import java.io.PrintStream
 

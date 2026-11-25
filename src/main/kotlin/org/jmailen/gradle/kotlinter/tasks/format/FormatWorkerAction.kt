@@ -1,7 +1,7 @@
 package org.jmailen.gradle.kotlinter.tasks.format
 
-import com.pinterest.ktlint.rule.engine.api.Code
-import com.pinterest.ktlint.rule.engine.core.api.AutocorrectDecision
+import io.github.ktlint.core.rule.engine.api.Code
+import io.github.ktlint.core.rule.engine.core.api.AutocorrectDecision
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging

@@ -130,10 +130,18 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
         }
         build("formatKotlin").apply {
             assertEquals(TaskOutcome.SUCCESS, task(":formatKotlinJsMain")?.outcome)
-            assertTrue(output.contains("FixtureClass.kt:3:19: Format fixed > [standard:curly-spacing] Missing spacing before \"{\""))
+            assertTrue(
+                output.contains(
+                    "FixtureClass.kt:3:19: Format fixed > [standard:class-signature] Expected a single space before class body",
+                ),
+            )
             assertTrue(output.contains("FixtureClass.kt:1:1: Format could not fix > [standard:no-wildcard-imports] Wildcard import"))
             assertEquals(TaskOutcome.SUCCESS, task(":formatKotlinJsTest")?.outcome)
-            assertTrue(output.contains("FixtureTestClass.kt:3:23: Format fixed > [standard:curly-spacing] Missing spacing before \"{\""))
+            assertTrue(
+                output.contains(
+                    "FixtureTestClass.kt:3:23: Format fixed > [standard:class-signature] Expected a single space before class body",
+                ),
+            )
             assertTrue(output.contains("FixtureTestClass.kt:1:1: Format could not fix > [standard:no-wildcard-imports] Wildcard import"))
         }
     }
@@ -171,10 +179,18 @@ class KotlinJsProjectTest : WithGradleTest.Kotlin() {
         }
         buildAndFail("formatKotlin").apply {
             assertEquals(TaskOutcome.FAILED, task(":formatKotlinJsMain")?.outcome)
-            assertTrue(output.contains("FixtureClass.kt:3:19: Format fixed > [standard:curly-spacing] Missing spacing before \"{\""))
+            assertTrue(
+                output.contains(
+                    "FixtureClass.kt:3:19: Format fixed > [standard:class-signature] Expected a single space before class body",
+                ),
+            )
             assertTrue(output.contains("FixtureClass.kt:1:1: Format could not fix > [standard:no-wildcard-imports] Wildcard import"))
             assertEquals(TaskOutcome.FAILED, task(":formatKotlinJsTest")?.outcome)
-            assertTrue(output.contains("FixtureTestClass.kt:3:23: Format fixed > [standard:curly-spacing] Missing spacing before \"{\""))
+            assertTrue(
+                output.contains(
+                    "FixtureTestClass.kt:3:23: Format fixed > [standard:class-signature] Expected a single space before class body",
+                ),
+            )
             assertTrue(output.contains("FixtureTestClass.kt:1:1: Format could not fix > [standard:no-wildcard-imports] Wildcard import"))
         }
     }

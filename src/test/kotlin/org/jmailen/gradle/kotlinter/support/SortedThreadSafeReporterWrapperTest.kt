@@ -1,8 +1,8 @@
 package org.jmailen.gradle.kotlinter.support
 
-import com.pinterest.ktlint.cli.reporter.core.api.ReporterV2
-import com.pinterest.ktlint.rule.engine.api.LintError
-import com.pinterest.ktlint.rule.engine.core.api.RuleId
+import io.github.ktlint.core.cli.reporter.core.api.ReporterV2
+import io.github.ktlint.core.rule.engine.api.LintError
+import io.github.ktlint.core.rule.engine.core.api.RuleId
 import org.jmailen.gradle.kotlinter.tasks.lint.toCliError
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

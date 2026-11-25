@@ -1,7 +1,6 @@
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
@@ -22,6 +21,7 @@ val pluginId = "org.jmailen.kotlinter"
 val githubUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val webUrl = "https://github.com/jeremymailen/kotlinter-gradle"
 val projectDescription = "Lint and formatting for Kotlin using ktlint with configuration-free setup on JVM and Android projects"
+val targetJavaVersion = JavaVersion.VERSION_17
 
 version = "5.7.0"
 group = "org.jmailen.gradle"
@@ -30,17 +30,11 @@ description = projectDescription
 configurations {
     register("testRuntimeDependencies") {
         extendsFrom(compileOnly.get())
+        exclude(group = "io.github.ktlint.core")
         attributes {
             // KGP publishes multiple variants https://kotlinlang.org/docs/whatsnew17.html#support-for-gradle-plugin-variants
             attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_RUNTIME))
             attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
-        }
-    }
-    configureEach {
-        resolutionStrategy.eachDependency {
-            if (requested.group == "org.jetbrains.kotlin" && requested.name.startsWith("kotlin")) {
-                useVersion(getKotlinPluginVersion())
-            }
         }
     }
 }
@@ -52,6 +46,7 @@ dependencies {
     compileOnly(libs.bundles.ktlint.engine)
     compileOnly(libs.bundles.ktlint.reporters)
     compileOnly(libs.bundles.ktlint.rulesets)
+    compileOnly(libs.ktlint.compatibility)
 
     testImplementation(libs.commons.io)
     testImplementation(libs.mockito.kotlin)
@@ -59,6 +54,7 @@ dependencies {
     testImplementation(libs.bundles.ktlint.engine)
     testImplementation(libs.bundles.ktlint.reporters)
     testImplementation(libs.bundles.ktlint.rulesets)
+    testImplementation(libs.ktlint.compatibility)
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly(libs.junit.jupiter.platform)
 }
@@ -72,15 +68,17 @@ if (GradleVersion.current() >= GradleVersion.version("9.1")) {
 tasks {
     val generateKotlinterProperties = register("generateKotlinterProperties") {
         val projectVersion = version
+        val ktlintVersion = libs.versions.ktlint.get()
         val propertiesFile = File(sourceSets.main.get().output.resourcesDir, "kotlinter.properties")
         inputs.property("projectVersion", projectVersion)
+        inputs.property("ktlintVersion", ktlintVersion)
         outputs.file(propertiesFile)
 
         doLast {
             propertiesFile.writeText(
                 """
                 version = $projectVersion
-                ktlintVersion = ${libs.versions.ktlint.get()}
+                ktlintVersion = $ktlintVersion
                 """.trimIndent(),
             )
         }
@@ -91,22 +89,14 @@ tasks {
     }
 
     withType<JavaCompile>().configureEach {
-        options.release.set(JavaVersion.VERSION_11.majorVersion.toInt())
+        options.release.set(targetJavaVersion.majorVersion.toInt())
     }
     withType<KotlinJvmCompile>().configureEach {
         compilerOptions {
             apiVersion.set(KotlinVersion.KOTLIN_2_0)
             languageVersion.set(KotlinVersion.KOTLIN_2_0)
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.fromTarget(targetJavaVersion.majorVersion))
         }
-    }
-    compileTestKotlin {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
-        }
-    }
-    compileTestJava {
-        options.release.set(JavaVersion.VERSION_17.majorVersion.toInt())
     }
     withType<Test>().configureEach {
         useJUnitPlatform()
@@ -137,6 +127,8 @@ gradlePlugin {
 }
 
 java {
+    sourceCompatibility = targetJavaVersion
+    targetCompatibility = targetJavaVersion
     withSourcesJar()
 }
 

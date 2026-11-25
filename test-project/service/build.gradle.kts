@@ -18,6 +18,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 
 dependencies {
     ktlint(project(":rules"))
+    ktlint(project(":legacy-rules"))
 }
 
 kotlinter {

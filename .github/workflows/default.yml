@@ -50,16 +50,25 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            gradle: 8.14.3
+            gradle: 9.0.0
+            java: 17
+          - os: ubuntu-latest
+            gradle: 9.0.0
             java: 21
           - os: windows-latest
-            gradle: 8.14.3
+            gradle: 9.0.0
             java: 21
           - os: ubuntu-latest
             gradle: 9.5.1
-            java: 25
+            java: 21
           - os: windows-latest
             gradle: 9.5.1
+            java: 21
+          - os: ubuntu-latest
+            gradle: 9.9.2
+            java: 25
+          - os: windows-latest
+            gradle: 9.9.2
             java: 25
 
     name: '[${{ matrix.os }}] Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}'
@@ -84,6 +93,7 @@ jobs:
         run: |
           cd test-project/service/build/reports/ktlint
           grep 'kotlinter-test-rules:no-var' main-lint.txt | grep -q 'CustomNoVar.kt:4:5'
+          grep 'legacy-test-rules:no-var' test-format.txt | grep -q 'LegacyVar.kt:3:1'
           grep 'op-spacing' test-format.txt | grep -q 'OpSpacing.kt:5:16'
 
       - name: Upload reports
@@ -99,12 +109,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - gradle: 8.14.3
-            java: 21
-            agp: 8.13.2
           - gradle: 9.5.1
             java: 25
             agp: 9.2.1
+          - gradle: 9.9.2
+            java: 27
+            agp: 9.5.2
 
     name: '[android] Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}, AGP: ${{ matrix.agp }}'
     steps:
@@ -145,16 +155,28 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            gradle: 8.14.3
+            gradle: 9.0.0
+            java: 17
+          - os: ubuntu-latest
+            gradle: 9.0.0
             java: 21
           - os: windows-latest
-            gradle: 8.14.3
+            gradle: 9.0.0
             java: 21
           - os: ubuntu-latest
             gradle: 9.5.1
-            java: 25
+            java: 17
+          - os: ubuntu-latest
+            gradle: 9.5.1
+            java: 21
           - os: windows-latest
             gradle: 9.5.1
+            java: 21
+          - os: ubuntu-latest
+            gradle: 9.9.2
+            java: 25
+          - os: windows-latest
+            gradle: 9.9.2
             java: 25
 
     name: '[${{ matrix.os }}] No Kotlin Plugin, Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}'

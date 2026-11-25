@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.4.10"
-ktlint = "1.8.0"
+ktlint = "2.0.0-ALPHA-5"
 android-tools = "9.2.1"
 junit = "6.1.3"
 mockito = "6.3.0"
@@ -9,15 +9,16 @@ gradle-publish = "2.2.1"
 kotlinter-check = "5.7.0"
 
 [libraries]
-ktlint-rule-engine = { group = "com.pinterest.ktlint", name = "ktlint-rule-engine", version.ref = "ktlint" }
-ktlint-rule-engine-core = { group = "com.pinterest.ktlint", name = "ktlint-rule-engine-core", version.ref = "ktlint" }
-ktlint-cli-reporter-core = { group = "com.pinterest.ktlint", name = "ktlint-cli-reporter-core", version.ref = "ktlint" }
-ktlint-cli-reporter-plain = { group = "com.pinterest.ktlint", name = "ktlint-cli-reporter-plain", version.ref = "ktlint" }
-ktlint-cli-reporter-html = { group = "com.pinterest.ktlint", name = "ktlint-cli-reporter-html", version.ref = "ktlint" }
-ktlint-cli-reporter-checkstyle = { group = "com.pinterest.ktlint", name = "ktlint-cli-reporter-checkstyle", version.ref = "ktlint" }
-ktlint-cli-reporter-json = { group = "com.pinterest.ktlint", name = "ktlint-cli-reporter-json", version.ref = "ktlint" }
-ktlint-cli-reporter-sarif = { group = "com.pinterest.ktlint", name = "ktlint-cli-reporter-sarif", version.ref = "ktlint" }
-ktlint-ruleset-standard = { group = "com.pinterest.ktlint", name = "ktlint-ruleset-standard", version.ref = "ktlint" }
+ktlint-rule-engine = { group = "io.github.ktlint.core", name = "ktlint-rule-engine", version.ref = "ktlint" }
+ktlint-rule-engine-core = { group = "io.github.ktlint.core", name = "ktlint-rule-engine-core", version.ref = "ktlint" }
+ktlint-cli-reporter-core = { group = "io.github.ktlint.core", name = "ktlint-cli-reporter-core", version.ref = "ktlint" }
+ktlint-cli-reporter-plain = { group = "io.github.ktlint.core", name = "ktlint-cli-reporter-plain", version.ref = "ktlint" }
+ktlint-cli-reporter-html = { group = "io.github.ktlint.core", name = "ktlint-cli-reporter-html", version.ref = "ktlint" }
+ktlint-cli-reporter-checkstyle = { group = "io.github.ktlint.core", name = "ktlint-cli-reporter-checkstyle", version.ref = "ktlint" }
+ktlint-cli-reporter-json = { group = "io.github.ktlint.core", name = "ktlint-cli-reporter-json", version.ref = "ktlint" }
+ktlint-cli-reporter-sarif = { group = "io.github.ktlint.core", name = "ktlint-cli-reporter-sarif", version.ref = "ktlint" }
+ktlint-ruleset-standard = { group = "io.github.ktlint.core", name = "ktlint-ruleset-standard", version.ref = "ktlint" }
+ktlint-compatibility = { group = "io.github.ktlint.core", name = "ktlint-com-pinterest-backward-compatibility", version.ref = "ktlint" }
 android-tools-gradle-api = { group = "com.android.tools.build", name = "gradle-api", version.ref = "android-tools" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit" }
 junit-jupiter-platform = { group = "org.junit.platform", name= "junit-platform-launcher", version.ref = "junit" }

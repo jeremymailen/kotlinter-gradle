@@ -50,10 +50,10 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            gradle: 8.14.3
+            gradle: 9.5.1
             java: 21
           - os: windows-latest
-            gradle: 8.14.3
+            gradle: 9.5.1
             java: 21
           - os: ubuntu-latest
             gradle: 9.5.1
@@ -99,9 +99,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - gradle: 8.14.3
-            java: 21
-            agp: 8.13.2
           - gradle: 9.5.1
             java: 25
             agp: 9.2.1
@@ -148,13 +145,13 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            gradle: 8.4
+            gradle: 9.5.1
             java: 17
           - os: ubuntu-latest
-            gradle: 8.14.3
+            gradle: 9.5.1
             java: 21
           - os: windows-latest
-            gradle: 8.14.3
+            gradle: 9.5.1
             java: 21
           - os: ubuntu-latest
             gradle: 9.5.1

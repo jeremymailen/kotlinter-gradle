@@ -1,7 +1,6 @@
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
@@ -31,17 +30,11 @@ description = projectDescription
 configurations {
     register("testRuntimeDependencies") {
         extendsFrom(compileOnly.get())
+        exclude(group = "io.github.ktlint.core")
         attributes {
             // KGP publishes multiple variants https://kotlinlang.org/docs/whatsnew17.html#support-for-gradle-plugin-variants
             attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_RUNTIME))
             attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
-        }
-    }
-    configureEach {
-        resolutionStrategy.eachDependency {
-            if (requested.group == "org.jetbrains.kotlin" && requested.name.startsWith("kotlin")) {
-                useVersion(getKotlinPluginVersion())
-            }
         }
     }
 }
@@ -73,15 +66,17 @@ if (GradleVersion.current() >= GradleVersion.version("9.1")) {
 tasks {
     val generateKotlinterProperties = register("generateKotlinterProperties") {
         val projectVersion = version
+        val ktlintVersion = libs.versions.ktlint.get()
         val propertiesFile = File(sourceSets.main.get().output.resourcesDir, "kotlinter.properties")
         inputs.property("projectVersion", projectVersion)
+        inputs.property("ktlintVersion", ktlintVersion)
         outputs.file(propertiesFile)
 
         doLast {
             propertiesFile.writeText(
                 """
                 version = $projectVersion
-                ktlintVersion = ${libs.versions.ktlint.get()}
+                ktlintVersion = $ktlintVersion
                 """.trimIndent(),
             )
         }

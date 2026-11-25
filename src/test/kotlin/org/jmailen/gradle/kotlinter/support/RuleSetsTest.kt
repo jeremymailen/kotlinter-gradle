@@ -1,12 +1,12 @@
 package org.jmailen.gradle.kotlinter.support
 
-import com.pinterest.ktlint.cli.ruleset.core.api.RuleSetProviderV3
-import com.pinterest.ktlint.rule.engine.api.Code
-import com.pinterest.ktlint.rule.engine.api.KtLintRuleEngine
-import com.pinterest.ktlint.rule.engine.core.api.Rule
-import com.pinterest.ktlint.rule.engine.core.api.RuleId
-import com.pinterest.ktlint.rule.engine.core.api.RuleProvider
-import com.pinterest.ktlint.rule.engine.core.api.RuleSetId
+import io.github.ktlint.core.cli.ruleset.core.api.RuleSetV2Provider
+import io.github.ktlint.core.rule.engine.api.Code
+import io.github.ktlint.core.rule.engine.api.KtLintRuleEngine
+import io.github.ktlint.core.rule.engine.core.api.RuleId
+import io.github.ktlint.core.rule.engine.core.api.RuleSetId
+import io.github.ktlint.core.rule.engine.core.api.RuleV2
+import io.github.ktlint.core.rule.engine.core.api.RuleV2Provider
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -55,8 +55,8 @@ class RuleSetsTest {
     }
 }
 
-class TestRuleSetProvider(id: String, val ruleSet: Set<Rule>) : RuleSetProviderV3(RuleSetId(id)) {
-    override fun getRuleProviders() = ruleSet.map { rule -> RuleProvider(provider = { rule }) }.toSet()
+class TestRuleSetProvider(id: String, val ruleSet: Set<RuleV2>) : RuleSetV2Provider(RuleSetId(id)) {
+    override fun getRuleProviders() = ruleSet.map { rule -> RuleV2Provider(provider = { rule }) }.toSet()
 }
 
-class TestRule(id: String) : Rule(RuleId(id), About("maintainer"), emptySet(), emptySet())
+class TestRule(id: String) : RuleV2(RuleId(id), About("maintainer"))

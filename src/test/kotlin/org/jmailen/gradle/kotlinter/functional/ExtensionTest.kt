@@ -35,6 +35,54 @@ internal class ExtensionTest : WithGradleTest.Kotlin() {
     }
 
     @Test
+    fun `ktlint 2 runs lint and format with all reporters`() {
+        projectRoot.resolve("build.gradle") {
+            appendText(
+                """
+
+                kotlinter {
+                    ktlintVersion = '2.0.0-ALPHA-5'
+                    reporters = ['checkstyle', 'html', 'json', 'plain', 'sarif']
+                    ignoreLintFailures = true
+                }
+                """.trimIndent(),
+            )
+        }
+        val source = projectRoot.resolve("src/main/kotlin/KotlinClass.kt") {
+            writeText("class KotlinClass{ }\n")
+        }
+        build("lintKotlinMain").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":lintKotlinMain")?.outcome)
+            assertTrue(output.contains("Lint error"))
+        }
+        listOf("xml", "html", "json", "txt", "sarif.json").forEach { extension ->
+            val report = projectRoot.resolve("build/reports/ktlint/main-lint.$extension")
+            assertTrue(report.isFile && report.readText().contains("KotlinClass.kt"), report.path)
+        }
+        build("formatKotlinMain").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":formatKotlinMain")?.outcome)
+        }
+        assertTrue(!source.readText().contains("Class{"))
+        build("lintKotlinMain").apply {
+            assertEquals(TaskOutcome.SUCCESS, task(":lintKotlinMain")?.outcome)
+            assertTrue(!output.contains("Lint error"))
+        }
+    }
+
+    @Test
+    fun `ktlint version below alpha 5 fails resolution`() {
+        projectRoot.resolve("build.gradle") {
+            appendText("\nkotlinter { ktlintVersion = '2.0.0-ALPHA-4' }\n")
+        }
+        projectRoot.resolve("src/main/kotlin/KotlinClass.kt") {
+            writeText(kotlinClass("KotlinClass"))
+        }
+        buildAndFail("lintKotlinMain").apply {
+            assertTrue(output.contains("Kotlinter requires KtLint 2.x starting with 2.0.0-ALPHA-5"))
+        }
+    }
+
+    @Test
     fun `extension configures ignoreLintFailures`() {
         projectRoot.resolve("build.gradle") {
             // language=groovy

@@ -1,6 +1,6 @@
 package org.jmailen.gradle.kotlinter.support
 
-import com.pinterest.ktlint.rule.engine.api.KtLintRuleEngine
+import io.github.ktlint.core.rule.engine.api.KtLintRuleEngine
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.logging.Logger
 import java.io.File

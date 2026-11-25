@@ -1,9 +1,9 @@
 package org.jmailen.gradle.kotlinter.tasks.lint
 
-import com.pinterest.ktlint.cli.reporter.core.api.KtlintCliError
-import com.pinterest.ktlint.cli.reporter.core.api.ReporterV2
-import com.pinterest.ktlint.rule.engine.api.Code
-import com.pinterest.ktlint.rule.engine.api.LintError
+import io.github.ktlint.core.cli.reporter.core.api.KtlintCliError
+import io.github.ktlint.core.cli.reporter.core.api.ReporterV2
+import io.github.ktlint.core.rule.engine.api.Code
+import io.github.ktlint.core.rule.engine.api.LintError
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.internal.logging.slf4j.DefaultContextAwareTaskLogger

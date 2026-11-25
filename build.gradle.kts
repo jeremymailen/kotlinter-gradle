@@ -46,6 +46,7 @@ dependencies {
     compileOnly(libs.bundles.ktlint.engine)
     compileOnly(libs.bundles.ktlint.reporters)
     compileOnly(libs.bundles.ktlint.rulesets)
+    compileOnly(libs.ktlint.compatibility)
 
     testImplementation(libs.commons.io)
     testImplementation(libs.mockito.kotlin)
@@ -53,6 +54,7 @@ dependencies {
     testImplementation(libs.bundles.ktlint.engine)
     testImplementation(libs.bundles.ktlint.reporters)
     testImplementation(libs.bundles.ktlint.rulesets)
+    testImplementation(libs.ktlint.compatibility)
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly(libs.junit.jupiter.platform)
 }

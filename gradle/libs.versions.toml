@@ -18,6 +18,7 @@ ktlint-cli-reporter-checkstyle = { group = "io.github.ktlint.core", name = "ktli
 ktlint-cli-reporter-json = { group = "io.github.ktlint.core", name = "ktlint-cli-reporter-json", version.ref = "ktlint" }
 ktlint-cli-reporter-sarif = { group = "io.github.ktlint.core", name = "ktlint-cli-reporter-sarif", version.ref = "ktlint" }
 ktlint-ruleset-standard = { group = "io.github.ktlint.core", name = "ktlint-ruleset-standard", version.ref = "ktlint" }
+ktlint-compatibility = { group = "io.github.ktlint.core", name = "ktlint-com-pinterest-backward-compatibility", version.ref = "ktlint" }
 android-tools-gradle-api = { group = "com.android.tools.build", name = "gradle-api", version.ref = "android-tools" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit" }
 junit-jupiter-platform = { group = "org.junit.platform", name= "junit-platform-launcher", version.ref = "junit" }

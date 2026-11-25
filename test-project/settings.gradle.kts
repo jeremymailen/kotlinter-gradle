@@ -9,3 +9,4 @@ dependencyResolutionManagement {
 
 include(":service")
 include(":rules")
+include(":legacy-rules")

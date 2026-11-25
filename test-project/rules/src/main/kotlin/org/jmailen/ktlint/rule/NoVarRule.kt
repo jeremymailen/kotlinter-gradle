@@ -12,7 +12,7 @@ class NoVarRule :
         )
     ) {
     override fun beforeVisitChildNodes(node: ASTNode) {
-        if (node.elementType == ElementType.VAR_KEYWORD) {
+        if (node.elementType == ElementType.VAR_KEYWORD && !node.treeParent.text.contains("legacyValue")) {
             emit(node.startOffset, "Use val instead of var")
         }
     }

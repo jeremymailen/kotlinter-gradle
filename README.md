@@ -184,7 +184,12 @@ The `ktlintVersion` property allows you to override the default version of `ktli
 The default is `2.0.0-ALPHA-5`. KtLint 1.x is no longer supported; the 2.x modules use the Maven group
 `io.github.ktlint.core`. Gradle version selectors may be used for compatible 2.x releases.
 KtLint 2.x is currently a prerelease and includes a Kotlin compiler release candidate. Rules and APIs can change between
-versions, and later releases may not be compatible. Custom rulesets must use KtLint 2.x APIs.
+versions, and later releases may not be compatible.
+
+Custom rulesets can use the native 2.x API. Compatible 1.x rulesets can also be loaded through KtLint's temporary
+compatibility bridge, but **2.0.0-ALPHA-5 can omit non-autocorrectable legacy rule violations**. Migrate legacy rules
+to 2.x rather than relying on the bridge. Some compiled 1.x rules use shaded IntelliJ types and cannot link with the
+bridge at all. See the [KtLint migration guide](https://ktlint.github.io/ktlint/dev-snapshot/api/migrate-to-ktlint-2.x/).
 
 Setting `ignoreFormatFailures` to `false` will configure the `formatKotlin` task to fail the build when auto-format is not able to fix a lint error.
 

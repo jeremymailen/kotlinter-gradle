@@ -105,9 +105,19 @@ class KotlinterPlugin : Plugin<Project> {
             "io.github.ktlint.core:ktlint-cli-reporter-checkstyle:$ktlintVersion",
             "io.github.ktlint.core:ktlint-cli-reporter-json:$ktlintVersion",
             "io.github.ktlint.core:ktlint-cli-reporter-sarif:$ktlintVersion",
+            "io.github.ktlint.core:ktlint-com-pinterest-backward-compatibility:$ktlintVersion",
         )
         deps.forEach { dep ->
             ktlintConfiguration.dependencies.add(project.dependencies.create(dep))
+        }
+        listOf(
+            "ktlint-rule-engine",
+            "ktlint-rule-engine-core",
+            "ktlint-cli-ruleset-core",
+            "ktlint-ruleset-standard",
+            "ktlint-cli-reporter-core",
+        ).forEach { module ->
+            ktlintConfiguration.exclude(mapOf("group" to "com.pinterest.ktlint", "module" to module))
         }
         ktlintConfiguration.resolutionStrategy.componentSelection.all { selection ->
             if (selection.candidate.group == "io.github.ktlint.core" &&

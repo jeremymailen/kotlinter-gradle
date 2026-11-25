@@ -5,9 +5,12 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.logging.Logger
 import java.io.File
 
-internal val ktlintEngine = KtLintRuleEngine(
-    ruleProviders = resolveRuleProviders(defaultRuleSetProviders),
-)
+internal val ktlintEngine = try {
+    KtLintRuleEngine(ruleProviders = resolveRuleProviders(defaultRuleSetProviders, legacyRuleSetProviders))
+} catch (error: LinkageError) {
+    if (legacyRuleSetProviders.isEmpty()) throw error
+    throw IllegalStateException(LEGACY_ERROR, error)
+}
 
 internal fun resetEditorconfigCacheIfNeeded(changedEditorconfigFiles: ConfigurableFileCollection, logger: Logger) {
     val changedFiles = changedEditorconfigFiles.files

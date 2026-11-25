@@ -65,10 +65,10 @@ jobs:
             gradle: 9.5.1
             java: 21
           - os: ubuntu-latest
-            gradle: 9.5.1
+            gradle: 9.9.2
             java: 25
           - os: windows-latest
-            gradle: 9.5.1
+            gradle: 9.9.2
             java: 25
 
     name: '[${{ matrix.os }}] Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}'
@@ -113,7 +113,7 @@ jobs:
             java: 25
             agp: 9.2.1
           - gradle: 9.9.2
-            java: 25
+            java: 27
             agp: 9.5.2
 
     name: '[android] Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}, AGP: ${{ matrix.agp }}'
@@ -173,10 +173,10 @@ jobs:
             gradle: 9.5.1
             java: 21
           - os: ubuntu-latest
-            gradle: 9.5.1
+            gradle: 9.9.2
             java: 25
           - os: windows-latest
-            gradle: 9.5.1
+            gradle: 9.9.2
             java: 25
 
     name: '[${{ matrix.os }}] No Kotlin Plugin, Gradle: ${{ matrix.gradle }}, Java: ${{ matrix.java }}'

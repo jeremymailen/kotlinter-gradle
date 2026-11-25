@@ -90,7 +90,7 @@ plugins {
 ### Compatibility
 
 - Kotlin -- generally compatible so long as the language features are supported by the version of ktlint selected
-- Gradle 9.5.1+
+- Gradle 9.0+
 - Java 17+ to run Gradle
 - Ktlint 2.0+
 

@@ -33,8 +33,8 @@ class KotlinterPlugin : Plugin<Project> {
     )
 
     override fun apply(project: Project) = with(project) {
-        if (GradleVersion.current() < GradleVersion.version("9.5.1")) {
-            throw GradleException("Kotlinter requires Gradle 9.5.1 or newer to run KtLint 2.x")
+        if (GradleVersion.current() < GradleVersion.version("9.0.0")) {
+            throw GradleException("Kotlinter requires Gradle 9.0 or newer to run KtLint 2.x")
         }
         val kotlinterExtension = extensions.create("kotlinter", KotlinterExtension::class.java)
         val ktlintConfiguration = configurations.maybeCreate(KTLINT_CONFIGURATION_NAME).apply {
